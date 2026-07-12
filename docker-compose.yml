@@ -1,0 +1,8 @@
+services:
+  portfolio:
+    build: .
+    container_name: lucca-portfolio
+    restart: unless-stopped
+    # Bind to localhost only — the host Caddy reverse-proxies to this port.
+    ports:
+      - "127.0.0.1:8080:80"
