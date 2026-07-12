@@ -50,6 +50,10 @@ interface ExperienceState {
   instant: boolean;
   /** Hand-off origin for the report overlay entrance. */
   apex: ApexPoint | null;
+  /** When WebGL support fails or context is lost, fallback to DOM layout. */
+  webglFallback: boolean;
+
+  setWebglFallback(value: boolean): void;
 
   // Drawer events
   openDrawer(opts?: { instant?: boolean }): void;
@@ -77,6 +81,11 @@ export const useExperience = create<ExperienceState>()(
     page: 0,
     instant: false,
     apex: null,
+    webglFallback: false,
+
+    setWebglFallback(value) {
+      set({ webglFallback: value });
+    },
 
     openDrawer(opts) {
       if (get().drawer !== "closed") return;
@@ -98,6 +107,10 @@ export const useExperience = create<ExperienceState>()(
 
     selectProject(id) {
       const s = get();
+      if (s.webglFallback) {
+        set({ activeProject: id, viewer: "opening", page: 0, apex: null });
+        return;
+      }
       if (s.drawer !== "open" || s.viewer !== "closed") return;
       set({ activeProject: id, viewer: "folder-lifting", page: 0 });
     },
@@ -117,6 +130,10 @@ export const useExperience = create<ExperienceState>()(
     },
     viewerDismissed() {
       if (get().viewer !== "closing") return;
+      if (get().webglFallback) {
+        set({ viewer: "closed", activeProject: null, apex: null, page: 0 });
+        return;
+      }
       set({ viewer: "folder-returning" });
     },
     folderReturned() {

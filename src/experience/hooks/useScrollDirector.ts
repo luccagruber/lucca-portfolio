@@ -26,6 +26,7 @@ export function useScrollDirector() {
 
     const evaluate = (instant = false) => {
       const s = useExperience.getState();
+      if (s.webglFallback) return; // scroll triggers are inactive in fallback mode
       if (s.viewer !== "closed") return; // the viewer owns input while open
       const immediate = instant || prefersReducedMotion();
       const y = window.scrollY;

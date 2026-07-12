@@ -10,6 +10,7 @@ import { useExperience } from "./state/store";
 import { ExperienceCanvas } from "./ExperienceCanvas";
 import { ExperienceA11y } from "./ExperienceA11y";
 import { ProjectViewer } from "./viewer/ProjectViewer";
+import { WebglFallbackWorkspace } from "./WebglFallbackWorkspace";
 
 gsap.registerPlugin(useGSAP);
 
@@ -23,21 +24,26 @@ gsap.registerPlugin(useGSAP);
 export function Experience() {
   useScrollDirector();
   const viewer = useExperience((s) => s.viewer);
+  const webglFallback = useExperience((s) => s.webglFallback);
   useScrollLock(viewer !== "closed");
 
   return (
     <section
       aria-label="Workspace — the project files"
-      className="relative"
-      style={{ height: `${SCROLL.stageHeightSvh}svh` }}
+      className={webglFallback ? "relative bg-stage py-6 sm:py-12" : "relative"}
+      style={webglFallback ? undefined : { height: `${SCROLL.stageHeightSvh}svh` }}
     >
-      <div className="sticky top-0 h-svh w-full overflow-hidden">
-        <ExperienceCanvas />
-        <ExperienceA11y />
-        <noscript>
-          <NoScriptProjects />
-        </noscript>
-      </div>
+      {webglFallback ? (
+        <WebglFallbackWorkspace />
+      ) : (
+        <div className="sticky top-0 h-svh w-full overflow-hidden">
+          <ExperienceCanvas />
+          <ExperienceA11y />
+          <noscript>
+            <NoScriptProjects />
+          </noscript>
+        </div>
+      )}
       <ProjectViewer />
     </section>
   );

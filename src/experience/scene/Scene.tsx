@@ -2,6 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
+import { useExperience } from "@/experience/state/store";
 import { palette } from "@/lib/palette";
 import { CAMERA, FRAMINGS } from "./layout";
 import { CameraRig } from "./CameraRig";
@@ -18,7 +19,7 @@ export default function Scene() {
   return (
     <Canvas
       frameloop="demand"
-      shadows="soft"
+      shadows
       dpr={[1, 2]}
       camera={{
         fov: CAMERA.fov,
@@ -27,6 +28,15 @@ export default function Scene() {
         position: FRAMINGS.overview.position,
       }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
+      onCreated={({ gl }) => {
+        const canvasEl = gl.domElement;
+        const handleContextLost = (e: Event) => {
+          e.preventDefault();
+          console.warn("WebGL context lost. Falling back to DOM workspace.");
+          useExperience.getState().setWebglFallback(true);
+        };
+        canvasEl.addEventListener("webglcontextlost", handleContextLost);
+      }}
     >
       <color attach="background" args={[palette.stage]} />
       <CameraRig />
@@ -35,11 +45,12 @@ export default function Scene() {
       <ContactShadows
         position={[0, 0.0002, 0.15]}
         scale={6.5}
-        resolution={1024}
+        resolution={512}
         far={1.3}
         blur={2.4}
         opacity={0.42}
         color="#3a3936"
+        frames={1}
       />
     </Canvas>
   );
