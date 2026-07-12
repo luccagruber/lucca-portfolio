@@ -1,5 +1,9 @@
 node_modules
-dist
+.next
+out
 .git
+docs
+README.md
 Dockerfile
 docker-compose.yml
+*.log

@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+
+  /*
+   * Workspace neutrals — mirror of src/lib/palette.ts (keep in sync).
+   * Project identity colors deliberately have no tokens here: they are
+   * defined per project in src/content/projects.ts and applied as CSS
+   * variables on the viewer root only (vision: project colors never
+   * appear outside project files).
+   */
+  --color-stage: #e9e7e2;
+  --color-paper: #f4f4f2;
+  --color-surface: #efeee9;
+  --color-line: #d8d6cf;
+  --color-ink: #1f1e1b;
+  --color-ink-soft: #55534e;
+  --color-ink-faint: #8b8880;
+  --color-manila: #d9c89e;
+  --color-manila-deep: #cdba8c;
+  --color-tab-ink: #41403b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-stage font-sans text-ink antialiased;
+}
+
+::selection {
+  @apply bg-manila text-tab-ink;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Corporate section label — shared by the traditional act. */
+.section-label {
+  @apply font-mono text-[11px] font-medium tracking-[0.28em] text-ink-faint uppercase;
+}
