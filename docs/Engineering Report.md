@@ -166,7 +166,30 @@ src/
 6. **Placeholder socials** — LinkedIn/GitHub entries are commented out in
    `content/profile.ts` until real URLs exist.
 
-## 7. Recommended next steps
+## 7. Deployment (2026-07-12)
+
+The site is live at **https://lucca-portifolio.duckdns.org** (DuckDNS →
+OCI VM). The original plan — build the Next export inside Docker on the VM
+(root `Dockerfile` + `docker-compose.yml`) — was dropped: the VM has 1 GB of
+RAM and already runs production containers (Caddy, n8n, Postgres,
+accul-reburg-api), so `next build` there risks OOM. Those files were removed
+in favor of `deploy/`:
+
+- `deploy/deploy.sh` — builds `out/` locally, rsyncs it to the VM, builds
+  `deploy/Dockerfile` (a `caddy:2-alpine` image serving the static files),
+  and runs it as container `lucca-portfolio` on the `n8n_network` Docker
+  network.
+- Routing/TLS: the VM's existing dockerized Caddy got a
+  `lucca-portifolio.duckdns.org { reverse_proxy lucca-portfolio:80 }` block
+  in `~/Caddyfile`; certificates are auto-provisioned.
+
+Also verified post-deploy on hardware GL: risk #1's fallback detection does
+**not** misfire on real GPUs (a Mesa Intel renderer string is correctly left
+on the 3D path), and the full 3D flow works on the built site. The "3D never
+worked in local dev" symptom was software WebGL on the dev browser — exactly
+risk #1 — now answered by the 2D fallback rather than a frozen scene.
+
+## 8. Recommended next steps
 
 1. **Sound of the drawer** — a single, quiet metal-glide sample on
    open/close (respecting reduced motion / a mute) would deepen the

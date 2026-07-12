@@ -54,17 +54,27 @@ npm run typecheck
 
 ## Deploy (OCI, Docker + Caddy)
 
+Live at **https://lucca-portifolio.duckdns.org**.
+
 ```bash
-docker compose up -d --build
+./deploy/deploy.sh
 ```
 
-The container serves the site on `127.0.0.1:8080`; point the host Caddy at it:
+The script builds the static export **locally** (the 1 GB OCI VM cannot run
+`next build` reliably), rsyncs `out/` to the VM (ssh alias `oci-server`),
+builds a minimal `caddy:2-alpine` image there (`deploy/Dockerfile`), and runs
+it as container `lucca-portfolio` on the `n8n_network` Docker network. The
+VM's existing dockerized Caddy terminates TLS and routes to it via
+`~/Caddyfile` on the VM:
 
 ```caddyfile
-yourdomain.example {
-    reverse_proxy 127.0.0.1:8080
+lucca-portifolio.duckdns.org {
+    reverse_proxy lucca-portfolio:80
 }
 ```
+
+After editing that file, reload with
+`docker exec -w /etc/caddy caddy caddy reload --config /etc/caddy/Caddyfile`.
 
 ## Notes
 
