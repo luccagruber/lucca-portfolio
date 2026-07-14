@@ -3,6 +3,10 @@
 _2026-07-12 · rebuild of the repository against `Portfolio Vision.md` and
 `Experience Architecture.md`_
 
+> **Note (2026-07-14):** the scene described in §3–§4 (parametric filing
+> cabinet) has since been replaced by the real desk-GLB scene — see the
+> appendix at the end of this report for how the experience works now.
+
 ## 1. Product understanding
 
 The portfolio is a single interactive metaphor: the visitor stands in front
@@ -202,3 +206,40 @@ risk #1 — now answered by the 2D fallback rather than a frozen scene.
 5. **Analytics-free feedback** — the vision's success criterion is
    subjective; a lightweight session replay or plain user testing on the
    drawer-discovery moment would validate "the interaction teaches itself".
+
+---
+
+# Appendix — 2026-07-14: desk-GLB scene rebuild
+
+The 3D experience was rebuilt around a real desk asset with a built-in
+animatable drawer ("Office Desk 140x60" by AleixoAlonso, CC BY 4.0 —
+credited in the footer; optimized 23 MB → 2.3 MB via gltf-transform, see
+README "3D assets"). The filing cabinet is gone: the two manila folders
+live in the desk's own drawer. This resolves risk #2 (parametric art
+ceiling) for the hero object; remaining props are still generated and
+marked `// SWAPPABLE: replace with GLB later`.
+
+**Camera contract (user spec):** FOV 42, straight front view — the camera's
+rotation is permanently identity, framings are positions only, portrait
+compensation slides/pulls straight back. **Mouse movement never moves the
+scene** (pointer parallax removed); scroll's only job is triggering the
+drawer.
+
+**New choreography:** folders lie back inside the drawer box while it
+travels (nothing clips the desk front), then rise and tip upright,
+staggered. A selected folder flies to a camera-axis apex, projects its
+screen quad into the store, and the DOM viewer mounts over that exact quad
+— the folder *is* the report: front cover rotates open on a CSS hinge
+(index printed inside), pages are pinned by a two-prong fastener and turn
+by heaving over the top hinge (GSAP two-phase lift/fall). The stage behind
+blurs and dims via a GSAP filter veil on the canvas wrapper. Escape/× runs
+the whole thing in reverse down to the drawer slot.
+
+The state machine, scroll director, reduced-motion and fallback paths are
+unchanged in shape; the store gained `hoveredFolder` (hover dims the other
+file), `sceneReady` (stage fade-in) and the apex quad. Verified end-to-end
+in headless Chrome on hardware GL (full loop, both reports, page turns,
+restore-to-byte-identical drawer state) and in the DOM fallback (flip
+matrices probed mid-air); mobile verified for the DOM report. Known
+verification gap at time of writing: the 3D mobile framing shot is pending
+a wedged X-session GLX (hardware-GL headless runs blocked mid-session).

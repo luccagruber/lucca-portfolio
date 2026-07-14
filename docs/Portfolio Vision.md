@@ -10,7 +10,7 @@ The opening scene presents a familiar corporate cubicle, viewed from the perspec
 
 My work is not presented through cards or sections.
 
-Instead, my projects physically exist inside the filing cabinet beside my desk, waiting to be opened like real project files.
+Instead, my projects physically exist inside my desk's drawer, waiting to be opened like real project files.
 
 The experience is built around a single metaphor, and that metaphor should never be broken.
 
@@ -24,7 +24,7 @@ Imagine visiting someone's workspace.
 
 The desk belongs to me.
 
-The filing cabinet stores my work.
+Its drawer stores my work.
 
 To understand what I've built, you open the project files exactly as someone would inside a real office.
 
@@ -42,7 +42,7 @@ Nothing less.
 \- Calm, deliberate and confident.  
 \- Minimal, never empty.  
 \- Every visible object has a reason to exist.  
-\- The filing cabinet is always the visual protagonist.  
+\- The desk drawer is always the visual protagonist.  
 \- The interaction teaches itself.  
 \- Remove everything that distracts from the metaphor.
 
@@ -52,7 +52,9 @@ Whenever realism conflicts with usability, usability wins—but the illusion sho
 
 \# Rendering Style
 
-The workspace should be rendered as high-quality stylized 3D.
+The desk is a real 3D model with its wood texture — weighted, believable, with a built-in working drawer.
+
+Everything on it is rendered as high-quality stylized 3D, generated in code and swappable for real models later.
 
 Not photorealistic.
 
@@ -74,13 +76,10 @@ The goal is warmth, familiarity and clarity.
 \# Workspace Palette
 
 Desk  
-\- Matte Office White (\#F4F4F2)
+\- Natural wood (from the real model)
 
-Filing Cabinet  
-\- Soft Office Gray (\#A8ADB3)
-
-Drawer Interior  
-\- Slightly darker neutral gray
+Room  
+\- Quiet warm grays (floor \#D8D4CC, wall \#E3E0DA)
 
 Folders  
 \- Classic Manila  
@@ -112,20 +111,22 @@ Project colors never appear outside project files.
 
 \# Scene Composition
 
-The camera remains fixed in front of the workspace.
+The camera sits very close, straight in front of the desk, slightly low — you are seated at it, inside the space.
 
-The composition focuses only on the desk and the filing cabinet.
+It never yaws, never tilts, and never reacts to mouse movement. The scene is completely static except intentional animated moments.
+
+The composition focuses only on the desk and its drawer.
 
 The room itself is intentionally ignored.
 
 Visible objects:
 
-\- Office desk  
-\- Filing cabinet  
+\- Office desk (with its drawer)  
+\- Nameplate  
 \- Coffee cup  
 \- Pen holder  
 \- Picture frame  
-\- Minimal supporting office props
+\- Paper stack
 
 Never include:
 
@@ -161,9 +162,9 @@ Instead, scrolling simply starts the sequence.
 
 Sequence:
 
-\- cabinet drawer opens  
-\- camera subtly eases toward the cabinet  
-\- two folders slowly rise into view
+\- the desk drawer slides open with weight  
+\- camera barely eases forward — just enough added depth  
+\- two folders rise into view from inside
 
 The animation finishes independently.
 
@@ -200,13 +201,13 @@ Each project's visual identity begins only after opening.
 
 \# Project Experience
 
-Selecting a folder lifts it from the filing cabinet.
+Selecting a folder lifts it out of the drawer. It floats toward you and its front cover swings open on its hinge.
 
 The folder becomes the primary focus.
 
-The workspace remains only as contextual background.
+The workspace softly blurs and dims behind it — contextual background only.
 
-The folder opens into a corporate project report.
+The open folder is the corporate project report: the index printed inside the cover, the pages pinned under a fastener, each turn physical.
 
 Information unfolds page by page.
 
@@ -218,7 +219,7 @@ Each page reveals progressively deeper information about the project.
 
 The amount of pages depends entirely on project content.
 
-Closing the project returns the folder to its original position inside the filing cabinet.
+Closing the project returns the folder to its exact position inside the drawer.
 
 A subtle Close (×) control is available after the folder has fully opened.
 

@@ -1,36 +1,33 @@
 "use client";
 
-import { LAYOUT } from "./layout";
-import { Desk, DESK_TOP_Y } from "./workspace/Desk";
-import { Partition } from "./workspace/Partition";
+import { DESK } from "./layout";
+import { Room } from "./Room";
+import { DeskModel } from "./desk/DeskModel";
 import { CoffeeCup } from "./workspace/props/CoffeeCup";
 import { Nameplate } from "./workspace/props/Nameplate";
 import { PaperStack } from "./workspace/props/PaperStack";
 import { PenHolder } from "./workspace/props/PenHolder";
 import { PictureFrame } from "./workspace/props/PictureFrame";
-import { FilingCabinet } from "./cabinet/FilingCabinet";
 
 /**
- * The workspace system renders the cubicle: partition, desk, props and the
- * filing cabinet (which owns its drawer, which reveals the folders).
- * Vision: every visible object has a reason to exist; no monitors, no
- * keyboards, no clutter. Prop positions are desk-local.
+ * The workspace system renders the set: the room, the real desk (which
+ * owns its drawer, which reveals the folders) and the generated props on
+ * the desk top. Vision: every visible object has a reason to exist; no
+ * monitors, no keyboards, no clutter. Prop positions are desk-top-local.
  */
 export function Workspace() {
   return (
     <group>
-      <Partition />
+      <Room />
+      <DeskModel />
 
-      <group position={LAYOUT.desk.position}>
-        <Desk />
-        <CoffeeCup position={[0.32, DESK_TOP_Y, 0.17]} />
-        <PenHolder position={[-0.44, DESK_TOP_Y, -0.17]} />
-        <PictureFrame position={[-0.58, DESK_TOP_Y, -0.22]} rotation-y={0.5} />
-        <PaperStack position={[0.56, DESK_TOP_Y, -0.14]} rotation-y={-0.07} />
-        <Nameplate position={[0.13, DESK_TOP_Y, 0.26]} />
+      <group position={[0, DESK.topY, 0]}>
+        <Nameplate position={[-0.12, 0, 0.1]} />
+        <CoffeeCup position={[0.1, 0, 0.15]} />
+        <PenHolder position={[-0.34, 0, -0.14]} />
+        <PictureFrame position={[-0.52, 0, -0.16]} rotation-y={0.42} />
+        <PaperStack position={[0.5, 0, -0.12]} rotation-y={-0.06} />
       </group>
-
-      <FilingCabinet />
     </group>
   );
 }

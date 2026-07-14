@@ -1,51 +1,71 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { reportById } from "@/content/projects";
 import type { ProjectReport } from "@/content/types";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
-import { DUR, EASE } from "@/experience/motion";
+import { DUR, EASE, SEQ } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
+import { FOLDER, FOLDER_FULL_H, FOLDER_SLOTS } from "@/experience/scene/layout";
 import { ReportPage } from "./ReportPage";
 
 /**
- * The project viewer: a corporate report that unfolds page by page.
- * Navigation is clicks only; page scroll is locked while it is open
- * (see Experience). It owns the "opening"/"closing" viewer phases; the
- * folder lift/return phases belong to the folder system in the scene.
+ * The project viewer: the manila folder itself, now DOM. The 3D folder
+ * flies to the camera and hands off its exact screen quad; the DOM folder
+ * mounts over it pixel-for-pixel, its front cover rotates open on a real
+ * CSS hinge, and the report is read inside the open folder — left panel
+ * the inside cover (index), right panel the fastened page stack.
  *
- * The report itself is DOM, not 3D — crisp typography, real text for
- * screen readers, native focus handling. The workspace stays visible
- * behind a soft dim as context.
+ * Pages are pinned by a two-prong fastener at the top, so page turns are
+ * physical: the sheet heaves up around the top hinge, tips over the
+ * fastener and lies away. Navigation is clicks only (arrows, page edges,
+ * the index) plus keyboard arrows; scroll stays locked while viewing.
  */
 export function ProjectViewer() {
   const viewer = useExperience((s) => s.viewer);
   const activeProject = useExperience((s) => s.activeProject);
   if (viewer === "closed" || !activeProject) return null;
-  return <ViewerDialog report={reportById(activeProject)} />;
+  return <FolderDialog report={reportById(activeProject)} />;
 }
 
-function ViewerDialog({ report }: { report: ProjectReport }) {
+/** Local page-flip state: which sheet is mid-air and what sits under it. */
+interface Flip {
+  sheet: number;
+  under: number;
+  dir: 1 | -1;
+}
+
+function FolderDialog({ report }: { report: ProjectReport }) {
   const viewer = useExperience((s) => s.viewer);
-  const page = useExperience((s) => s.page);
-  const apex = useExperience((s) => s.apex);
-  const goToPage = useExperience((s) => s.goToPage);
+  const storePage = useExperience((s) => s.page);
   const closeProject = useExperience((s) => s.closeProject);
+  // In fallback mode there is no canvas veil behind — the dialog carries
+  // its own scrim so the workspace still steps back.
+  const webglFallback = useExperience((s) => s.webglFallback);
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
-  const sheetRef = useRef<HTMLElement>(null);
-  const pageContentRef = useRef<HTMLDivElement>(null);
-  const lastPageRef = useRef(0);
+  const moverRef = useRef<HTMLDivElement>(null);
+  const shifterRef = useRef<HTMLDivElement>(null);
+  const folderRef = useRef<HTMLDivElement>(null);
+  const coverRef = useRef<HTMLDivElement>(null);
+  const coverShadeRef = useRef<HTMLDivElement>(null);
+  const chromeRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const sweepRef = useRef<HTMLDivElement>(null);
+  const flipTl = useRef<gsap.core.Timeline | null>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
 
+  const [flip, setFlip] = useState<Flip | null>(null);
+
   const pages = report.pages;
-  const current = Math.min(page, pages.length - 1);
-  const atFirst = current === 0;
-  const atLast = current === pages.length - 1;
+  const total = pages.length;
+  const current = Math.min(storePage, total - 1);
+  /** While a backward sheet is falling, the old page stays visible under it. */
+  const basePage = flip && flip.dir === -1 ? flip.under : current;
+  const tabSide = FOLDER_SLOTS[report.id].tabX < 0 ? "left" : "right";
 
   const identityVars = {
     "--report-bg": report.identity.background,
@@ -56,10 +76,30 @@ function ViewerDialog({ report }: { report: ProjectReport }) {
     "--report-rule": report.identity.rule,
   } as CSSProperties;
 
+  /** Click-navigation — the only way pages move. Fast-forwards a live flip. */
+  const nav = (target: number) => {
+    const s = useExperience.getState();
+    if (s.viewer !== "viewing") return;
+    const from = s.page;
+    if (target === from || target < 0 || target >= total) return;
+    flipTl.current?.progress(1).kill();
+    flipTl.current = null;
+    s.goToPage(target);
+    if (prefersReducedMotion()) {
+      setFlip(null);
+      return;
+    }
+    setFlip(
+      target > from
+        ? { sheet: from, under: target, dir: 1 }
+        : { sheet: target, under: from, dir: -1 },
+    );
+  };
+
   // Capture focus for the dialog's lifetime; give it back on close.
   useEffect(() => {
     restoreFocusRef.current = document.activeElement as HTMLElement | null;
-    sheetRef.current?.focus({ preventScroll: true });
+    folderRef.current?.focus({ preventScroll: true });
     return () => restoreFocusRef.current?.focus?.();
   }, []);
 
@@ -90,78 +130,177 @@ function ViewerDialog({ report }: { report: ProjectReport }) {
         }
         return;
       }
-      if (s.viewer !== "viewing") return;
-      if (e.key === "ArrowRight") s.goToPage(Math.min(s.page + 1, pages.length - 1));
-      if (e.key === "ArrowLeft") s.goToPage(Math.max(s.page - 1, 0));
+      if (e.key === "ArrowRight") nav(useExperience.getState().page + 1);
+      if (e.key === "ArrowLeft") nav(useExperience.getState().page - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [pages.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total]);
+
+  /** Where the folder body sits when closed: the 3D hand-off quad. */
+  const closedPose = () => {
+    const folder = folderRef.current;
+    const apex = useExperience.getState().apex;
+    if (!folder || !apex) return { dx: 0, dy: 0, scale: 0.94 };
+    const bodyFrac = FOLDER.height / FOLDER_FULL_H;
+    const bodyHPx = (apex.h / 100) * window.innerHeight * bodyFrac;
+    // apex.y centers the full silhouette (tab included); the body center
+    // sits lower by half the tab's share.
+    const bodyCenterY = apex.y + (apex.h * (1 - bodyFrac)) / 2;
+    return {
+      dx: ((apex.x - 50) / 100) * window.innerWidth,
+      dy: ((bodyCenterY - 50) / 100) * window.innerHeight,
+      scale: bodyHPx / Math.max(folder.offsetHeight, 1),
+    };
+  };
+
+  const spreadShift = () => {
+    const folder = folderRef.current;
+    if (!folder || !window.matchMedia("(min-width: 640px)").matches) return 0;
+    return folder.offsetWidth / 2;
+  };
 
   // Phase-driven enter/exit. Completions feed the machine.
   useGSAP(
     () => {
-      const backdrop = backdropRef.current;
       const layer = layerRef.current;
-      if (!backdrop || !layer) return;
+      const mover = moverRef.current;
+      const shifter = shifterRef.current;
+      const cover = coverRef.current;
+      const shade = coverShadeRef.current;
+      const chrome = chromeRef.current;
+      if (!layer || !mover || !shifter || !cover || !shade || !chrome) return;
       const d = (x: number) => (prefersReducedMotion() ? 0 : x);
 
       if (viewer === "folder-lifting") {
+        // The 3D folder is still flying; nothing DOM is visible yet.
         gsap.set(layer, { autoAlpha: 0 });
-        gsap.to(backdrop, { autoAlpha: 1, duration: d(DUR.backdropIn), ease: "power2.out" });
       } else if (viewer === "opening") {
-        gsap.to(backdrop, { autoAlpha: 1, duration: d(0.2), overwrite: "auto" });
-        gsap.set(layer, {
-          transformOrigin: apex ? `${apex.x}% ${apex.y}%` : "50% 62%",
+        const { dx, dy, scale } = closedPose();
+        const tl = gsap.timeline({
+          onComplete: () => useExperience.getState().viewerOpened(),
         });
-        gsap.fromTo(
-          layer,
-          { autoAlpha: 0, y: 26, scale: 0.94 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
-            duration: d(DUR.viewerIn),
-            ease: EASE.enter,
-            onComplete: () => useExperience.getState().viewerOpened(),
-          },
-        );
+        tl.set(layer, { autoAlpha: 1 })
+          .set(chrome, { autoAlpha: 0 })
+          .fromTo(
+            mover,
+            { x: dx, y: dy, scale },
+            { x: 0, y: 0, scale: 1, duration: d(DUR.viewerGrow), ease: EASE.enter, overwrite: "auto" },
+            0,
+          )
+          .fromTo(
+            cover,
+            { rotationY: -2, transformOrigin: "0% 50%" },
+            {
+              rotationY: -178,
+              duration: d(DUR.coverOpen),
+              ease: "power2.inOut",
+              overwrite: "auto",
+            },
+            d(SEQ.coverOverlap),
+          )
+          .to(
+            shade,
+            { opacity: 0, duration: d(DUR.coverOpen * 0.7), ease: "power1.out" },
+            d(SEQ.coverOverlap + 0.1),
+          )
+          .to(
+            shifter,
+            { x: spreadShift(), duration: d(DUR.coverOpen), ease: EASE.glide },
+            d(SEQ.coverOverlap + 0.05),
+          )
+          .fromTo(
+            chrome,
+            { autoAlpha: 0, y: 10 },
+            { autoAlpha: 1, y: 0, duration: d(0.35), ease: EASE.enter },
+            d(SEQ.coverOverlap + DUR.coverOpen * 0.55),
+          );
       } else if (viewer === "closing") {
-        gsap.to(layer, {
-          autoAlpha: 0,
-          y: 16,
-          scale: 0.965,
-          duration: d(DUR.viewerOut),
-          ease: EASE.exit,
-          overwrite: "auto",
+        const { dx, dy, scale } = closedPose();
+        const tl = gsap.timeline({
           onComplete: () => useExperience.getState().viewerDismissed(),
         });
-      } else if (viewer === "folder-returning") {
-        gsap.to(backdrop, { autoAlpha: 0, duration: d(DUR.backdropOut), ease: "power2.in" });
+        tl.to(chrome, { autoAlpha: 0, y: 6, duration: d(0.15), ease: EASE.exit, overwrite: "auto" }, 0)
+          .to(
+            cover,
+            {
+              rotationY: -2,
+              transformOrigin: "0% 50%",
+              duration: d(DUR.coverClose),
+              ease: "power2.inOut",
+              overwrite: "auto",
+            },
+            0,
+          )
+          .to(shade, { opacity: 1, duration: d(DUR.coverClose * 0.6), ease: "power1.in", overwrite: "auto" }, d(0.1))
+          .to(shifter, { x: 0, duration: d(DUR.coverClose), ease: EASE.glide, overwrite: "auto" }, 0)
+          .to(
+            mover,
+            { x: dx, y: dy, scale, duration: d(DUR.viewerShrink), ease: EASE.exit, overwrite: "auto" },
+            d(DUR.coverClose * 0.5),
+          )
+          .to(layer, { autoAlpha: 0, duration: d(0.1), overwrite: "auto" }, ">-0.02");
       }
+      // "viewing": steady state. "folder-returning": layer is already
+      // hidden; the 3D folder carries the moment home.
     },
     { dependencies: [viewer] },
   );
 
-  // Direction-aware page turn.
+  // The physical page turn — heave off the fastener, tip over, lie away.
   useGSAP(
     () => {
-      const el = pageContentRef.current;
-      if (!el) return;
-      const dir = current >= lastPageRef.current ? 1 : -1;
-      lastPageRef.current = current;
-      if (prefersReducedMotion()) return;
-      gsap.fromTo(
-        el,
-        { autoAlpha: 0, x: 22 * dir },
-        { autoAlpha: 1, x: 0, duration: DUR.pageTurn, ease: EASE.settle },
-      );
+      if (!flip) return;
+      const sheet = sheetRef.current;
+      const sweep = sweepRef.current;
+      if (!sheet || !sweep) return;
+      const tl = gsap.timeline({ onComplete: () => setFlip(null) });
+      if (flip.dir === 1) {
+        tl.fromTo(
+          sheet,
+          { rotationX: 0, autoAlpha: 1, transformOrigin: "50% 0%" },
+          { rotationX: -80, duration: DUR.pageLift, ease: "power2.out" },
+          0,
+        )
+          .to(sheet, { rotationX: -166, duration: DUR.pageFall, ease: "power2.in" }, ">")
+          .to(sheet, { autoAlpha: 0, duration: 0.1, ease: "power1.in" }, ">-0.08")
+          .fromTo(
+            sweep,
+            { opacity: 0 },
+            { opacity: 0.26, duration: DUR.pageLift, ease: "power1.out" },
+            0,
+          )
+          .to(sweep, { opacity: 0, duration: DUR.pageFall, ease: "power1.in" }, ">");
+      } else {
+        tl.fromTo(
+          sheet,
+          { rotationX: -166, autoAlpha: 0, transformOrigin: "50% 0%" },
+          { rotationX: -166, autoAlpha: 1, duration: 0.06 },
+          0,
+        )
+          .to(sheet, { rotationX: -84, duration: 0.2, ease: "power1.inOut" }, ">")
+          .to(sheet, { rotationX: 0, duration: DUR.pageLift, ease: "power2.out" }, ">")
+          .fromTo(
+            sweep,
+            { opacity: 0 },
+            { opacity: 0.22, duration: 0.2, ease: "power1.out" },
+            0.06,
+          )
+          .to(sweep, { opacity: 0, duration: DUR.pageLift, ease: "power1.out" }, ">");
+      }
+      flipTl.current = tl;
+      return () => {
+        tl.kill();
+      };
     },
-    { dependencies: [current] },
+    { dependencies: [flip] },
   );
 
+  const atFirst = current === 0;
+  const atLast = current === total - 1;
   const navButton =
-    "font-mono text-[11px] tracking-[0.18em] text-(--report-ink-soft) transition-colors hover:text-(--report-ink) disabled:pointer-events-none disabled:opacity-35";
+    "font-mono text-[10px] tracking-[0.18em] text-tab-ink/70 transition-colors hover:text-tab-ink disabled:pointer-events-none disabled:opacity-35";
 
   return (
     <div
@@ -172,88 +311,231 @@ function ViewerDialog({ report }: { report: ProjectReport }) {
       style={identityVars}
       className="fixed inset-0 z-50"
     >
-      {/* Soft dim — the workspace remains as contextual background */}
-      <div
-        ref={backdropRef}
-        onClick={() => closeProject()}
-        className="absolute inset-0 bg-stage/60 opacity-0 backdrop-blur-md"
-        aria-hidden
-      />
-
-      {/* Transform layer — scales in from the lifted folder's screen point */}
+      {/* Click-out — the veil behind already dims the workspace */}
       <div
         ref={layerRef}
-        className="pointer-events-none absolute inset-0 grid place-items-center p-3 opacity-0 sm:p-6"
+        className={`absolute inset-0 opacity-0 ${
+          webglFallback ? "bg-stage/60 backdrop-blur-md" : ""
+        }`}
+        onClick={() => closeProject()}
       >
-        <article
-          ref={sheetRef}
-          tabIndex={-1}
-          className="pointer-events-auto relative flex h-[min(84svh,54rem)] w-[min(46rem,94vw)] flex-col rounded-lg bg-(--report-bg) text-(--report-ink) shadow-[0_40px_80px_-24px_rgba(20,18,12,0.5)] ring-1 ring-black/10 outline-none"
-        >
-          {/* The physical file peeking behind the report */}
-          <div
-            aria-hidden
-            className="absolute -inset-x-2 -bottom-2.5 top-4 -z-10 rotate-[-0.5deg] rounded-lg bg-manila shadow-2xl"
-          />
-          <div
-            aria-hidden
-            className="absolute -top-7 left-7 -z-10 flex h-9 w-52 items-start justify-center rounded-t-md bg-manila pt-1.5"
-          >
-            <span className="font-mono text-[11px] tracking-[0.18em] text-tab-ink">
-              {report.fileLabel}
-            </span>
-          </div>
+        <div className="absolute inset-0 grid place-items-center overflow-hidden [perspective:1500px]">
+          <div ref={moverRef} className="will-change-transform">
+            <div ref={shifterRef} className="will-change-transform">
+              <div
+                ref={folderRef}
+                tabIndex={-1}
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-(--fw) outline-none [--fw:min(26rem,88vw,44svh)] sm:[--fw:min(26rem,46vw,44svh)] [perspective:1400px]"
+                style={{ height: "calc(var(--fw) * 1.25)" }}
+              >
+                {/* ——— Back cover (the folder body) ——— */}
+                <div className="absolute inset-0 rounded-md bg-linear-150 from-manila to-manila-deep shadow-[0_50px_100px_-24px_rgba(28,22,10,0.6)]" />
 
-          <header className="flex items-center justify-between gap-4 px-6 pt-5 sm:px-10 sm:pt-7">
-            <p className="font-mono text-[11px] tracking-[0.24em] text-(--report-accent-bright)">
-              {pages[current].label}
-            </p>
-            {/* Subtle close — available once the folder has fully opened */}
-            <button
-              type="button"
-              onClick={() => closeProject()}
-              aria-label="Close project file"
-              className={`grid size-8 place-items-center rounded-full border border-(--report-rule) text-lg leading-none text-(--report-ink-soft) transition-[opacity,color] hover:text-(--report-ink) ${
-                viewer === "viewing" ? "opacity-100" : "pointer-events-none opacity-0"
-              }`}
-            >
-              ×
-            </button>
-          </header>
+                {/* Tab — echoes the 3D folder's tab */}
+                <div
+                  className={`absolute -top-[4.4%] h-[4.6%] w-[42%] rounded-t-[6px] bg-manila ${
+                    tabSide === "left" ? "left-[7%]" : "right-[7%]"
+                  } flex items-center justify-center`}
+                >
+                  <span className="font-mono text-[9px] tracking-[0.2em] text-tab-ink/85">
+                    {report.fileLabel}
+                  </span>
+                </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-10 sm:py-8">
-            <div ref={pageContentRef} key={current}>
-              <ReportPage page={pages[current]} />
+                {/* ——— The fastened page stack ——— */}
+                <div className="absolute inset-x-[3%] top-[3%] bottom-[8.5%] [perspective:1200px] [perspective-origin:50%_20%] [transform-style:preserve-3d]">
+                  {/* Sheets below the current one */}
+                  <div className="absolute inset-0 translate-y-[5px] rounded-[3px] bg-(--report-bg) brightness-[0.82]" />
+                  <div className="absolute inset-0 translate-y-[2.5px] rounded-[3px] bg-(--report-bg) brightness-[0.91]" />
+
+                  {/* Base page (what the sheet lands on / reveals) */}
+                  <div className="absolute inset-0 z-10 overflow-hidden rounded-[3px] shadow-[0_1px_4px_rgba(0,0,0,0.2)]">
+                    <PageFace report={report} index={basePage} total={total} />
+                    {/* Turn-shadow that sweeps while a sheet is mid-air */}
+                    <div
+                      ref={sweepRef}
+                      className="pointer-events-none absolute inset-0 opacity-0 bg-linear-to-b from-black/45 via-black/10 to-transparent"
+                    />
+                  </div>
+
+                  {/* The turning sheet */}
+                  {flip ? (
+                    <div
+                      ref={sheetRef}
+                      className="absolute inset-0 z-20 [transform-origin:50%_0%] [transform-style:preserve-3d] will-change-transform"
+                    >
+                      <div className="absolute inset-0 overflow-hidden rounded-[3px] [backface-visibility:hidden] shadow-[0_10px_28px_rgba(0,0,0,0.3)]">
+                        <PageFace report={report} index={flip.sheet} total={total} />
+                      </div>
+                      <div className="absolute inset-0 rounded-[3px] bg-(--report-bg) brightness-[0.94] [backface-visibility:hidden] [transform:rotateX(180deg)]" />
+                    </div>
+                  ) : null}
+
+                  {/* Two-prong fastener — pages are pinned at the top */}
+                  <div className="absolute -top-[1.4%] left-1/2 z-30 flex h-[2.6%] w-[26%] -translate-x-1/2 items-center justify-between rounded-full bg-linear-to-b from-[#C9CDD3] to-[#9AA0A8] px-[12%] shadow-[0_1px_2px_rgba(0,0,0,0.35)] [transform:translateZ(6px)]">
+                    <span className="size-[5px] rounded-full bg-[#7E848C] shadow-[inset_0_1px_1px_rgba(0,0,0,0.5)]" />
+                    <span className="size-[5px] rounded-full bg-[#7E848C] shadow-[inset_0_1px_1px_rgba(0,0,0,0.5)]" />
+                  </div>
+
+                  {/* Page-edge click zones */}
+                  <div ref={chromeRef} className="pointer-events-none absolute inset-0 z-20 opacity-0">
+                    {!atFirst && viewer === "viewing" ? (
+                      <div
+                        aria-hidden
+                        onClick={() => nav(current - 1)}
+                        className="group pointer-events-auto absolute inset-y-[6%] left-0 w-[10%] cursor-pointer"
+                      >
+                        <div className="absolute inset-0 rounded-l-[3px] bg-linear-to-r from-black/15 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                      </div>
+                    ) : null}
+                    {!atLast && viewer === "viewing" ? (
+                      <div
+                        aria-hidden
+                        onClick={() => nav(current + 1)}
+                        className="group pointer-events-auto absolute inset-y-[6%] right-0 w-[10%] cursor-pointer"
+                      >
+                        <div className="absolute inset-0 rounded-r-[3px] bg-linear-to-l from-black/15 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* ——— Bottom manila lip: navigation ——— */}
+                <div className="absolute inset-x-[5%] bottom-0 flex h-[8.5%] items-center justify-between">
+                  <button
+                    type="button"
+                    className={navButton}
+                    disabled={atFirst || viewer !== "viewing"}
+                    onClick={() => nav(current - 1)}
+                  >
+                    ← PREV
+                  </button>
+                  <span className="font-mono text-[9px] tracking-[0.2em] text-tab-ink/60">
+                    PAGE {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+                  </span>
+                  <button
+                    type="button"
+                    className={navButton}
+                    disabled={atLast || viewer !== "viewing"}
+                    onClick={() => nav(current + 1)}
+                  >
+                    NEXT →
+                  </button>
+                </div>
+
+                {/* ——— Front cover on its hinge ——— */}
+                <div
+                  ref={coverRef}
+                  className="absolute inset-0 z-30 rounded-md [transform-origin:0%_50%] [transform-style:preserve-3d] will-change-transform"
+                >
+                  {/* Outside face — blank manila, like the real thing */}
+                  <div className="absolute inset-0 rounded-md bg-linear-160 from-[#DECDA4] via-manila to-[#CDBA8C] shadow-[inset_-1px_0_2px_rgba(0,0,0,0.06)] [backface-visibility:hidden]">
+                    <div className="absolute inset-y-0 left-0 w-[3%] rounded-l-md bg-linear-to-r from-black/12 to-transparent" />
+                  </div>
+                  {/* Inside face — the index */}
+                  <div className="absolute inset-0 flex rotate-y-180 flex-col rounded-md bg-[#E7DAB8] p-[8%] [backface-visibility:hidden]">
+                    <div className="absolute inset-y-0 right-0 w-[4%] bg-linear-to-l from-black/10 to-transparent" />
+                    <p className="font-mono text-[9px] tracking-[0.24em] text-tab-ink/60">
+                      PROJECT FILE
+                    </p>
+                    <h2 className="mt-2 text-xl font-semibold tracking-tight text-tab-ink">
+                      {report.name}
+                    </h2>
+                    <div className="mt-4 h-px bg-tab-ink/15" />
+                    <ol className="mt-4 min-h-0 flex-1 space-y-1 overflow-y-auto">
+                      {pages.map((page, i) => (
+                        <li key={page.id}>
+                          <button
+                            type="button"
+                            onClick={() => nav(i)}
+                            disabled={viewer !== "viewing"}
+                            className={`group flex w-full items-baseline gap-3 rounded-sm px-2 py-1.5 text-left transition-colors ${
+                              i === current ? "bg-tab-ink/8" : "hover:bg-tab-ink/5"
+                            }`}
+                          >
+                            <span
+                              className="w-0.5 self-stretch rounded-full"
+                              style={{
+                                background: i === current ? "var(--report-accent)" : "transparent",
+                              }}
+                            />
+                            <span className="font-mono text-[9px] text-tab-ink/50">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span
+                              className={`font-mono text-[10px] tracking-[0.14em] ${
+                                i === current ? "text-tab-ink" : "text-tab-ink/65"
+                              }`}
+                            >
+                              {page.label}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ol>
+                    <p className="mt-3 font-mono text-[8px] tracking-[0.2em] text-tab-ink/45">
+                      FILE: {report.fileLabel} · {String(total).padStart(2, "0")} PAGES
+                    </p>
+                  </div>
+                  {/* Shade the page while the cover hangs over it */}
+                </div>
+
+                {/* Cover-cast shade on the page (fades as the cover opens) */}
+                <div
+                  ref={coverShadeRef}
+                  className="pointer-events-none absolute inset-0 z-20 rounded-md bg-linear-to-r from-black/25 via-black/10 to-black/5"
+                />
+
+                {/* Close — appears once the folder is fully open */}
+                <button
+                  type="button"
+                  onClick={() => closeProject()}
+                  aria-label="Close project file"
+                  className={`absolute -top-[3%] -right-[3%] z-40 grid size-9 place-items-center rounded-full border border-line bg-paper text-lg leading-none text-ink-soft shadow-md transition-[opacity,color] hover:text-ink ${
+                    viewer === "viewing" ? "opacity-100" : "pointer-events-none opacity-0"
+                  }`}
+                >
+                  ×
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          <footer className="flex items-center justify-between gap-4 border-t border-(--report-rule) px-6 py-4 sm:px-10">
-            <span className="hidden font-mono text-[10px] tracking-[0.2em] text-(--report-ink-soft) sm:block">
-              FILE: {report.fileLabel}
-            </span>
-            <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:justify-end">
-              <button
-                type="button"
-                className={navButton}
-                disabled={atFirst || viewer !== "viewing"}
-                onClick={() => goToPage(current - 1)}
-              >
-                ← PREV
-              </button>
-              <span className="font-mono text-[10px] tracking-[0.2em] text-(--report-ink-soft)">
-                PAGE {String(current + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
-              </span>
-              <button
-                type="button"
-                className={navButton}
-                disabled={atLast || viewer !== "viewing"}
-                onClick={() => goToPage(current + 1)}
-              >
-                NEXT →
-              </button>
-            </div>
-          </footer>
-        </article>
+/** One printed sheet — header, rule, blocks; identity colors via CSS vars. */
+function PageFace({
+  report,
+  index,
+  total,
+}: {
+  report: ProjectReport;
+  index: number;
+  total: number;
+}) {
+  const page = report.pages[Math.min(index, report.pages.length - 1)];
+  return (
+    <div className="relative flex h-full flex-col bg-(--report-bg) text-(--report-ink)">
+      {/* Punched holes under the fastener */}
+      <div aria-hidden className="pointer-events-none absolute top-[1%] left-1/2 flex w-[18%] -translate-x-1/2 justify-between">
+        <span className="size-[7px] rounded-full bg-black/25 shadow-[inset_0_1px_1px_rgba(0,0,0,0.4)]" />
+        <span className="size-[7px] rounded-full bg-black/25 shadow-[inset_0_1px_1px_rgba(0,0,0,0.4)]" />
+      </div>
+      <header className="flex items-baseline justify-between gap-4 px-[7%] pt-[6.5%]">
+        <p className="font-mono text-[10px] tracking-[0.22em] text-(--report-accent-bright)">
+          {page.label}
+        </p>
+        <p className="font-mono text-[9px] tracking-[0.18em] text-(--report-ink-soft)">
+          {String(index + 1).padStart(2, "0")} · {String(total).padStart(2, "0")}
+        </p>
+      </header>
+      <div className="mx-[7%] mt-[3.5%] h-px shrink-0 bg-(--report-rule)" />
+      <div className="min-h-0 flex-1 overflow-y-auto px-[7%] py-[5.5%]">
+        <ReportPage page={page} />
       </div>
     </div>
   );

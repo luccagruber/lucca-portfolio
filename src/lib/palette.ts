@@ -12,33 +12,25 @@ export const palette = {
   /** Canvas clear color and page background — the intentionally ignored room. */
   stage: "#E9E7E2",
 
-  // Desk
-  deskTop: "#F4F4F2", // Matte Office White (vision)
-  deskFrame: "#E0DFDA",
-
-  // Filing cabinet
-  cabinet: "#A8ADB3", // Soft Office Gray (vision)
-  cabinetFace: "#9FA4AA",
-  drawerInterior: "#84898F", // slightly darker neutral gray (vision)
-  handle: "#5E636A",
-  labelPlate: "#E7E6E2",
-
-  // Cubicle partition
-  partition: "#DBD9D3",
-  partitionFrame: "#C6C4BD",
+  // The room behind the desk — quiet, receives the key-light shadows.
+  floor: "#D8D4CC",
+  wall: "#E3E0DA",
 
   // Folders
   manila: "#D9C89E", // Warm Cream (vision)
   manilaDeep: "#CDBA8C",
+  manilaInside: "#E3D6B2", // inside faces of the covers
   tabInk: "#41403B",
 
   // Props
   paper: "#FBFAF7",
   cupPaper: "#F6F4EF",
   kraft: "#C29A6B", // kraft sleeve
+  coffee: "#3B2E26",
   matteBlack: "#26262A", // pen holder, picture frame, nameplate (vision)
   engraving: "#DCDAD4", // nameplate lettering
-  photoMatte: "#DCD7CC",
+  photoMatte: "#E9E4D9",
   photoPrint: "#AFA99B",
   pen: "#3A3A3E",
+  penAccent: "#6E7178",
 } as const;

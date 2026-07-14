@@ -1,51 +1,44 @@
 "use client";
 
-import { Environment, Lightformer } from "@react-three/drei";
-
 /**
- * Studio-soft lighting for the stylized product-render look: one soft key
- * with gentle shadows, cool fill, and a small procedural environment (no
- * external HDR — the Lightformers are baked once at mount).
+ * Premium three-part lighting for the close-up desk:
+ *
+ * - Key — strong warm directional from upper-left, camera side, the only
+ *   shadow caster (2048² PCFSoft, tight frustum around the desk).
+ * - Fill — soft cool directional from the right, lifting the shadow side
+ *   without flattening it.
+ * - Bounce — hemisphere pairing a cool ceiling with a warm ground/desk
+ *   reflection, plus a faint true up-light so undersides never go dead.
+ * - Ambient — low; the shadows carry the weight.
  */
 export function Lighting() {
   return (
     <>
-      <ambientLight intensity={0.32} />
+      <ambientLight intensity={0.13} color="#e9e6df" />
+
+      {/* Desk-surface bounce: warm from below, cool sky above */}
+      <hemisphereLight args={["#dbe2ea", "#e7d6ba", 0.42]} />
+      <directionalLight position={[0.3, -1, 1.2]} intensity={0.18} color="#ffe9cf" />
+
+      {/* Key — warm, upper-left, in front of the desk */}
       <directionalLight
-        position={[2.4, 3.8, 2.6]}
-        intensity={1.85}
+        position={[-1.7, 2.6, 1.9]}
+        intensity={2.8}
+        color="#ffe3c2"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-2.2}
         shadow-camera-right={2.2}
-        shadow-camera-top={2.4}
-        shadow-camera-bottom={-1}
-        shadow-camera-near={1}
+        shadow-camera-top={2.2}
+        shadow-camera-bottom={-1.2}
+        shadow-camera-near={0.6}
         shadow-camera-far={9}
-        shadow-bias={-0.0001}
-        shadow-normalBias={0.02}
+        shadow-bias={-0.00015}
+        shadow-normalBias={0.025}
       />
-      <directionalLight position={[-2.6, 2.2, 1.4]} intensity={0.5} />
-      <Environment resolution={64} frames={1}>
-        <Lightformer
-          intensity={0.85}
-          rotation-x={Math.PI / 2}
-          position={[0, 4, 0]}
-          scale={[9, 9, 1]}
-        />
-        <Lightformer
-          intensity={0.45}
-          rotation-y={Math.PI}
-          position={[0, 1.4, 4]}
-          scale={[7, 3, 1]}
-        />
-        <Lightformer
-          intensity={0.3}
-          rotation-y={Math.PI / 2}
-          position={[-4, 1.6, 0]}
-          scale={[5, 3, 1]}
-        />
-      </Environment>
+
+      {/* Fill — soft, cool, from the right */}
+      <directionalLight position={[2.3, 1.3, 1.0]} intensity={0.45} color="#cddcee" />
     </>
   );
 }

@@ -48,6 +48,12 @@ Responsible for:
 \- subtle easing  
 \- focus transitions
 
+Contract:
+
+\- straight front view — zero yaw, zero tilt, permanently  
+\- framings are positions only  
+\- mouse movement never moves the camera or the scene
+
 Never responsible for:
 
 \- drawer logic  
@@ -60,10 +66,9 @@ Never responsible for:
 
 Responsible for:
 
-\- rendering the cubicle  
-\- desk  
-\- props  
-\- filing cabinet
+\- rendering the room  
+\- the desk (a real GLB, which owns its drawer)  
+\- props
 
 Never responsible for:
 
@@ -116,11 +121,13 @@ Never responsible for:
 
 \# Project Viewer
 
+The viewer is the folder itself, in DOM: the 3D folder flies to the camera, hands off its exact screen quad, and the DOM folder opens its cover over it.
+
 Responsible for:
 
-\- opening animation  
-\- page rendering  
-\- page transitions  
+\- opening animation (cover on its hinge)  
+\- page rendering (fastened stack)  
+\- page transitions (physical turns over the top hinge)  
 \- closing
 
 States

@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { prefersReducedMotion } from "@/lib/motion-prefs";
+import { DUR } from "./motion";
 import { useExperience } from "./state/store";
 
 // The WebGL scene is client-only; the placeholder matches the canvas
@@ -13,6 +17,8 @@ const Scene = dynamic(() => import("./scene/Scene"), {
 
 export function ExperienceCanvas() {
   const setWebglFallback = useExperience((s) => s.setWebglFallback);
+  const sceneReady = useExperience((s) => s.sceneReady);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
@@ -43,8 +49,21 @@ export function ExperienceCanvas() {
     }
   }, [setWebglFallback]);
 
+  // The stage fades up once the desk asset has resolved — no popping.
+  useGSAP(
+    () => {
+      if (!sceneReady || !wrapRef.current) return;
+      gsap.to(wrapRef.current, {
+        autoAlpha: 1,
+        duration: prefersReducedMotion() ? 0 : DUR.stageFade,
+        ease: "power1.out",
+      });
+    },
+    { dependencies: [sceneReady] },
+  );
+
   return (
-    <div className="absolute inset-0" aria-hidden>
+    <div ref={wrapRef} className="absolute inset-0 opacity-0" aria-hidden>
       <Scene />
     </div>
   );

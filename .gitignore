@@ -5,6 +5,9 @@
 /.next/
 /out/
 
+# raw 3D source assets (optimized copies ship from public/models)
+/lucca-portifolio-3d-assets/
+
 # misc
 .DS_Store
 *.pem

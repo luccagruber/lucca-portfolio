@@ -1,7 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ContactShadows } from "@react-three/drei";
 import { useExperience } from "@/experience/state/store";
 import { palette } from "@/lib/palette";
 import { CAMERA, FRAMINGS } from "./layout";
@@ -13,19 +13,19 @@ import { Workspace } from "./Workspace";
  * Rendering root. `frameloop="demand"` keeps the GPU idle whenever the
  * scene is static — every animation invalidates explicitly, so frames are
  * only produced while something actually moves (animations are discrete
- * events, never scroll-driven).
+ * events, never scroll- or pointer-driven). Shadows are PCFSoft.
  */
 export default function Scene() {
   return (
     <Canvas
       frameloop="demand"
-      shadows
+      shadows="soft"
       dpr={[1, 2]}
       camera={{
         fov: CAMERA.fov,
         near: CAMERA.near,
         far: CAMERA.far,
-        position: FRAMINGS.overview.position,
+        position: FRAMINGS.idle,
       }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
@@ -41,17 +41,9 @@ export default function Scene() {
       <color attach="background" args={[palette.stage]} />
       <CameraRig />
       <Lighting />
-      <Workspace />
-      <ContactShadows
-        position={[0, 0.0002, 0.15]}
-        scale={6.5}
-        resolution={512}
-        far={1.3}
-        blur={2.4}
-        opacity={0.42}
-        color="#3a3936"
-        frames={1}
-      />
+      <Suspense fallback={null}>
+        <Workspace />
+      </Suspense>
     </Canvas>
   );
 }

@@ -31,16 +31,23 @@ export type ViewerPhase =
 
 export type FolderPhase = "hidden" | "revealed" | "selected" | "returning";
 
-/** Viewport-relative point (0–100%) where the lifted folder settled. */
-export interface ApexPoint {
+/**
+ * Screen-space quad (viewport-relative, 0–100) where the lifted 3D folder
+ * settled: the DOM folder mounts exactly over it, so the hand-off frame is
+ * invisible. `h` is the folder's projected height as % of viewport height.
+ */
+export interface ApexQuad {
   x: number;
   y: number;
+  h: number;
 }
 
 interface ExperienceState {
   drawer: DrawerPhase;
   viewer: ViewerPhase;
   activeProject: ProjectId | null;
+  /** Folder under the pointer (drawer open, viewer closed) — the other one dims. */
+  hoveredFolder: ProjectId | null;
   /** Current report page index while viewing. */
   page: number;
   /**
@@ -48,12 +55,16 @@ interface ExperienceState {
    * immediately (scroll restoration on load, reduced motion).
    */
   instant: boolean;
-  /** Hand-off origin for the report overlay entrance. */
-  apex: ApexPoint | null;
+  /** Hand-off quad for the DOM folder entrance. */
+  apex: ApexQuad | null;
   /** When WebGL support fails or context is lost, fallback to DOM layout. */
   webglFallback: boolean;
+  /** The desk asset is loaded and the first frame is composed. */
+  sceneReady: boolean;
 
   setWebglFallback(value: boolean): void;
+  setSceneReady(value: boolean): void;
+  setHoveredFolder(id: ProjectId | null): void;
 
   // Drawer events
   openDrawer(opts?: { instant?: boolean }): void;
@@ -63,7 +74,7 @@ interface ExperienceState {
 
   // Folder / viewer events
   selectProject(id: ProjectId): void;
-  folderLifted(apex: ApexPoint | null): void;
+  folderLifted(apex: ApexQuad | null): void;
   viewerOpened(): void;
   closeProject(): void;
   viewerDismissed(): void;
@@ -78,13 +89,21 @@ export const useExperience = create<ExperienceState>()(
     drawer: "closed",
     viewer: "closed",
     activeProject: null,
+    hoveredFolder: null,
     page: 0,
     instant: false,
     apex: null,
     webglFallback: false,
+    sceneReady: false,
 
     setWebglFallback(value) {
       set({ webglFallback: value });
+    },
+    setSceneReady(value) {
+      set({ sceneReady: value });
+    },
+    setHoveredFolder(id) {
+      set({ hoveredFolder: id });
     },
 
     openDrawer(opts) {
@@ -112,7 +131,7 @@ export const useExperience = create<ExperienceState>()(
         return;
       }
       if (s.drawer !== "open" || s.viewer !== "closed") return;
-      set({ activeProject: id, viewer: "folder-lifting", page: 0 });
+      set({ activeProject: id, viewer: "folder-lifting", page: 0, hoveredFolder: null });
     },
     folderLifted(apex) {
       if (get().viewer !== "folder-lifting") return;

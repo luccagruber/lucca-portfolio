@@ -35,7 +35,9 @@ body {
   @apply bg-manila text-tab-ink;
 }
 
-:focus-visible {
+/* Keyboard focus ring — real controls only, not programmatically
+   focused containers (e.g. the project-file dialog). */
+:focus-visible:not([tabindex="-1"]) {
   outline: 2px solid var(--color-ink);
   outline-offset: 2px;
 }

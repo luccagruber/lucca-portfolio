@@ -5,19 +5,25 @@ import { palette } from "@/lib/palette";
 
 type GroupProps = ThreeElements["group"];
 
-const SHEETS = [
-  { y: 0.001, rot: 0.0 },
-  { y: 0.0032, rot: -0.03 },
-  { y: 0.0054, rot: 0.045 },
-  { y: 0.0076, rot: 0.012 },
-];
-
-/** A small, slightly fanned stack of loose paper. */
+// SWAPPABLE: replace with GLB later
+/** A few A4 sheets, slightly offset — work in progress, kept tidy. */
 export function PaperStack(props: GroupProps) {
+  const sheets: { x: number; z: number; rotY: number }[] = [
+    { x: 0.003, z: -0.002, rotY: -0.022 },
+    { x: -0.004, z: 0.003, rotY: 0.03 },
+    { x: 0.002, z: -0.004, rotY: -0.008 },
+    { x: -0.001, z: 0.002, rotY: 0.016 },
+  ];
   return (
     <group {...props}>
-      {SHEETS.map((sheet, i) => (
-        <mesh key={i} position={[0, sheet.y, 0]} rotation-y={sheet.rot} castShadow receiveShadow>
+      {sheets.map((sheet, i) => (
+        <mesh
+          key={i}
+          position={[sheet.x, 0.0012 + i * 0.0021, sheet.z]}
+          rotation-y={sheet.rotY}
+          castShadow
+          receiveShadow
+        >
           <boxGeometry args={[0.21, 0.0018, 0.297]} />
           <meshStandardMaterial color={palette.paper} roughness={0.95} metalness={0} />
         </mesh>
