@@ -31,14 +31,9 @@ export function PictureFrame(props: GroupProps) {
         >
           <meshStandardMaterial color={palette.matteBlack} roughness={0.5} metalness={0.12} />
         </RoundedBox>
-        {/* Off-white mat */}
+        {/* Print — fills the frame to a thin black border, no mat */}
         <mesh position={[0, 0.074, 0.0045]}>
-          <planeGeometry args={[0.094, 0.126]} />
-          <meshStandardMaterial color={palette.photoMatte} roughness={0.9} metalness={0} />
-        </mesh>
-        {/* Print */}
-        <mesh position={[0, 0.072, 0.005]}>
-          <planeGeometry args={[0.064, 0.082]} />
+          <planeGeometry args={[0.099, 0.132]} />
           <meshStandardMaterial map={photo} roughness={0.85} metalness={0} />
         </mesh>
         {/* Easel leg */}
