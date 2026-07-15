@@ -3,6 +3,10 @@ import type { ReportBlock, ReportPage as ReportPageData } from "@/content/types"
 /**
  * Pure block renderer for one report page. Identity colors arrive as CSS
  * variables set on the viewer root — this component knows no project.
+ * Typography: Fraunces (--font-display) for headings, Newsreader
+ * (--font-serif) for running text — an editorial pairing that reads like
+ * a well-set printed document. Mono survives only as tiny archival
+ * stamps (kickers, numbering), part of the file-cabinet aesthetic.
  * Type scale is tuned for the folder's physical page panel (~26rem).
  */
 export function ReportPage({ page }: { page: ReportPageData }) {
@@ -23,13 +27,13 @@ function renderBlock(block: ReportBlock, index: number) {
       );
     case "title":
       return (
-        <h2 key={key} className="text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2 key={key} className="font-display text-[26px] font-semibold tracking-tight sm:text-[30px]">
           {block.text}
         </h2>
       );
     case "lede":
       return (
-        <p key={key} className="text-[15px] leading-relaxed font-medium sm:text-base">
+        <p key={key} className="font-serif text-[16.5px] leading-relaxed font-medium sm:text-[17.5px]">
           {block.text}
         </p>
       );
@@ -37,7 +41,7 @@ function renderBlock(block: ReportBlock, index: number) {
       return (
         <div key={key} className="space-y-3">
           {block.items.map((text, i) => (
-            <p key={i} className="text-[13px] leading-relaxed text-(--report-ink-soft)">
+            <p key={i} className="font-serif text-[15px] leading-relaxed text-(--report-ink-soft)">
               {text}
             </p>
           ))}
@@ -51,7 +55,7 @@ function renderBlock(block: ReportBlock, index: number) {
               <dt className="pt-0.5 font-mono text-[9px] tracking-[0.16em] uppercase text-(--report-accent-bright)">
                 {row.term}
               </dt>
-              <dd className="text-[12.5px] leading-relaxed text-(--report-ink-soft)">
+              <dd className="font-serif text-[14px] leading-relaxed text-(--report-ink-soft)">
                 {row.detail}
               </dd>
             </div>
@@ -67,8 +71,8 @@ function renderBlock(block: ReportBlock, index: number) {
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
-                <h3 className="text-[13px] font-semibold">{item.title}</h3>
-                <p className="mt-1 text-[12.5px] leading-relaxed text-(--report-ink-soft)">
+                <h3 className="font-display text-[15px] font-semibold">{item.title}</h3>
+                <p className="mt-1 font-serif text-[14px] leading-relaxed text-(--report-ink-soft)">
                   {item.body}
                 </p>
               </div>
@@ -83,7 +87,7 @@ function renderBlock(block: ReportBlock, index: number) {
             href={block.href}
             target="_blank"
             rel="noreferrer"
-            className="text-[13px] font-medium text-(--report-accent-bright) underline decoration-(--report-rule) underline-offset-4 transition-colors hover:text-(--report-ink)"
+            className="font-serif text-[15px] font-medium text-(--report-accent-bright) underline decoration-(--report-rule) underline-offset-4 transition-colors hover:text-(--report-ink)"
           >
             {block.label} ↗
           </a>
@@ -95,9 +99,11 @@ function renderBlock(block: ReportBlock, index: number) {
           <p className="font-mono text-[9px] tracking-[0.22em] text-(--report-accent-bright)">
             STATUS
           </p>
-          <p className="mt-2 text-[13px] leading-relaxed">{block.text}</p>
+          <p className="mt-2 font-serif text-[15px] leading-relaxed">{block.text}</p>
           {block.note ? (
-            <p className="mt-2.5 text-[12px] italic text-(--report-ink-soft)">{block.note}</p>
+            <p className="mt-2.5 font-serif text-[14px] italic text-(--report-ink-soft)">
+              {block.note}
+            </p>
           ) : null}
         </div>
       );

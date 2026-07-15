@@ -5,8 +5,6 @@ import { Room } from "./Room";
 import { DeskModel } from "./desk/DeskModel";
 import { CoffeeCup } from "./workspace/props/CoffeeCup";
 import { Nameplate } from "./workspace/props/Nameplate";
-import { PaperStack } from "./workspace/props/PaperStack";
-import { PenHolder } from "./workspace/props/PenHolder";
 import { PictureFrame } from "./workspace/props/PictureFrame";
 
 /**
@@ -21,12 +19,12 @@ export function Workspace() {
       <Room />
       <DeskModel />
 
+      {/* Three props, one story: photo left, name center, coffee right —
+          spaced across the true desk width (x ∈ [-0.7, 0.7]). */}
       <group position={[0, DESK.topY, 0]}>
-        <Nameplate position={[-0.12, 0, 0.1]} />
-        <CoffeeCup position={[0.1, 0, 0.15]} />
-        <PenHolder position={[-0.34, 0, -0.14]} />
-        <PictureFrame position={[-0.52, 0, -0.16]} rotation-y={0.42} />
-        <PaperStack position={[0.5, 0, -0.12]} rotation-y={-0.06} />
+        <PictureFrame position={[-0.46, 0, -0.08]} rotation-y={0.3} />
+        <Nameplate position={[0, 0, 0.06]} />
+        <CoffeeCup position={[0.44, 0, 0.02]} />
       </group>
     </group>
   );

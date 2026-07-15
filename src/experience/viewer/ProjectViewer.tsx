@@ -18,10 +18,12 @@ import { ReportPage } from "./ReportPage";
  * CSS hinge, and the report is read inside the open folder — left panel
  * the inside cover (index), right panel the fastened page stack.
  *
- * Pages are pinned by a two-prong fastener at the top, so page turns are
- * physical: the sheet heaves up around the top hinge, tips over the
- * fastener and lies away. Navigation is clicks only (arrows, page edges,
- * the index) plus keyboard arrows; scroll stays locked while viewing.
+ * Page turns work exactly like the cover: the current sheet rotates on a
+ * Y-axis hinge at its left edge with the same weighted ease, and — like a
+ * real book — the back of the turning sheet carries the next page's
+ * content, so the turn itself reveals it. PREV turns the sheet back the
+ * other way. Navigation is clicks only (arrows, page edges, the index)
+ * plus keyboard arrows; scroll stays locked while viewing.
  */
 export function ProjectViewer() {
   const viewer = useExperience((s) => s.viewer);
@@ -248,7 +250,10 @@ function FolderDialog({ report }: { report: ProjectReport }) {
     { dependencies: [viewer] },
   );
 
-  // The physical page turn — heave off the fastener, tip over, lie away.
+  // The page turn — the cover's hinge principle applied to a sheet. Same
+  // Y-axis rotation, same weighted ease; the sheet's back face carries the
+  // destination page, so mid-turn reads like a real book. Once flat it
+  // fades, leaving the base page it just revealed.
   useGSAP(
     () => {
       if (!flip) return;
@@ -259,35 +264,33 @@ function FolderDialog({ report }: { report: ProjectReport }) {
       if (flip.dir === 1) {
         tl.fromTo(
           sheet,
-          { rotationX: 0, autoAlpha: 1, transformOrigin: "50% 0%" },
-          { rotationX: -80, duration: DUR.pageLift, ease: "power2.out" },
+          { rotationY: 0, autoAlpha: 1, transformOrigin: "0% 50%" },
+          { rotationY: -178, duration: DUR.pageTurn, ease: "power2.inOut" },
           0,
         )
-          .to(sheet, { rotationX: -166, duration: DUR.pageFall, ease: "power2.in" }, ">")
-          .to(sheet, { autoAlpha: 0, duration: 0.1, ease: "power1.in" }, ">-0.08")
+          .to(sheet, { autoAlpha: 0, duration: 0.12, ease: "power1.in" }, ">-0.06")
           .fromTo(
             sweep,
             { opacity: 0 },
-            { opacity: 0.26, duration: DUR.pageLift, ease: "power1.out" },
+            { opacity: 0.24, duration: DUR.pageTurn * 0.5, ease: "power1.out" },
             0,
           )
-          .to(sweep, { opacity: 0, duration: DUR.pageFall, ease: "power1.in" }, ">");
+          .to(sweep, { opacity: 0, duration: DUR.pageTurn * 0.5, ease: "power1.in" }, ">");
       } else {
         tl.fromTo(
           sheet,
-          { rotationX: -166, autoAlpha: 0, transformOrigin: "50% 0%" },
-          { rotationX: -166, autoAlpha: 1, duration: 0.06 },
+          { rotationY: -178, autoAlpha: 0, transformOrigin: "0% 50%" },
+          { rotationY: -178, autoAlpha: 1, duration: 0.05 },
           0,
         )
-          .to(sheet, { rotationX: -84, duration: 0.2, ease: "power1.inOut" }, ">")
-          .to(sheet, { rotationX: 0, duration: DUR.pageLift, ease: "power2.out" }, ">")
+          .to(sheet, { rotationY: 0, duration: DUR.pageTurn, ease: "power2.inOut" }, ">")
           .fromTo(
             sweep,
             { opacity: 0 },
-            { opacity: 0.22, duration: 0.2, ease: "power1.out" },
-            0.06,
+            { opacity: 0.2, duration: DUR.pageTurn * 0.5, ease: "power1.out" },
+            0.05,
           )
-          .to(sweep, { opacity: 0, duration: DUR.pageLift, ease: "power1.out" }, ">");
+          .to(sweep, { opacity: 0, duration: DUR.pageTurn * 0.5, ease: "power1.in" }, ">");
       }
       flipTl.current = tl;
       return () => {
@@ -344,7 +347,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                 </div>
 
                 {/* ——— The fastened page stack ——— */}
-                <div className="absolute inset-x-[3%] top-[3%] bottom-[8.5%] [perspective:1200px] [perspective-origin:50%_20%] [transform-style:preserve-3d]">
+                <div className="absolute inset-x-[3%] top-[3%] bottom-[8.5%] [perspective:1400px] [perspective-origin:15%_50%] [transform-style:preserve-3d]">
                   {/* Sheets below the current one */}
                   <div className="absolute inset-0 translate-y-[5px] rounded-[3px] bg-(--report-bg) brightness-[0.82]" />
                   <div className="absolute inset-0 translate-y-[2.5px] rounded-[3px] bg-(--report-bg) brightness-[0.91]" />
@@ -355,20 +358,23 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     {/* Turn-shadow that sweeps while a sheet is mid-air */}
                     <div
                       ref={sweepRef}
-                      className="pointer-events-none absolute inset-0 opacity-0 bg-linear-to-b from-black/45 via-black/10 to-transparent"
+                      className="pointer-events-none absolute inset-0 opacity-0 bg-linear-to-r from-black/40 via-black/10 to-transparent"
                     />
                   </div>
 
-                  {/* The turning sheet */}
+                  {/* The turning sheet — front is the page leaving, back is
+                      the page arriving, like a real leaf of paper. */}
                   {flip ? (
                     <div
                       ref={sheetRef}
-                      className="absolute inset-0 z-20 [transform-origin:50%_0%] [transform-style:preserve-3d] will-change-transform"
+                      className="absolute inset-0 z-20 [transform-origin:0%_50%] [transform-style:preserve-3d] will-change-transform"
                     >
                       <div className="absolute inset-0 overflow-hidden rounded-[3px] [backface-visibility:hidden] shadow-[0_10px_28px_rgba(0,0,0,0.3)]">
                         <PageFace report={report} index={flip.sheet} total={total} />
                       </div>
-                      <div className="absolute inset-0 rounded-[3px] bg-(--report-bg) brightness-[0.94] [backface-visibility:hidden] [transform:rotateX(180deg)]" />
+                      <div className="absolute inset-0 overflow-hidden rounded-[3px] [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-[0_10px_28px_rgba(0,0,0,0.3)]">
+                        <PageFace report={report} index={flip.under} total={total} />
+                      </div>
                     </div>
                   ) : null}
 
@@ -439,7 +445,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     <p className="font-mono text-[9px] tracking-[0.24em] text-tab-ink/60">
                       PROJECT FILE
                     </p>
-                    <h2 className="mt-2 text-xl font-semibold tracking-tight text-tab-ink">
+                    <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight text-tab-ink">
                       {report.name}
                     </h2>
                     <div className="mt-4 h-px bg-tab-ink/15" />

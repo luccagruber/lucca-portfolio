@@ -108,23 +108,25 @@ export const CAMERA = {
  * in frame.
  */
 export const FRAMINGS = {
-  /** Arrival — the whole desk, immersive close. */
-  idle: [0.3, 0.78, 1.34] as Vec3,
-  /** Drawer open — barely eased forward, just enough added depth. */
-  drawer: [0.3, 0.775, 1.21] as Vec3,
+  /** Arrival — the whole desk centered and fully in frame. */
+  idle: [0, 0.78, 1.5] as Vec3,
+  /** Drawer open — a gentle lean toward the drawer so both standing
+   * folders sit fully in frame, without abandoning the centered desk. */
+  drawer: [0.18, 0.775, 1.45] as Vec3,
 } as const;
 
 export type FramingName = keyof typeof FRAMINGS;
 
 /**
- * Aspect compensation: narrow viewports slide the eye toward the drawer
- * and pull straight back (never rotating) so the drawer and both folders
- * stay composed. Wide viewports use the framing as authored.
+ * Aspect compensation: the camera stays centered on the desk and narrow
+ * viewports pull straight back (never rotating, never sliding) so the
+ * full desk width stays in frame. Wide viewports use the framing as
+ * authored.
  */
 export function framingFor(name: FramingName, aspect: number): Vec3 {
   const [x, y, z] = FRAMINGS[name];
   const deficit = Math.max(0, 1.7 - Math.max(aspect, 0.35));
-  return [x + deficit * 0.12, y, z + deficit * 0.62];
+  return [x, y, z + deficit * 0.62];
 }
 
 /**

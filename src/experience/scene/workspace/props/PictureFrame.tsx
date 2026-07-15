@@ -1,17 +1,22 @@
 "use client";
 
-import { RoundedBox } from "@react-three/drei";
+import { RoundedBox, useTexture } from "@react-three/drei";
 import type { ThreeElements } from "@react-three/fiber";
+import { SRGBColorSpace } from "three";
 import { palette } from "@/lib/palette";
 
 type GroupProps = ThreeElements["group"];
 
-// SWAPPABLE: replace with GLB later
 /**
- * Thin black picture frame standing upright, off-white inner — the photo
- * itself stays an abstraction (vision: personal without feeling playful).
+ * Thin black picture frame standing upright, off-white mat, and a real
+ * printed photo. The print is whatever lives at /images/portrait.jpg —
+ * currently a quiet placeholder; drop in Lucca's actual photo (portrait
+ * orientation, ~4:5) at that path and it appears here.
  */
 export function PictureFrame(props: GroupProps) {
+  const photo = useTexture("/images/portrait.jpg", (t) => {
+    t.colorSpace = SRGBColorSpace;
+  });
   return (
     <group {...props}>
       <group rotation-x={-0.09}>
@@ -34,7 +39,7 @@ export function PictureFrame(props: GroupProps) {
         {/* Print */}
         <mesh position={[0, 0.072, 0.005]}>
           <planeGeometry args={[0.064, 0.082]} />
-          <meshStandardMaterial color={palette.photoPrint} roughness={0.85} metalness={0} />
+          <meshStandardMaterial map={photo} roughness={0.85} metalness={0} />
         </mesh>
         {/* Easel leg */}
         <mesh position={[0, 0.045, -0.028]} rotation-x={0.5} castShadow>

@@ -30,7 +30,6 @@ export const palette = {
   matteBlack: "#26262A", // pen holder, picture frame, nameplate (vision)
   engraving: "#DCDAD4", // nameplate lettering
   photoMatte: "#E9E4D9",
-  photoPrint: "#AFA99B",
   pen: "#3A3A3E",
   penAccent: "#6E7178",
 } as const;

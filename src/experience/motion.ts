@@ -46,9 +46,8 @@ export const DUR = {
   veilIn: 0.55,
   veilOut: 0.45,
 
-  // Page turning — lift against gravity, fall over the fastener.
-  pageLift: 0.3,
-  pageFall: 0.26,
+  // Page turning — same hinge principle and weight as the cover opening.
+  pageTurn: 0.62,
 
   hover: 0.16,
   hint: 0.4,
