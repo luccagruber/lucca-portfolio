@@ -58,11 +58,10 @@ npx @gltf-transform/cli webp tmp.glb tmp2.glb --slots "{baseColorTexture,metalli
 npx @gltf-transform/cli webp tmp2.glb out.glb --slots "normalTexture" --quality 90
 ```
 
-The desk props (lamp, glasses, notebook, pencil cup, coffee cup) are also
-Sketchfab GLBs from `lucca-portifolio-3d-assets/`, optimized the same way
-(resize to 1024 + WebP, plus `optimize --simplify` for the heavy meshes)
-and normalized at load by `scene/workspace/props/GlbProp.tsx`.
-**TODO: add source links/attribution for each** (required if CC-BY).
+The Starbucks paper cup is also a Sketchfab GLB from
+`lucca-portifolio-3d-assets/`, optimized the same way (resize to 1024 +
+WebP) and normalized at load by `scene/workspace/props/GlbProp.tsx`.
+**TODO: add its source link/attribution** (required if CC-BY).
 The nameplate, picture frame and manila folders are generated in R3F.
 
 ## Development

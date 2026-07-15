@@ -8,10 +8,6 @@ import { GlbProp } from "./workspace/props/GlbProp";
 import { Nameplate } from "./workspace/props/Nameplate";
 import { PictureFrame } from "./workspace/props/PictureFrame";
 
-const LAMP_GLB = "/models/desk-lamp.glb";
-const GLASSES_GLB = "/models/glasses.glb";
-const NOTEBOOK_GLB = "/models/notebook.glb";
-const PENCIL_CUP_GLB = "/models/pencil-cup.glb";
 const COFFEE_CUP_GLB = "/models/coffee-cup.glb";
 
 /**
@@ -28,26 +24,16 @@ export function Workspace() {
       <Room />
       <DeskModel />
 
+      {/* Three props, top-view composition: frame mid-left (deepest),
+          nameplate centered near the front edge, cup at the very
+          bottom-right corner, logo to the camera. */}
       <group position={[0, DESK.topY, 0]}>
-        {/* Back row — the tall anchors */}
-        <GlbProp url={LAMP_GLB} height={0.42} position={[-0.54, 0, -0.15]} rotation-y={0.5} />
-        <GlbProp url={PENCIL_CUP_GLB} height={0.17} position={[-0.13, 0, -0.2]} rotation-y={-0.4} />
-
-        {/* Middle band */}
-        <PictureFrame position={[-0.3, 0, 0.06]} rotation-y={0.28} />
-        <GlbProp url={NOTEBOOK_GLB} height={0.02} position={[0.29, 0, -0.09]} rotation-y={-0.18} />
-
-        {/* Front row — what a visitor reads first */}
-        <Nameplate position={[0, 0, 0.12]} />
-        <GlbProp url={GLASSES_GLB} height={0.045} position={[0.3, 0, 0.1]} rotation-y={0.35} />
-        <GlbProp url={COFFEE_CUP_GLB} height={0.14} position={[0.53, 0, 0.03]} rotation-y={1.2} />
+        <PictureFrame position={[-0.35, 0, -0.06]} rotation-y={0.28} />
+        <Nameplate position={[0, 0, 0.14]} />
+        <GlbProp url={COFFEE_CUP_GLB} height={0.14} position={[0.55, 0, 0.19]} rotation-y={0} />
       </group>
     </group>
   );
 }
 
-useGLTF.preload(LAMP_GLB);
-useGLTF.preload(GLASSES_GLB);
-useGLTF.preload(NOTEBOOK_GLB);
-useGLTF.preload(PENCIL_CUP_GLB);
 useGLTF.preload(COFFEE_CUP_GLB);
