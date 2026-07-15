@@ -37,8 +37,9 @@ export function Lighting() {
         shadow-normalBias={0.025}
       />
 
-      {/* Fill — soft, cool, from the right */}
-      <directionalLight position={[2.3, 1.3, 1.0]} intensity={0.45} color="#cddcee" />
+      {/* Fill — soft, cool, from the right; strong enough that the
+          right-corner props (the cup) don't sink into their shadow side */}
+      <directionalLight position={[2.3, 1.5, 1.4]} intensity={0.7} color="#d6e2ef" />
     </>
   );
 }

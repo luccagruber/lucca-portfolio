@@ -33,13 +33,15 @@ export function Workspace() {
           The supporting props dress the remaining space without ever
           crowding the trio. */}
       <group position={[0, DESK.topY, 0]}>
-        {/* Mid-left cluster — the personal corner: photo behind, plaque
-            in front, angled toward each other so both read as objects. */}
+        {/* Left — the personal corner. The frame's spot is settled (user-
+            approved); the plaque sits alone at the front-left, running
+            diagonally: left end toward the desk edge, right end toward
+            the center. It never stands in the frame's way. */}
         <PictureFrame position={[-0.38, 0, -0.08]} rotation-y={0.3} />
-        <Nameplate position={[-0.27, 0, 0.1]} rotation-y={-0.22} />
+        <Nameplate position={[-0.52, 0, 0.14]} rotation-y={0.45} />
 
-        {/* Center — the closed MacBook, a few degrees off square. */}
-        <GlbProp url={MACBOOK_GLB} height={0.015} position={[0.05, 0, -0.02]} rotation-y={0.06} />
+        {/* Center — the closed MacBook, dead straight. */}
+        <GlbProp url={MACBOOK_GLB} height={0.015} position={[0.05, 0, -0.02]} rotation-y={0} />
 
         {/* Right — notebook with the glasses resting on its cover. */}
         <GlbProp url={NOTEBOOK_GLB} height={0.013} position={[0.34, 0, 0.03]} rotation-y={-0.2} />

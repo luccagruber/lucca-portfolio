@@ -12,8 +12,8 @@ export function Footer() {
             BACK TO TOP ↑
           </a>
         </div>
-        <p className="mt-3 text-[9px] tracking-[0.12em]">
-          DESK MODEL:{" "}
+        <p className="mt-3 text-[9px] leading-relaxed tracking-[0.12em]">
+          3D MODELS (CC BY 4.0):{" "}
           <a
             href="https://sketchfab.com/3d-models/office-desk-140x60-9262f311271c4c4390341e526d3fe103"
             target="_blank"
@@ -21,8 +21,34 @@ export function Footer() {
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
             “OFFICE DESK 140X60” BY ALEIXOALONSO
-          </a>{" "}
-          · CC BY 4.0
+          </a>
+          {" · "}
+          <a
+            href="https://sketchfab.com/3d-models/macbook-pro-13-inch-2020-efab224280fd4c3993c808107f7c0b38"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 transition-colors hover:text-ink"
+          >
+            “MACBOOK PRO 13 INCH 2020” BY TIMBLEWEE
+          </a>
+          {" · "}
+          <a
+            href="https://sketchfab.com/3d-models/glasses-007651a9450746a5b6c5a126d484cd52"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 transition-colors hover:text-ink"
+          >
+            “GLASSES” BY MARIUS.EDER
+          </a>
+          {" · "}
+          <a
+            href="https://sketchfab.com/3d-models/starbucks-coffee-paper-cup-c34893d7ef90490b8d65d87753aad8ad"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 transition-colors hover:text-ink"
+          >
+            “STARBUCKS COFFEE PAPER CUP” BY WITTYBACON
+          </a>
         </p>
       </div>
     </footer>
