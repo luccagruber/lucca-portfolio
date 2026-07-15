@@ -13,6 +13,7 @@ import { DUR, EASE } from "@/experience/motion";
 import { folderPhaseFor, useExperience } from "@/experience/state/store";
 import {
   APEX,
+  CAMERA,
   FOLDER,
   FOLDER_FULL_H,
   FOLDER_POSE,
@@ -107,23 +108,31 @@ export function Folder({ report, slot }: { report: ProjectReport; slot: FolderSl
         if (!anchor) return;
         anchor.updateWorldMatrix(true, false);
 
-        // Present the folder centered on the camera axis, filling
+        // Present the folder centered on the camera's (pitched) view
+        // axis, its plane parallel to the image plane, filling
         // APEX.heightFraction of the viewport (see layout.apexDistance).
         const fov = "fov" in camera ? (camera.fov as number) : 42;
-        const worldTarget = new Vector3(
-          camera.position.x,
-          camera.position.y - FOLDER_FULL_H / 2,
-          camera.position.z - apexDistance(fov),
-        );
+        const forward = new Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+        // The folder tilts back to match the camera pitch; its local up
+        // in world space after that tilt:
+        const folderUp = new Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+        const worldTarget = camera.position
+          .clone()
+          .addScaledVector(forward, apexDistance(fov))
+          .addScaledVector(folderUp, -FOLDER_FULL_H / 2);
         const local = anchor.worldToLocal(worldTarget.clone());
+        // World-rotation targets, expressed against the anchor's pose.
+        const targetRotX = CAMERA.pitch - FOLDER_POSE.revealed.rotX;
 
         const tl = gsap.timeline({
           onUpdate: invalidate,
           onComplete: () => {
             // Measure the settled folder's screen quad and hand the DOM
-            // folder its exact frame, then step out of the picture.
+            // folder its exact frame, then step out of the picture. The
+            // folder's plane is parallel to the image plane, so its
+            // height runs along folderUp, not world Y.
             const origin = root.getWorldPosition(new Vector3());
-            const top = origin.clone().setY(origin.y + FOLDER_FULL_H);
+            const top = origin.clone().addScaledVector(folderUp, FOLDER_FULL_H);
             const o = origin.project(camera);
             const t = top.project(camera);
             useExperience.getState().folderLifted({
@@ -150,7 +159,7 @@ export function Folder({ report, slot }: { report: ProjectReport; slot: FolderSl
           .to(
             root.rotation,
             {
-              x: -FOLDER_POSE.revealed.rotX,
+              x: targetRotX,
               y: -slot.rotY,
               duration: d(DUR.folderFly - 0.2),
               ease: EASE.glide,

@@ -99,20 +99,27 @@ export const CAMERA = {
   fov: 42,
   near: 0.08,
   far: 20,
+  /**
+   * Fixed downward pitch (radians). The camera sits above desk level and
+   * looks gently down — a high three-quarter front view that makes the
+   * desk top a readable plane (depth between props, folders visible
+   * inside the open drawer). Never yaws, never rolls, never follows the
+   * pointer; this one constant is the camera's entire orientation.
+   */
+  pitch: -0.19,
 } as const;
 
 /**
- * Named framings. The camera never yaws and never tilts — its rotation is
- * permanently identity — so a framing is a position only. Slightly below
- * the desk top: seated directly in front of the desk, drawer naturally
- * in frame.
+ * Named framings. The camera's orientation is the fixed CAMERA.pitch, so
+ * a framing is a position only. Eyes above the desk top, seated directly
+ * in front of it, drawer naturally in frame.
  */
 export const FRAMINGS = {
   /** Arrival — the whole desk centered and fully in frame. */
-  idle: [0, 0.78, 1.5] as Vec3,
+  idle: [0, 1.08, 1.62] as Vec3,
   /** Drawer open — a gentle lean toward the drawer so both standing
    * folders sit fully in frame, without abandoning the centered desk. */
-  drawer: [0.18, 0.775, 1.45] as Vec3,
+  drawer: [0.18, 1.04, 1.52] as Vec3,
 } as const;
 
 export type FramingName = keyof typeof FRAMINGS;
