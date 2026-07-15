@@ -10,16 +10,15 @@ export const profile = {
   location: "Rijswijk, Netherlands",
   tagline: "You have a problem. I can probably solve it.",
   about: [
-    "I'm 16, Brazilian, in the Netherlands since late 2025.",
-    "I haven't arrived yet, and I know it. But I'm moving with real discipline toward one specific goal: get to a position where money stops being the constraint and everything after becomes a choice. No career dream, no passion story — just clear direction and consistent movement toward it.",
-    "I took a job at Albert Heijn not just for the money, but to understand Dutch systems and culture from the inside. I'm learning Dutch — A2, getting better. When it stops being useful, I'll move.",
-    "I work well with people. Not because I'm easy-going, but because I'm secure enough to let someone else be right when they are — and clear enough to say when they're not.",
-    "If you're reading this and thinking I might be able to help with something — you're probably right. Get in touch.",
+    "Lucca Gruber Rodrigues, 16 years old.",
+    "Plenty of time, plenty of energy, and adaptability is a given. Learning is constant — and so is the work ethic behind it.",
+    "The goal is always the same: understand what's needed, make sure it's delivered, and be honest when something is outside scope. What gets learned, gets applied fast.",
+    "There are people who need exactly what's on offer here. Get in touch.",
   ],
   contact: [
-    { label: "Email", value: "accul.reburg@gmail.com", href: "mailto:accul.reburg@gmail.com" },
-    // Add real profiles when ready — entries render in order:
-    // { label: "LinkedIn", value: "linkedin.com/in/…", href: "https://…" },
-    // { label: "GitHub", value: "github.com/…", href: "https://…" },
+    { label: "Email", value: "luccagruber1@gmail.com", href: "mailto:luccagruber1@gmail.com" },
+    { label: "WhatsApp", value: "wa.me/310631085489", href: "https://wa.me/310631085489" },
+    { label: "LinkedIn", value: "linkedin.com/in/luccagruber1", href: "https://www.linkedin.com/in/luccagruber1/" },
+    { label: "GitHub", value: "github.com/luccagruber", href: "https://github.com/luccagruber" },
   ],
 } as const;
