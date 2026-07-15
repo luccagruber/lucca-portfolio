@@ -2,7 +2,7 @@ import { profile } from "@/content/profile";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-paper">
+    <footer className="border-t border-line bg-warm">
       <div className="mx-auto max-w-7xl px-8 py-10 text-[11px] tracking-[0.08em] text-ink-faint">
         <div className="flex items-center justify-between">
           <span>

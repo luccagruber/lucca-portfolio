@@ -37,7 +37,11 @@ const icons: Record<string, ReactNode> = {
 
 export function Contact() {
   return (
-    <section id="contact" aria-label="Contact" className="mt-16 lg:mt-0">
+    <section
+      id="contact"
+      aria-label="Contact"
+      className="mt-16 border-t border-line pt-16 lg:mt-0 lg:border-t-0 lg:pt-0"
+    >
       <h2 className="font-display text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
         Contact
       </h2>

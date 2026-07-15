@@ -23,6 +23,12 @@
   --color-manila: #d9c89e;
   --color-manila-deep: #cdba8c;
   --color-tab-ink: #41403b;
+  /*
+   * Warm sand the traditional content settles onto — pale and low-
+   * saturation so dark ink stays fully legible. Not a scene material:
+   * it exists only to let the grey stage ease into a warm page below.
+   */
+  --color-warm: #ece4d4;
 }
 
 html {
