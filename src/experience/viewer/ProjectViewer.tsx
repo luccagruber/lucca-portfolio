@@ -303,7 +303,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
   const atFirst = current === 0;
   const atLast = current === total - 1;
   const navButton =
-    "font-mono text-[10px] tracking-[0.18em] text-tab-ink/70 transition-colors hover:text-tab-ink disabled:pointer-events-none disabled:opacity-35";
+    "font-sans text-[10px] tracking-[0.18em] text-tab-ink/70 transition-colors hover:text-tab-ink disabled:pointer-events-none disabled:opacity-35";
 
   return (
     <div
@@ -341,7 +341,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     tabSide === "left" ? "left-[7%]" : "right-[7%]"
                   } flex items-center justify-center`}
                 >
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-tab-ink/85">
+                  <span className="font-sans text-[9px] tracking-[0.2em] text-tab-ink/85">
                     {report.fileLabel}
                   </span>
                 </div>
@@ -417,7 +417,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                   >
                     ← PREV
                   </button>
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-tab-ink/60">
+                  <span className="font-sans text-[9px] tracking-[0.2em] text-tab-ink/60">
                     PAGE {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                   </span>
                   <button
@@ -442,7 +442,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                   {/* Inside face — the index */}
                   <div className="absolute inset-0 flex rotate-y-180 flex-col rounded-md bg-[#E7DAB8] p-[8%] [backface-visibility:hidden]">
                     <div className="absolute inset-y-0 right-0 w-[4%] bg-linear-to-l from-black/10 to-transparent" />
-                    <p className="font-mono text-[9px] tracking-[0.24em] text-tab-ink/60">
+                    <p className="font-sans text-[9px] tracking-[0.24em] text-tab-ink/60">
                       PROJECT FILE
                     </p>
                     <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight text-tab-ink">
@@ -466,11 +466,11 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                                 background: i === current ? "var(--report-accent)" : "transparent",
                               }}
                             />
-                            <span className="font-mono text-[9px] text-tab-ink/50">
+                            <span className="font-sans text-[9px] text-tab-ink/50">
                               {String(i + 1).padStart(2, "0")}
                             </span>
                             <span
-                              className={`font-mono text-[10px] tracking-[0.14em] ${
+                              className={`font-sans text-[10px] tracking-[0.14em] ${
                                 i === current ? "text-tab-ink" : "text-tab-ink/65"
                               }`}
                             >
@@ -480,7 +480,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                         </li>
                       ))}
                     </ol>
-                    <p className="mt-3 font-mono text-[8px] tracking-[0.2em] text-tab-ink/45">
+                    <p className="mt-3 font-sans text-[8px] tracking-[0.2em] text-tab-ink/45">
                       FILE: {report.fileLabel} · {String(total).padStart(2, "0")} PAGES
                     </p>
                   </div>
@@ -532,10 +532,10 @@ function PageFace({
         <span className="size-[7px] rounded-full bg-black/25 shadow-[inset_0_1px_1px_rgba(0,0,0,0.4)]" />
       </div>
       <header className="flex items-baseline justify-between gap-4 px-[7%] pt-[6.5%]">
-        <p className="font-mono text-[10px] tracking-[0.22em] text-(--report-accent-bright)">
+        <p className="font-sans text-[10px] tracking-[0.22em] text-(--report-accent-bright)">
           {page.label}
         </p>
-        <p className="font-mono text-[9px] tracking-[0.18em] text-(--report-ink-soft)">
+        <p className="font-sans text-[9px] tracking-[0.18em] text-(--report-ink-soft)">
           {String(index + 1).padStart(2, "0")} · {String(total).padStart(2, "0")}
         </p>
       </header>

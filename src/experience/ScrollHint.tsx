@@ -62,7 +62,7 @@ export function ScrollHint() {
       className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex flex-col items-center gap-2.5 opacity-0"
     >
       <span ref={lineRef} className="block h-8 w-px bg-ink/50" />
-      <span className="font-mono text-[10px] tracking-[0.32em] text-ink-soft">SCROLL</span>
+      <span className="font-sans text-[10px] tracking-[0.32em] text-ink-soft">SCROLL</span>
     </div>
   );
 }

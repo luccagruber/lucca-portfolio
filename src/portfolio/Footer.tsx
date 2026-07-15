@@ -3,7 +3,7 @@ import { profile } from "@/content/profile";
 export function Footer() {
   return (
     <footer className="border-t border-line bg-paper">
-      <div className="mx-auto max-w-2xl px-6 py-8 font-mono text-[11px] tracking-[0.14em] text-ink-faint">
+      <div className="mx-auto max-w-7xl px-8 py-10 text-[11px] tracking-[0.08em] text-ink-faint">
         <div className="flex items-center justify-between">
           <span>
             © {new Date().getFullYear()} {profile.name}
@@ -12,15 +12,15 @@ export function Footer() {
             BACK TO TOP ↑
           </a>
         </div>
-        <p className="mt-3 text-[9px] leading-relaxed tracking-[0.12em]">
-          3D MODELS (CC BY 4.0):{" "}
+        <p className="mt-4 text-[10px] leading-relaxed tracking-[0.06em]">
+          3D models (CC BY 4.0):{" "}
           <a
             href="https://sketchfab.com/3d-models/office-desk-140x60-9262f311271c4c4390341e526d3fe103"
             target="_blank"
             rel="noreferrer"
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
-            “OFFICE DESK 140X60” BY ALEIXOALONSO
+            “Office Desk 140x60” by AleixoAlonso
           </a>
           {" · "}
           <a
@@ -29,7 +29,7 @@ export function Footer() {
             rel="noreferrer"
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
-            “MACBOOK PRO 13 INCH 2020” BY TIMBLEWEE
+            “MacBook Pro 13 inch 2020” by timblewee
           </a>
           {" · "}
           <a
@@ -38,7 +38,7 @@ export function Footer() {
             rel="noreferrer"
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
-            “GLASSES” BY MARIUS.EDER
+            “Glasses” by Marius.Eder
           </a>
           {" · "}
           <a
@@ -47,7 +47,7 @@ export function Footer() {
             rel="noreferrer"
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
-            “STARBUCKS COFFEE PAPER CUP” BY WITTYBACON
+            “Starbucks Coffee Paper Cup” by Wittybacon
           </a>
         </p>
       </div>

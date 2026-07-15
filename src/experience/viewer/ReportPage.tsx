@@ -20,7 +20,7 @@ function renderBlock(block: ReportBlock, index: number) {
       return (
         <p
           key={key}
-          className="font-mono text-[10px] tracking-[0.22em] uppercase text-(--report-accent-bright)"
+          className="font-sans text-[10px] tracking-[0.22em] uppercase text-(--report-accent-bright)"
         >
           {block.text}
         </p>
@@ -52,7 +52,7 @@ function renderBlock(block: ReportBlock, index: number) {
         <dl key={key} className="divide-y divide-(--report-rule) border-y border-(--report-rule)">
           {block.rows.map((row) => (
             <div key={row.term} className="grid grid-cols-[6rem_1fr] gap-3 py-2">
-              <dt className="pt-0.5 font-mono text-[9px] tracking-[0.16em] uppercase text-(--report-accent-bright)">
+              <dt className="pt-0.5 font-sans text-[9px] tracking-[0.16em] uppercase text-(--report-accent-bright)">
                 {row.term}
               </dt>
               <dd className="font-serif text-[14px] leading-relaxed text-(--report-ink-soft)">
@@ -67,7 +67,7 @@ function renderBlock(block: ReportBlock, index: number) {
         <ol key={key} className="space-y-4">
           {block.items.map((item, i) => (
             <li key={item.title} className="grid grid-cols-[1.9rem_1fr]">
-              <span className="pt-0.5 font-mono text-[11px] text-(--report-accent-bright)">
+              <span className="pt-0.5 font-sans text-[11px] text-(--report-accent-bright)">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
@@ -96,7 +96,7 @@ function renderBlock(block: ReportBlock, index: number) {
     case "status":
       return (
         <div key={key} className="rounded-md border border-(--report-rule) p-4">
-          <p className="font-mono text-[9px] tracking-[0.22em] text-(--report-accent-bright)">
+          <p className="font-sans text-[9px] tracking-[0.22em] text-(--report-accent-bright)">
             STATUS
           </p>
           <p className="mt-2 font-serif text-[15px] leading-relaxed">{block.text}</p>

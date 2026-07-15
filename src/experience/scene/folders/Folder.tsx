@@ -20,7 +20,7 @@ import {
   apexDistance,
   type FolderSlot,
 } from "../layout";
-import { FONT_MONO_3D } from "../fonts";
+import { FONT_SANS_3D } from "../fonts";
 
 const { width: W, height: H, coverT: T, gap: GAP, tabWidth: TAB_W, tabHeight: TAB_H } = FOLDER;
 /** Front cover is cut a touch lower — the classic folder profile. */
@@ -263,7 +263,7 @@ export function Folder({ report, slot }: { report: ProjectReport; slot: FolderSl
         castShadow
       />
       <Text
-        font={FONT_MONO_3D}
+        font={FONT_SANS_3D}
         fontSize={0.0095}
         letterSpacing={0.06}
         color={palette.tabInk}

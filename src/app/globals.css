@@ -2,7 +2,7 @@
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+  --font-mono: ui-monospace, "SF Mono", monospace;
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-serif: var(--font-newsreader), Georgia, serif;
 
@@ -50,7 +50,7 @@ body {
   }
 }
 
-/* Corporate section label — shared by the traditional act. */
+/* Small section label — clean tracked sans (the noscript projects list). */
 .section-label {
-  @apply font-mono text-[11px] font-medium tracking-[0.28em] text-ink-faint uppercase;
+  @apply font-sans text-[11px] font-semibold tracking-[0.24em] text-ink-faint uppercase;
 }

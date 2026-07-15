@@ -10,7 +10,7 @@ export default function Home() {
       <h1 className="sr-only">{profile.name} — portfolio</h1>
       <Experience />
       <div className="border-t border-line bg-paper">
-        <div className="mx-auto max-w-2xl px-6 py-24 sm:py-32 lg:max-w-4xl lg:grid lg:grid-cols-2 lg:gap-20">
+        <div className="mx-auto max-w-7xl px-8 py-28 sm:py-36 lg:grid lg:grid-cols-[1.5fr_1fr] lg:gap-28">
           <About />
           <Contact />
         </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Mono, Inter, Newsreader } from "next/font/google";
+import { Fraunces, Inter, Newsreader } from "next/font/google";
 import { profile } from "@/content/profile";
 import "./globals.css";
 
@@ -26,13 +26,6 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-mono",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: profile.name,
   description: `${profile.tagline} Portfolio of ${profile.name} — ${profile.location}.`,
@@ -48,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${plexMono.variable} ${fraunces.variable} ${newsreader.variable}`}
+      className={`${inter.variable} ${fraunces.variable} ${newsreader.variable}`}
     >
       <body>{children}</body>
     </html>
