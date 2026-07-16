@@ -15,8 +15,13 @@ import type { ProjectId } from "@/content/types";
  * - drawer  — animated by the Drawer system.
  * - viewer  — "folder-lifting" / "folder-returning" are animated by the
  *   Folder system; "opening" / "closing" by the Project Viewer.
+ * - about   — "frame-lifting" / "frame-returning" are animated by the
+ *   Picture Frame system; "opening" / "closing" by the About viewer.
  * - Folder phases (hidden / revealed / selected / returning) are derived —
  *   see `folderPhaseFor` — so there is exactly one source of truth.
+ *
+ * `viewer` and `about` are the two doors out of the workspace and they are
+ * mutually exclusive: each one's open guard requires the other closed.
  */
 
 export type DrawerPhase = "closed" | "opening" | "open" | "closing";
@@ -32,6 +37,22 @@ export type ViewerPhase =
 export type FolderPhase = "hidden" | "revealed" | "selected" | "returning";
 
 /**
+ * The About flip. Same shape as `viewer` — the picture frame flies to the
+ * camera apex and hands its screen quad to the DOM frame, which turns the
+ * photograph over: About is written on the back of the print.
+ *
+ * Phase ownership: "frame-lifting" / "frame-returning" are animated by the
+ * Picture Frame system; "opening" / "closing" by the About viewer.
+ */
+export type AboutPhase =
+  | "closed"
+  | "frame-lifting"
+  | "opening"
+  | "viewing"
+  | "closing"
+  | "frame-returning";
+
+/**
  * Screen-space quad (viewport-relative, 0–100) where the lifted 3D folder
  * settled: the DOM folder mounts exactly over it, so the hand-off frame is
  * invisible. `h` is the folder's projected height as % of viewport height.
@@ -45,6 +66,7 @@ export interface ApexQuad {
 interface ExperienceState {
   drawer: DrawerPhase;
   viewer: ViewerPhase;
+  about: AboutPhase;
   activeProject: ProjectId | null;
   /** Folder under the pointer (drawer open, viewer closed) — the other one dims. */
   hoveredFolder: ProjectId | null;
@@ -57,6 +79,8 @@ interface ExperienceState {
   instant: boolean;
   /** Hand-off quad for the DOM folder entrance. */
   apex: ApexQuad | null;
+  /** Hand-off quad for the DOM picture frame entrance. */
+  aboutApex: ApexQuad | null;
   /** When WebGL support fails or context is lost, fallback to DOM layout. */
   webglFallback: boolean;
   /** The desk asset is loaded and the first frame is composed. */
@@ -80,6 +104,14 @@ interface ExperienceState {
   viewerDismissed(): void;
   folderReturned(): void;
 
+  // About events (the picture frame turns over)
+  openAbout(): void;
+  aboutFrameLifted(apex: ApexQuad | null): void;
+  aboutOpened(): void;
+  closeAbout(): void;
+  aboutDismissed(): void;
+  aboutFrameReturned(): void;
+
   // Report navigation (clicks only — never scroll)
   goToPage(page: number): void;
 }
@@ -88,11 +120,13 @@ export const useExperience = create<ExperienceState>()(
   subscribeWithSelector((set, get) => ({
     drawer: "closed",
     viewer: "closed",
+    about: "closed",
     activeProject: null,
     hoveredFolder: null,
     page: 0,
     instant: false,
     apex: null,
+    aboutApex: null,
     webglFallback: false,
     sceneReady: false,
 
@@ -107,7 +141,8 @@ export const useExperience = create<ExperienceState>()(
     },
 
     openDrawer(opts) {
-      if (get().drawer !== "closed") return;
+      const s = get();
+      if (s.drawer !== "closed" || s.about !== "closed") return;
       set({ drawer: "opening", instant: opts?.instant ?? false });
     },
     drawerOpened() {
@@ -116,7 +151,7 @@ export const useExperience = create<ExperienceState>()(
     },
     closeDrawer(opts) {
       const s = get();
-      if (s.drawer !== "open" || s.viewer !== "closed") return;
+      if (s.drawer !== "open" || s.viewer !== "closed" || s.about !== "closed") return;
       set({ drawer: "closing", instant: opts?.instant ?? false });
     },
     drawerClosed() {
@@ -126,6 +161,7 @@ export const useExperience = create<ExperienceState>()(
 
     selectProject(id) {
       const s = get();
+      if (s.about !== "closed") return;
       if (s.webglFallback) {
         set({ activeProject: id, viewer: "opening", page: 0, apex: null });
         return;
@@ -158,6 +194,42 @@ export const useExperience = create<ExperienceState>()(
     folderReturned() {
       if (get().viewer !== "folder-returning") return;
       set({ viewer: "closed", activeProject: null, apex: null, page: 0 });
+    },
+
+    openAbout() {
+      const s = get();
+      if (s.viewer !== "closed" || s.about !== "closed") return;
+      if (s.webglFallback) {
+        set({ about: "opening", aboutApex: null });
+        return;
+      }
+      set({ about: "frame-lifting" });
+    },
+    aboutFrameLifted(apex) {
+      if (get().about !== "frame-lifting") return;
+      set({ about: "opening", aboutApex: apex });
+    },
+    aboutOpened() {
+      if (get().about !== "opening") return;
+      set({ about: "viewing" });
+    },
+    closeAbout() {
+      const a = get().about;
+      // Closable once the frame is turning or fully turned.
+      if (a !== "viewing" && a !== "opening") return;
+      set({ about: "closing" });
+    },
+    aboutDismissed() {
+      if (get().about !== "closing") return;
+      if (get().webglFallback) {
+        set({ about: "closed", aboutApex: null });
+        return;
+      }
+      set({ about: "frame-returning" });
+    },
+    aboutFrameReturned() {
+      if (get().about !== "frame-returning") return;
+      set({ about: "closed", aboutApex: null });
     },
 
     goToPage(page) {

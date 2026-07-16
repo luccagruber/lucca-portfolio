@@ -243,3 +243,82 @@ restore-to-byte-identical drawer state) and in the DOM fallback (flip
 matrices probed mid-air); mobile verified for the DOM report. Known
 verification gap at time of writing: the 3D mobile framing shot is pending
 a wedged X-session GLX (hardware-GL headless runs blocked mid-session).
+
+---
+
+# Appendix — 2026-07-15: real props & editorial typography
+
+The desk was dressed with real Sketchfab GLBs (closed MacBook Pro recolored
+silver, notebook + pen with glasses resting on it, Starbucks cup; CC-BY
+credits in the footer and README; normalized at load by
+`scene/workspace/props/GlbProp.tsx`). Nameplate and picture frame remain
+R3F-generated. The camera gained a fixed downward pitch (`CAMERA.pitch`
+−0.19 rad — high three-quarter front view; still zero yaw/roll, still zero
+pointer parallax), and the folder apex hand-off was made pitch-aware.
+Typography moved to Fraunces (display) + Newsreader (reading serif) + Inter
+(UI sans); IBM Plex Mono was retired from the DOM and survives only on the
+3D nameplate.
+
+---
+
+# Appendix — 2026-07-16: the second act dissolves into the scene
+
+The "traditional portfolio" below the scene is gone. `portfolio/About.tsx`
+and `portfolio/Contact.tsx` were deleted; the page is now
+SiteHeader → Experience → ContactRail → Footer. The governing rule that
+replaced it: **the scene is navigation, the DOM is content** — every
+interactive object is a door, and text always arrives as real DOM, never
+painted onto a 3D surface.
+
+**About lives on the back of the photograph.** Clicking the picture frame
+flies it to the camera apex (same flight timing as a folder, exact target
+rotation computed by quaternion because the frame's anchor yaws), hands its
+screen quad to `viewer/AboutViewer.tsx`, and the DOM print turns over on a
+vertical hinge (`DUR.frameTurn`) — About is read on the back, closed by a
+plain ×/Escape/click-out. The store gained a second machine, `about`
+(closed → frame-lifting → opening → viewing → closing → frame-returning),
+mirroring `viewer`; the two doors are mutually exclusive by guard. The
+stage veil, scroll lock, a11y buttons and the WebGL fallback all answer to
+both doors. `layout.ts` gained `FRAME` constants and `apexDistanceFor()`
+(the folder-specific apex math, generalized).
+
+**Affordances.** `scene/Hotspot.tsx`: a flat, unlit, billboarded black
+dot-and-ring above the frame only — a slow ring pings outward while idle,
+stops under the pointer, never intercepts it. (A spinning silver gem was
+tried and rejected; the folders deliberately carry no mark — the drawer
+opening is the invitation.) The scroll hint was rebuilt as word + rail +
+a lit segment travelling downward + chevron, because the previous
+draw-and-retract hairline didn't communicate direction.
+
+**Contact.** A full-width four-cell rail (Gmail/WhatsApp/LinkedIn/GitHub
+brand marks, whole cell clickable, no heading) plus footer, both
+transparent over one shared gradient that starts at the scene's own
+background color and cools into a light grey (`--color-foot`). The email
+address is printed as selectable text *outside* the anchor (inside a link
+it could never be selected; `select-all` makes one click take the whole
+address) and hangs absolutely so the four labels stay aligned. The ink is
+`--color-cocoa #43291A`, a dark chocolate. A fixed header Contact button
+jumps to `#contact` and hides while either door is open.
+
+**The exit seam.** The stage is a sticky 100svh canvas, so when its section
+ends the canvas bottom edge lands mid-screen, slicing the desk on a hard
+line — nothing painted below that edge can hide it. The foot therefore
+climbs *over* the stage: `--foot-fade` (10rem) of negative margin with a
+transparent→stage gradient leg absorbs the desk, then `--foot-hold` (8rem)
+of clear ground separates it from the rail. The fade was tuned three times
+(12rem band → 34svh full-dissolve → 10rem) and the final rule is the
+user's: **small, and never on screen while the drawer is browsable**. The
+overlapping wrapper is `pointer-events-none` (it would otherwise swallow
+drawer clicks; rail/footer opt back in) — verified by clicking a folder
+through the fade. Related gotcha fixed en route: GSAP transforms make an
+element the containing block for absolute descendants, which had pinned the
+About close button to the wrong corner. `SCROLL.stageHeightSvh` went
+250 → 180 to cut dead scroll between the scene and contact; the MacBook
+moved to x = −0.03 to optically center between the prop clusters.
+
+**Verification.** Headless Chrome on hardware GL against the static build:
+full About round-trip, full project round-trip, pixel-column scans for hard
+edges across the exit (none in the transition; the only steps are desk
+silhouette and the footer's intentional hairline), one-click selection of
+the email address confirmed via `window.getSelection()`, folder click-through
+under the fade confirmed via dialog state. `tsc`, `next build` clean.

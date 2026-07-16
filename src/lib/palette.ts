@@ -32,4 +32,11 @@ export const palette = {
   photoMatte: "#E9E4D9",
   pen: "#3A3A3E",
   penAccent: "#6E7178",
+
+  /**
+   * The click hotspot — the only mark in the workspace that is not
+   * pretending to be real. Rendered unlit, so this is the literal pixel
+   * value: a flat printed black, not a black material.
+   */
+  hotspotInk: "#141414",
 } as const;

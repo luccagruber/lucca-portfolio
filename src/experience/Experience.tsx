@@ -13,6 +13,7 @@ import { ExperienceCanvas } from "./ExperienceCanvas";
 import { ExperienceA11y } from "./ExperienceA11y";
 import { ScrollHint } from "./ScrollHint";
 import { ProjectViewer } from "./viewer/ProjectViewer";
+import { AboutViewer } from "./viewer/AboutViewer";
 import { WebglFallbackWorkspace } from "./WebglFallbackWorkspace";
 
 gsap.registerPlugin(useGSAP);
@@ -20,21 +21,34 @@ gsap.registerPlugin(useGSAP);
 const VEIL_ON = "blur(14px) brightness(0.85) saturate(0.92)";
 const VEIL_OFF = "blur(0px) brightness(1) saturate(1)";
 
+/** Viewer/About phases during which the stage is behind something. */
+const VEILED_PHASES = new Set(["opening", "viewing", "closing"]);
+
 /**
  * The immersive act. The stage is sticky for `stageHeightSvh` of document
  * height: the arrival scroll triggers the drawer sequence (an event, not a
  * scrub), the open scene holds while folders are explored, and then the
  * workspace simply scrolls away into the traditional portfolio below.
  *
- * This component also owns the veil: while a project file is open the
- * whole stage softly blurs and dims behind it — a treatment of the stage,
- * not of any one system inside it.
+ * This component also owns the veil: while a project file or the About
+ * print is open the whole stage softly blurs and dims behind it — a
+ * treatment of the stage, not of any one system inside it.
  */
 export function Experience() {
   useScrollDirector();
   const viewer = useExperience((s) => s.viewer);
+  const about = useExperience((s) => s.about);
   const webglFallback = useExperience((s) => s.webglFallback);
-  useScrollLock(viewer !== "closed");
+  useScrollLock(viewer !== "closed" || about !== "closed");
+
+  /**
+   * The veil belongs to the stage, so it answers to whichever door is
+   * open. It lifts only once the flying object has been handed to the
+   * DOM ("opening") and drops as soon as the 3D object takes the moment
+   * back ("*-returning") — during the flights themselves the scene must
+   * stay sharp, because the object is still in it.
+   */
+  const veiled = VEILED_PHASES.has(viewer) || VEILED_PHASES.has(about);
 
   const veilRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
@@ -44,40 +58,24 @@ export function Experience() {
       const veil = veilRef.current;
       const dim = dimRef.current;
       if (!veil || !dim || webglFallback) return;
-      const duration = prefersReducedMotion() ? 0 : undefined;
+      const duration = prefersReducedMotion() ? 0 : veiled ? DUR.veilIn : DUR.veilOut;
 
-      if (viewer === "opening") {
-        gsap.to(veil, {
-          filter: VEIL_ON,
-          // Slight scale hides the transparent edge a blur pulls in.
-          scale: 1.03,
-          duration: duration ?? DUR.veilIn,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-        gsap.to(dim, {
-          autoAlpha: 1,
-          duration: duration ?? DUR.veilIn,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      } else if (viewer === "folder-returning" || viewer === "closed") {
-        gsap.to(veil, {
-          filter: VEIL_OFF,
-          scale: 1,
-          duration: duration ?? DUR.veilOut,
-          ease: "power2.inOut",
-          overwrite: "auto",
-        });
-        gsap.to(dim, {
-          autoAlpha: 0,
-          duration: duration ?? DUR.veilOut,
-          ease: "power2.inOut",
-          overwrite: "auto",
-        });
-      }
+      gsap.to(veil, {
+        filter: veiled ? VEIL_ON : VEIL_OFF,
+        // Slight scale hides the transparent edge a blur pulls in.
+        scale: veiled ? 1.03 : 1,
+        duration,
+        ease: veiled ? "power2.out" : "power2.inOut",
+        overwrite: "auto",
+      });
+      gsap.to(dim, {
+        autoAlpha: veiled ? 1 : 0,
+        duration,
+        ease: veiled ? "power2.out" : "power2.inOut",
+        overwrite: "auto",
+      });
     },
-    { dependencies: [viewer, webglFallback] },
+    { dependencies: [veiled, webglFallback] },
   );
 
   return (
@@ -106,6 +104,7 @@ export function Experience() {
         </div>
       )}
       <ProjectViewer />
+      <AboutViewer />
     </section>
   );
 }

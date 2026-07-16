@@ -14,7 +14,9 @@ Instead, my projects physically exist inside my desk's drawer, waiting to be ope
 
 The experience is built around a single metaphor, and that metaphor should never be broken.
 
-After the projects have been explored, the portfolio naturally transitions into a conventional About and Contact section, prioritizing clarity and usability.
+Everything personal lives inside that same metaphor: who I am is written on the back of the photograph standing on the desk — click the picture frame and the print turns over.
+
+Only contact remains below the scene: a plain, full-width rail at the foot of the page, prioritizing clarity and usability. There is no separate "traditional portfolio" anymore.
 
 \---
 
@@ -86,14 +88,20 @@ Folders
 \- Warm Cream (\#D9C89E)
 
 Coffee Cup  
-\- White paper cup  
-\- Kraft sleeve
+\- White paper Starbucks cup (real model, credited)
 
 Picture Frame  
 \- Matte black
 
-Pen Holder  
-\- Matte black
+Nameplate  
+\- Matte black, engraved lettering
+
+Click hotspot  
+\- Flat unlit black dot-and-ring (\#141414) — the one mark that is not pretending to be real
+
+Page foot (below the scene)  
+\- Light greys easing from the stage color (\#E9E7E2) into \#D6D5D1  
+\- Dark chocolate ink (\#43291A) — reads brown at a glance, still dark enough for small print
 
 Overall palette
 
@@ -123,16 +131,16 @@ Visible objects:
 
 \- Office desk (with its drawer)  
 \- Nameplate  
-\- Coffee cup  
-\- Pen holder  
-\- Picture frame  
-\- Paper stack
+\- Picture frame — the door to About, marked by the desk's only click hotspot  
+\- Closed MacBook, centered between the left and right prop clusters  
+\- Notebook with glasses resting on it  
+\- Starbucks coffee cup
 
 Never include:
 
 \- monitors  
 \- keyboards  
-\- laptops  
+\- open screens of any kind  
 \- decorative objects  
 \- unnecessary clutter
 
@@ -151,6 +159,8 @@ No hero section.
 No CTA.
 
 No onboarding.
+
+Two quiet cues and nothing else: a scroll hint at the foot of the stage (the word, a rail, a lit segment travelling down it) and the click hotspot floating above the photograph, pulsing a slow ring outward.
 
 Users naturally scroll.
 
@@ -248,6 +258,22 @@ Gruber Goal
 
 \---
 
+\# About — The Photograph
+
+The picture frame on the desk is the door to who I am.
+
+It carries the desk's only click hotspot. Selecting it lifts the frame toward the camera — the same flight and weight as a folder — and then the photograph turns over on its vertical hinge.
+
+About is written on the back of the print, because that is what the backs of photographs are for.
+
+The text is real DOM — crisp, selectable — never painted onto a 3D surface.
+
+A plain Close (×) turns the photo back and returns the frame to the desk.
+
+The rule that governs everything: the scene is navigation, the DOM is content. Every interactive object is a door.
+
+\---
+
 \# Transition
 
 The immersive experience ends naturally.
@@ -256,19 +282,16 @@ There are no cinematic transitions.
 
 No morphs.
 
-No dissolves.
+The workspace simply scrolls away. Only at the very end of its travel does a short fade absorb the desk — small enough to never be on screen while the drawer is browsable — so the canvas never ends on a hard line. Clear breathing room follows before the page closes.
 
-The workspace simply scrolls away.
+Below it the page ends with:
 
-Below it begins a traditional portfolio.
-
-Sections:
-
-\- About  
-\- Contact  
+\- Contact — four ways to reach me, side by side, spanning the full width, no heading; the email address is printed and copyable  
 \- Footer
 
-The storytelling exists only to introduce the projects.
+A fixed Contact button in the header points there from anywhere in the experience.
+
+The storytelling exists only to introduce the projects and the person.
 
 Everything afterwards prioritizes usability.
 

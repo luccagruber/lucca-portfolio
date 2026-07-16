@@ -17,8 +17,14 @@ export const SCROLL = {
    * which guarantees the opening sequence is actually seen and the folders
    * can be browsed before the workspace scrolls away with the document
    * (vision: no pinned scrubbing, no cinematic transition — it simply leaves).
+   *
+   * Everything above 100 is hold: scrolling that keeps the desk on screen
+   * with nothing new happening. Too much of it and the page reads as empty
+   * between the desk and the contact rail; too little and the drawer opens
+   * on top of the rail already sliding in. 180 leaves ~0.8 screens of
+   * browsing room after the drawer trigger.
    */
-  stageHeightSvh: 250,
+  stageHeightSvh: 180,
 } as const;
 
 /** Durations in seconds. */
@@ -34,9 +40,14 @@ export const DUR = {
   cameraDolly: 1.3,
   cameraReframe: 0.5, // viewport resizes, not narrative moves
 
-  // Folder selection
+  // Folder selection — the picture frame reuses this flight timing, so a
+  // lifted object always has the same weight whatever it is.
   folderFly: 0.95,
   folderReturn: 0.8,
+
+  // About — the print turning over on its vertical hinge. A shade slower
+  // than a folder cover: one considered movement, not a mechanism.
+  frameTurn: 0.72,
 
   // Viewer (DOM open-folder)
   coverOpen: 0.62,

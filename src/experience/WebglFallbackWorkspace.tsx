@@ -6,6 +6,7 @@ import { profile } from "@/content/profile";
 
 export function WebglFallbackWorkspace() {
   const selectProject = useExperience((s) => s.selectProject);
+  const openAbout = useExperience((s) => s.openAbout);
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-[75vh]">
@@ -21,6 +22,15 @@ export function WebglFallbackWorkspace() {
         <p className="mt-4 font-sans text-[10px] tracking-widest text-ink-faint uppercase">
           Interactive Workspace (2D Fallback Mode)
         </p>
+        {/* Without the desk there is no photograph to turn over, so the
+            About door needs a plain one here. */}
+        <button
+          type="button"
+          onClick={() => openAbout()}
+          className="mt-6 rounded-full border border-line bg-paper px-5 py-2 font-sans text-[10px] font-semibold tracking-[0.2em] text-ink-soft uppercase transition-colors hover:text-ink"
+        >
+          About Lucca
+        </button>
       </div>
 
       {/* Grid of Manila Folders */}

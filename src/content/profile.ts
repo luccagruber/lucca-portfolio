@@ -1,6 +1,14 @@
 /**
- * Personal content for the traditional act (About / Contact / Footer) and
- * the workspace nameplate. Edit copy here, not in components.
+ * Personal content — the About print, the contact rail, and the workspace
+ * nameplate. Edit copy here, not in components.
+ *
+ * `about` is read on the back of the picture frame (AboutViewer): the first
+ * entry is the lede above the rule, the rest is the body under it. Keep it
+ * short enough to sit in a portrait print without scrolling.
+ *
+ * Line breaks inside an entry are honoured (the viewer sets
+ * `whitespace-pre-line`), so the lede's two lines always break where they
+ * are written here rather than wherever the column happens to run out.
  */
 
 export const profile = {
@@ -10,10 +18,10 @@ export const profile = {
   location: "Rijswijk, Netherlands",
   tagline: "You have a problem. I can probably solve it.",
   about: [
-    "Lucca Gruber Rodrigues, 16 years old.",
-    "Plenty of time, plenty of energy, and adaptability is a given. Learning is constant — and so is the work ethic behind it.",
-    "The goal is always the same: understand what's needed, make sure it's delivered, and be honest when something is outside scope. What gets learned, gets applied fast.",
-    "There are people who need exactly what's on offer here. Get in touch.",
+    "Lucca Gruber Rodrigues,\n16 years old.",
+    "Full availability, high adaptability, and a genuine appetite for the work.",
+    "The approach is simple: listen properly, understand what you need, deliver without overcomplicating it, and be honest about limits. Whatever gets taken on, gets done properly. Fast learner — in the real sense of the phrase, what gets learned along the way gets applied immediately.",
+    "If that's what you're looking for — get in touch.",
   ],
   contact: [
     { label: "Email", value: "luccagruber1@gmail.com", href: "mailto:luccagruber1@gmail.com" },

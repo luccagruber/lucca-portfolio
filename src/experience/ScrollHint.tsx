@@ -8,18 +8,29 @@ import { DUR } from "./motion";
 import { useExperience } from "./state/store";
 
 /**
- * The only instruction the scene ever gives: a quiet pulse at the bottom
- * of the idle stage. It appears once the desk is composed and leaves for
- * good the moment the drawer starts moving.
+ * The only instruction the scene ever gives: the word, a rail, and a lit
+ * segment running down it, over and over. It appears once the desk is
+ * composed and leaves for good the moment the drawer starts moving.
+ *
+ * The travelling segment replaced a hairline that drew and retracted in
+ * place: that read as a flourish, not a direction. Something has to
+ * actually move *downward* for the hint to mean "down". Flat marks, ink on
+ * the stage — the same language as the desk's click hotspot, so the two
+ * pieces of UI in the whole experience look related.
  */
+const RAIL_H = 52;
+const SEG_H = 16;
+
 export function ScrollHint() {
   const drawer = useExperience((s) => s.drawer);
   const viewer = useExperience((s) => s.viewer);
+  const about = useExperience((s) => s.about);
   const sceneReady = useExperience((s) => s.sceneReady);
-  const visible = sceneReady && drawer === "closed" && viewer === "closed";
+  const visible = sceneReady && drawer === "closed" && viewer === "closed" && about === "closed";
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
+  const segRef = useRef<HTMLSpanElement>(null);
+  const chevRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
@@ -38,16 +49,26 @@ export function ScrollHint() {
 
   useGSAP(
     () => {
-      const line = lineRef.current;
-      if (!line || !visible || prefersReducedMotion()) return;
-      const tl = gsap
-        .timeline({ repeat: -1, repeatDelay: 0.7 })
+      const seg = segRef.current;
+      const chev = chevRef.current;
+      if (!seg || !chev || !visible || prefersReducedMotion()) return;
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.45 });
+      tl.fromTo(
+        seg,
+        { y: -SEG_H, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.32, ease: "power1.out" },
+      )
+        .to(seg, { y: RAIL_H - SEG_H, duration: 0.95, ease: "power1.in" })
+        .to(seg, { y: RAIL_H, opacity: 0, duration: 0.28, ease: "power1.in" }, ">-0.06")
+        // The chevron takes the hand-off — the movement continues past the
+        // rail instead of stopping at it.
         .fromTo(
-          line,
-          { scaleY: 0, transformOrigin: "50% 0%" },
-          { scaleY: 1, duration: 0.7, ease: "power2.inOut" },
+          chev,
+          { opacity: 0.25, y: -3 },
+          { opacity: 1, y: 1, duration: 0.3, ease: "power2.out" },
+          "<-0.12",
         )
-        .to(line, { scaleY: 0, transformOrigin: "50% 100%", duration: 0.7, ease: "power2.inOut" }, ">0.15");
+        .to(chev, { opacity: 0.25, y: -3, duration: 0.45, ease: "power2.inOut" }, ">");
       return () => {
         tl.kill();
       };
@@ -59,10 +80,26 @@ export function ScrollHint() {
     <div
       ref={rootRef}
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex flex-col items-center gap-2.5 opacity-0"
+      className="pointer-events-none absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3 opacity-0"
     >
-      <span ref={lineRef} className="block h-8 w-px bg-ink/50" />
-      <span className="font-sans text-[10px] tracking-[0.32em] text-ink-soft">SCROLL</span>
+      <span className="font-sans text-[10px] font-medium tracking-[0.32em] text-ink-soft">
+        SCROLL
+      </span>
+      {/* The rail: a faint track the lit segment runs down. */}
+      <span
+        className="relative block w-px overflow-hidden bg-ink/12"
+        style={{ height: RAIL_H }}
+      >
+        <span
+          ref={segRef}
+          className="absolute inset-x-0 top-0 block bg-ink/70"
+          style={{ height: SEG_H }}
+        />
+      </span>
+      <span
+        ref={chevRef}
+        className="block size-[7px] rotate-45 border-r border-b border-ink/70"
+      />
     </div>
   );
 }

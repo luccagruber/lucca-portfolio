@@ -15,19 +15,26 @@ const srButton =
 export function ExperienceA11y() {
   const drawer = useExperience((s) => s.drawer);
   const viewer = useExperience((s) => s.viewer);
+  const about = useExperience((s) => s.about);
   const openDrawer = useExperience((s) => s.openDrawer);
+  const openAbout = useExperience((s) => s.openAbout);
   const selectProject = useExperience((s) => s.selectProject);
+  const idle = viewer === "closed" && about === "closed";
 
-  const announcement =
-    viewer !== "closed"
-      ? ""
-      : drawer === "open"
-        ? "Projects drawer open. Two project files available."
-        : "";
+  const announcement = !idle
+    ? ""
+    : drawer === "open"
+      ? "Projects drawer open. Two project files available."
+      : "";
 
   return (
     <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-3">
-      {drawer === "closed" && viewer === "closed" ? (
+      {idle ? (
+        <button type="button" className={srButton} onClick={() => openAbout()}>
+          Turn over the photograph: about Lucca
+        </button>
+      ) : null}
+      {drawer === "closed" && idle ? (
         <button
           type="button"
           className={srButton}
@@ -36,7 +43,7 @@ export function ExperienceA11y() {
           Open the projects drawer
         </button>
       ) : null}
-      {drawer === "open" && viewer === "closed"
+      {drawer === "open" && idle
         ? projectReports.map((report) => (
             <button
               key={report.id}

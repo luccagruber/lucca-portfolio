@@ -2,10 +2,17 @@ import type { ReactNode } from "react";
 import { profile } from "@/content/profile";
 
 /**
- * Contact — the second column of the wide traditional block (wrapper in
- * page.tsx). "Contact" is the headline itself (Fraunces). Each row is a
- * real brand mark in its true color plus the bold, clickable label; the
- * raw URL is never shown. Icons are inline SVGs (no icon dependency).
+ * The contact rail: four ways to reach Lucca, side by side, spanning the
+ * full width at the foot of the page. There is deliberately no heading and
+ * no invitation — a footer that has to announce itself as the contact
+ * section isn't one. Each cell is a real brand mark in its true color plus
+ * the clickable label, and the whole cell is the link. Icons are inline
+ * SVGs (no icon dependency).
+ *
+ * Email is the one exception: its address is printed under the label and
+ * is real selectable text, because an address is something people copy
+ * elsewhere, not something they follow. The other three keep their URLs
+ * hidden — nobody types a linkedin.com/in/… by hand.
  */
 
 const icons: Record<string, ReactNode> = {
@@ -35,32 +42,59 @@ const icons: Record<string, ReactNode> = {
   ),
 };
 
-export function Contact() {
+export function ContactRail() {
   return (
-    <section
-      id="contact"
-      aria-label="Contact"
-      className="mt-16 border-t border-line pt-16 lg:mt-0 lg:border-t-0 lg:pt-0"
-    >
-      <h2 className="font-display text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
-        Contact
-      </h2>
-      <ul className="mt-10 space-y-5">
+    // Transparent on purpose — the page's foot gradient is the background
+    // for the rail and the footer together, and it is the wrapper in
+    // page.tsx that turns pointer events off for the strip lying over the
+    // canvas. This is below that strip, so it takes them back.
+    <section id="contact" aria-label="Contact" className="pointer-events-auto">
+      <ul className="mx-auto grid max-w-[100rem] grid-cols-2 lg:grid-cols-4">
         {profile.contact.map((entry) => (
-          <li key={entry.label}>
+          <li
+            key={entry.label}
+            /*
+             * Hairlines between cells only — never on the rail's outer
+             * edge; the section's own top border and the footer below
+             * close the box. Two columns: the first two cells carry the
+             * row rule, the odd cells carry the column rule. Four
+             * columns: no row rule at all, every cell but the last
+             * carries the column rule.
+             */
+            className="relative border-line [&:nth-child(-n+2)]:border-b [&:nth-child(odd)]:border-r lg:[&:not(:last-child)]:border-r lg:[&:nth-child(-n+2)]:border-b-0"
+          >
             <a
               href={entry.href}
               target={entry.href.startsWith("mailto:") ? undefined : "_blank"}
               rel="noreferrer"
-              className="group inline-flex items-center gap-4"
+              className="group flex h-full items-center justify-center gap-4 px-6 py-10 transition-colors duration-200 hover:bg-paper/45 sm:py-14"
             >
-              <span className="grid size-7 shrink-0 place-items-center">
+              <span className="grid size-6 shrink-0 place-items-center transition-transform duration-200 group-hover:scale-110">
                 {icons[entry.label]}
               </span>
-              <span className="text-2xl font-medium text-ink underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-ink">
+              <span className="text-xl font-medium text-cocoa underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-cocoa sm:text-2xl">
                 {entry.label}
               </span>
             </a>
+            {/*
+             * The address is the one thing on this rail people need to
+             * take rather than follow, so it sits OUTSIDE the anchor:
+             * inside it, dragging across the text would start a link drag
+             * instead of selecting, and it could never be copied. `li` is
+             * the positioned ancestor, so the address hangs over the
+             * anchor without joining the flow — in flow it would make this
+             * cell taller than its neighbours and knock the four labels
+             * out of alignment. One click takes the whole address.
+             */}
+            {entry.label === "Email" ? (
+              <span className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center sm:bottom-7">
+                {/* Only the glyphs take the pointer — everywhere else in
+                    the cell stays a link, like the other three. */}
+                <span className="pointer-events-auto cursor-text font-sans text-[13px] tracking-[0.02em] text-cocoa/70 transition-colors duration-200 select-all hover:text-cocoa sm:text-sm">
+                  {entry.value}
+                </span>
+              </span>
+            ) : null}
           </li>
         ))}
       </ul>

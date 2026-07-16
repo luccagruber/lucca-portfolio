@@ -20,15 +20,15 @@ Workspace
 
 ↓
 
-Drawer Opening
+Drawer Opening ────── or ────── Picture Frame (About)
 
-↓
+↓                               ↓
 
-Project Selection
+Project Selection               About Viewer (photo turns over)
 
-↓
+↓                               ↓
 
-Project Viewer
+Project Viewer                  Return to Workspace
 
 ↓
 
@@ -36,7 +36,9 @@ Return to Workspace
 
 ↓
 
-Traditional Portfolio
+Contact Rail \+ Footer
+
+The two doors — Project Viewer and About — are mutually exclusive: each one's open guard requires the other closed.
 
 \---
 
@@ -143,19 +145,59 @@ Navigation uses clicks only.
 
 \---
 
-\# About Section
+\# Picture Frame / About Viewer
 
-Responsible only for presenting personal information.
+The About experience is the picture frame itself. The 3D frame flies to the camera, hands off its exact screen quad, and the DOM frame turns the photograph over on a vertical hinge — About is read on the back of the print.
 
-No storytelling.
+Picture Frame (3D) responsible for:
 
-No interaction.
+\- the hover breath and the click hotspot  
+\- the flight to the camera apex and the screen-quad hand-off  
+\- the settle back onto the desk
+
+About Viewer (DOM) responsible for:
+
+\- the flip animation (both faces)  
+\- rendering the About text as real DOM  
+\- closing (×, Escape, click-out)
+
+States
+
+\- Closed  
+\- Frame-Lifting  
+\- Opening  
+\- Viewing  
+\- Closing  
+\- Frame-Returning
+
+Scrolling is disabled while viewing.
+
+Never responsible for:
+
+\- project content  
+\- contact
 
 \---
 
-\# Footer
+\# Hotspot
 
-Responsible only for contact information.
+One shared component: a flat, unlit, billboarded black dot-and-ring.
+
+It marks exactly one object — the picture frame. The folders carry no mark: the drawer sliding open is already the invitation.
+
+A ring pings slowly outward while idle; the ring tightens onto the dot under the pointer. It never intercepts the pointer — the object it marks is the hit target.
+
+\---
+
+\# Contact Rail \+ Footer
+
+The page below the scene. Responsible only for contact information and credits.
+
+\- Four brand-mark links, side by side, full width, no heading.  
+\- The email address is printed as selectable text outside the link (one click selects the whole address).  
+\- A fixed header button ("Contact") jumps here from anywhere.  
+\- Background is one shared gradient starting at the scene's own background color; both sections are transparent over it.  
+\- The wrapper climbs slightly over the canvas with a short transparent-to-stage fade so the sticky canvas's bottom edge never shows as a hard line. The wrapper is pointer-events-none (the overlap must not swallow clicks meant for the drawer); the rail and footer opt back in.
 
 \---
 
@@ -205,11 +247,31 @@ Continue Scrolling
 
 ↓
 
-About
+Contact Rail
 
 ↓
 
 Footer
+
+Parallel door (from any idle workspace state):
+
+Click Picture Frame
+
+↓
+
+Frame Lifts to Camera
+
+↓
+
+Photograph Turns Over (About)
+
+↓
+
+Close (×)
+
+↓
+
+Frame Returns to Desk
 
 Reverse:
 
@@ -217,7 +279,7 @@ Footer
 
 ↑
 
-About
+Contact Rail
 
 ↑
 

@@ -23,12 +23,23 @@
   --color-manila: #d9c89e;
   --color-manila-deep: #cdba8c;
   --color-tab-ink: #41403b;
+  /* The back of a photographic print — warm, slightly chalky, the side
+     you write on. Only the About viewer uses it. */
+  --color-photo-back: #ece7dc;
   /*
-   * Warm sand the traditional content settles onto — pale and low-
-   * saturation so dark ink stays fully legible. Not a scene material:
-   * it exists only to let the grey stage ease into a warm page below.
+   * The foot of the page — contact rail and footer — is one continuous
+   * ramp, not a block with a seam above it. It starts at --color-stage
+   * (literally the canvas clear color, so the scene has no edge) and
+   * settles into --color-foot, a soft light grey. Not scene materials:
+   * these exist only to carry the page out from under the desk.
    */
-  --color-warm: #ece4d4;
+  --color-foot: #d6d5d1;
+  /*
+   * Dark chocolate — the ink of the foot of the page. Warm enough that
+   * the brown is perceptible at a glance (user's call, 2026-07-16), but
+   * still dark enough to carry small text on the grey ramp.
+   */
+  --color-cocoa: #43291a;
 }
 
 html {

@@ -87,7 +87,19 @@ export const FOLDER_POSE = {
   revealed: { y: 0.024, rotX: -0.055 },
 } as const;
 
-/** Selected-folder presentation in front of the camera. */
+/**
+ * Picture frame — generated in R3F (see props/PictureFrame). Origin at the
+ * bottom-center of the frame, standing upright, print facing +z. Only the
+ * silhouette lives here: it sizes the apex flight and the DOM hand-off.
+ */
+export const FRAME = {
+  width: 0.115,
+  height: 0.148,
+  /** Resting lean-back of the frame on its easel leg. */
+  tilt: -0.09,
+} as const;
+
+/** Selected-folder / lifted-frame presentation in front of the camera. */
 export const APEX = {
   /** Fraction of the viewport height the folder fills at rest. */
   heightFraction: 0.56,
@@ -137,9 +149,18 @@ export function framingFor(name: FramingName, aspect: number): Vec3 {
 }
 
 /**
- * How far in front of the camera a lifted folder settles so it fills
- * `APEX.heightFraction` of the viewport height.
+ * How far in front of the camera an object of silhouette height `fullH`
+ * must settle to fill `fraction` of the viewport height.
  */
+export function apexDistanceFor(
+  fovDeg: number,
+  fullH: number,
+  fraction: number = APEX.heightFraction,
+): number {
+  return fullH / (2 * fraction * Math.tan((fovDeg * Math.PI) / 360));
+}
+
+/** Apex distance for a lifted folder. */
 export function apexDistance(fovDeg: number): number {
-  return FOLDER_FULL_H / (2 * APEX.heightFraction * Math.tan((fovDeg * Math.PI) / 360));
+  return apexDistanceFor(fovDeg, FOLDER_FULL_H);
 }

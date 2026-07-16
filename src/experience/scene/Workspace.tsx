@@ -40,8 +40,11 @@ export function Workspace() {
         <PictureFrame position={[-0.38, 0, -0.08]} rotation-y={0.3} />
         <Nameplate position={[-0.52, 0, 0.14]} rotation-y={0.45} />
 
-        {/* Center — the closed MacBook, dead straight. */}
-        <GlbProp url={MACBOOK_GLB} height={0.015} position={[0.05, 0, -0.02]} rotation-y={0} />
+        {/* Center — the closed MacBook, dead straight. Not centered on the
+            desk but between its neighbours: the gap to the frame on the
+            left and the gap to the notebook on the right read equal
+            (user's call, 2026-07-16). */}
+        <GlbProp url={MACBOOK_GLB} height={0.015} position={[-0.03, 0, -0.02]} rotation-y={0} />
 
         {/* Right — notebook with the glasses resting on its cover. */}
         <GlbProp url={NOTEBOOK_GLB} height={0.013} position={[0.34, 0, 0.03]} rotation-y={-0.2} />
