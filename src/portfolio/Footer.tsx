@@ -10,7 +10,26 @@ export function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="mx-auto max-w-7xl px-8 py-10 text-[11px] tracking-[0.08em] text-cocoa/55">
-        <div className="flex items-center justify-between">
+        {/*
+         * The colophon. The site is itself a project, and visitors who
+         * arrive without Lucca in the room must not mistake it for a
+         * template — so this line is set in the display face at reading
+         * size and full ink, deliberately louder than the small print
+         * around it, with the receipts one click away.
+         */}
+        <p className="font-display text-[16px] font-medium tracking-normal text-cocoa sm:text-[17px]">
+          This site is a project too — designed and built from zero by {profile.name}.
+          No templates.{" "}
+          <a
+            href="https://github.com/luccagruber/lucca-portifolio"
+            target="_blank"
+            rel="noreferrer"
+            className="underline decoration-cocoa/30 underline-offset-4 transition-colors hover:decoration-cocoa"
+          >
+            Source on GitHub ↗
+          </a>
+        </p>
+        <div className="mt-8 flex items-center justify-between">
           <span>
             © {new Date().getFullYear()} {profile.name}
           </span>
