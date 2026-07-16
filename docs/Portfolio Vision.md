@@ -282,7 +282,9 @@ There are no cinematic transitions.
 
 No morphs.
 
-The workspace simply scrolls away. Only at the very end of its travel does a short fade absorb the desk — small enough to never be on screen while the drawer is browsable — so the canvas never ends on a hard line. Clear breathing room follows before the page closes.
+No dissolves — fades over the exit were tried and rejected.
+
+The workspace simply scrolls away. The page below begins at the scene's own background color and cools into a bright, quiet grey, with plain breathing room before the rail.
 
 Below it the page ends with:
 

@@ -196,8 +196,8 @@ The page below the scene. Responsible only for contact information and credits.
 \- Four brand-mark links, side by side, full width, no heading.  
 \- The email address is printed as selectable text outside the link (one click selects the whole address).  
 \- A fixed header button ("Contact") jumps here from anywhere.  
-\- Background is one shared gradient starting at the scene's own background color; both sections are transparent over it.  
-\- The wrapper climbs slightly over the canvas with a short transparent-to-stage fade so the sticky canvas's bottom edge never shows as a hard line. The wrapper is pointer-events-none (the overlap must not swallow clicks meant for the drawer); the rail and footer opt back in.
+\- Background is one shared gradient: the scene's own background color at the top, cooling into a bright grey at the bottom. Both sections are transparent over it.  
+\- The foot never overlaps the canvas. Climb-over fades were tried and rejected; the scene scrolls away and the page simply continues.
 
 \---
 

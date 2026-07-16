@@ -45,10 +45,8 @@ const icons: Record<string, ReactNode> = {
 export function ContactRail() {
   return (
     // Transparent on purpose — the page's foot gradient is the background
-    // for the rail and the footer together, and it is the wrapper in
-    // page.tsx that turns pointer events off for the strip lying over the
-    // canvas. This is below that strip, so it takes them back.
-    <section id="contact" aria-label="Contact" className="pointer-events-auto">
+    // for the rail and the footer together (see page.tsx).
+    <section id="contact" aria-label="Contact">
       <ul className="mx-auto grid max-w-[100rem] grid-cols-2 lg:grid-cols-4">
         {profile.contact.map((entry) => (
           <li

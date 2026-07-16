@@ -8,7 +8,7 @@ import { profile } from "@/content/profile";
  */
 export function Footer() {
   return (
-    <footer className="pointer-events-auto border-t border-line">
+    <footer className="border-t border-line">
       <div className="mx-auto max-w-7xl px-8 py-10 text-[11px] tracking-[0.08em] text-cocoa/55">
         <div className="flex items-center justify-between">
           <span>

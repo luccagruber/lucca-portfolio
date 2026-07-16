@@ -302,19 +302,19 @@ jumps to `#contact` and hides while either door is open.
 
 **The exit seam.** The stage is a sticky 100svh canvas, so when its section
 ends the canvas bottom edge lands mid-screen, slicing the desk on a hard
-line — nothing painted below that edge can hide it. The foot therefore
-climbs *over* the stage: `--foot-fade` (10rem) of negative margin with a
-transparent→stage gradient leg absorbs the desk, then `--foot-hold` (8rem)
-of clear ground separates it from the rail. The fade was tuned three times
-(12rem band → 34svh full-dissolve → 10rem) and the final rule is the
-user's: **small, and never on screen while the drawer is browsable**. The
-overlapping wrapper is `pointer-events-none` (it would otherwise swallow
-drawer clicks; rail/footer opt back in) — verified by clicking a folder
-through the fade. Related gotcha fixed en route: GSAP transforms make an
-element the containing block for absolute descendants, which had pinned the
-About close button to the wrong corner. `SCROLL.stageHeightSvh` went
-250 → 180 to cut dead scroll between the scene and contact; the MacBook
-moved to x = −0.03 to optically center between the prop clusters.
+line — nothing painted below that edge can hide it. A climb-over fade
+(negative margin + transparent→stage gradient leg + pointer-events
+plumbing) was built and tuned three times (12rem band → 34svh
+full-dissolve → 10rem + 8rem hold) and then **removed entirely at the
+user's direction — every variant read as fog and was judged worse than the
+plain cut**. Final state: the foot never overlaps the canvas; it is a
+simple gradient from the scene's exact background color into the foot
+grey, with a fixed breathing spacer before the rail. Do not reintroduce a
+fade here. Related gotcha fixed en route: GSAP transforms make an element
+the containing block for absolute descendants, which had pinned the About
+close button to the wrong corner. `SCROLL.stageHeightSvh` went 250 → 180
+to cut dead scroll between the scene and contact; the MacBook moved to
+x = −0.03 to optically center between the prop clusters.
 
 **Verification.** Headless Chrome on hardware GL against the static build:
 full About round-trip, full project round-trip, pixel-column scans for hard
