@@ -13,6 +13,9 @@ export function ReportPage({ page }: { page: ReportPageData }) {
   return <div className="space-y-4 sm:space-y-5">{page.blocks.map(renderBlock)}</div>;
 }
 
+/** Casual pin-board tilts, cycled so neighbouring prints never lean alike. */
+const TILTS = ["-rotate-2", "rotate-[1.6deg]", "-rotate-1", "rotate-[2.4deg]"] as const;
+
 function renderBlock(block: ReportBlock, index: number) {
   const key = `${block.kind}-${index}`;
   switch (block.kind) {
@@ -92,6 +95,47 @@ function renderBlock(block: ReportBlock, index: number) {
             {block.label} ↗
           </a>
         </p>
+      );
+    case "logo":
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={key} src={block.src} alt={block.alt} className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
+      );
+    case "figures":
+      // Photographs live on the page like prints taped into a paper file:
+      // white print border, a strip of masking tape, and a casual tilt —
+      // never set perfectly straight (user: "tortinho", despojado).
+      return (
+        <div
+          key={key}
+          className={`flex flex-wrap items-start justify-center gap-x-6 gap-y-7 pt-3 pb-1`}
+        >
+          {block.items.map((item, i) => {
+            const tilt = TILTS[(index + i) % TILTS.length];
+            return (
+              <figure
+                key={item.src}
+                className={`relative min-w-0 bg-white p-1.5 pb-1 shadow-[0_10px_22px_rgba(0,0,0,0.3)] ${tilt} ${
+                  block.items.length > 1 ? "w-[calc(50%-1rem)]" : "w-[74%]"
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute -top-2.5 left-1/2 h-5 w-14 -translate-x-1/2 bg-[rgba(252,246,225,0.72)] shadow-[0_1px_3px_rgba(0,0,0,0.18)] ${
+                    (index + i) % 2 ? "rotate-[3deg]" : "rotate-[-4deg]"
+                  }`}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.src} alt={item.alt} loading="lazy" className="w-full object-cover" />
+                {item.caption ? (
+                  <figcaption className="px-1 pt-1.5 pb-0.5 font-serif text-[11px] leading-snug italic text-neutral-600">
+                    {item.caption}
+                  </figcaption>
+                ) : null}
+              </figure>
+            );
+          })}
+        </div>
       );
     case "status":
       return (

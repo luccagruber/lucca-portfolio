@@ -200,7 +200,7 @@ Folder appearance:
 
 Projects
 
-\- Accul Rebugr  
+\- Accul Reburg  
 \- Gruber Goal
 
 The outside of every folder remains visually neutral.
@@ -245,7 +245,7 @@ Projects
 
 Own their visual language.
 
-Accul Rebugr
+Accul Reburg
 
 \- Background \#0B0B0B  
 \- Accent Moss Green (\#4A6741)

@@ -35,8 +35,9 @@ export default function Home() {
             "linear-gradient(to bottom, var(--color-stage) 0%, var(--color-foot) 100%)",
         }}
       >
-        <div aria-hidden="true" className="h-24 sm:h-32" />
+        <div aria-hidden="true" className="h-36 sm:h-48" />
         <ContactRail />
+        <div aria-hidden="true" className="h-28 sm:h-40" />
         <Footer />
       </div>
     </main>

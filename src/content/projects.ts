@@ -1,18 +1,20 @@
 import type { ProjectId, ProjectReport } from "./types";
 
 /**
- * The two project files that live in the cabinet — exactly two, never more
+ * The two project files that live in the drawer — exactly two, never more
  * (vision). All project copy is edited here, nowhere else.
  *
- * The Shipping Label Automation work is presented as a chapter of the
- * Gruber Goal file: it was built for that operation and reads strongest as
- * part of that story.
+ * Writing rules (agreed with Lucca, 2026-07-16): each file reads as ONE
+ * linear story, short pages, no page that demands effort. Brazilian
+ * platforms are always explained for an international reader, never
+ * name-dropped. Photos are post-it prints pinned next to the exact claim
+ * they prove. No skill lists, no age bragging — the work speaks.
  */
 
-const acculRebugr: ProjectReport = {
-  id: "accul-rebugr",
-  name: "Accul Rebugr",
-  fileLabel: "ACCUL REBUGR",
+const acculReburg: ProjectReport = {
+  id: "accul-reburg",
+  name: "Accul Reburg",
+  fileLabel: "ACCUL REBURG",
   identity: {
     background: "#0B0B0B",
     ink: "#EAE8E1",
@@ -26,49 +28,59 @@ const acculRebugr: ProjectReport = {
       id: "cover",
       label: "PROJECT FILE",
       blocks: [
-        { kind: "kicker", text: "Cross-platform AI project memory" },
-        { kind: "title", text: "Accul Rebugr" },
+        { kind: "logo", src: "/images/projects/accul-logo.webp", alt: "Accul Reburg logo" },
+        { kind: "kicker", text: "Portable memory for AI conversations" },
+        { kind: "title", text: "Accul Reburg" },
         {
           kind: "lede",
-          text: "A silent Chrome extension that lets a project continue in any AI, exactly where it left off.",
+          text: "A Chrome extension that lets a project continue in any AI, exactly where it left off. Built from zero, published, and running — by one person.",
         },
         {
           kind: "meta",
           rows: [
-            { term: "Category", detail: "Chrome extension · MV3" },
-            { term: "Platforms", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
-            { term: "Distribution", detail: "Chrome Web Store (unlisted)" },
-            { term: "Status", detail: "Published · collecting user feedback" },
+            { term: "What it is", detail: "Chrome extension + my own backend and encrypted storage" },
+            { term: "Works on", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
+            { term: "Status", detail: "Live on the Chrome Web Store, real users testing" },
           ],
         },
       ],
     },
     {
       id: "problem",
-      label: "PROBLEM STATEMENT",
+      label: "THE PROBLEM",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "Every time you switch AI platforms — Claude, ChatGPT, Gemini, DeepSeek — your project state resets. You rebuild context from scratch, every session.",
-            "Claude and Gemini both launched memory export in early 2026, confirming the demand is real. But both built the same thing: user preference transfer. Knowing who you are doesn't tell a new AI what you were building, where you got stuck, or what to do next.",
+            "Work inside an AI chat and something valuable builds up: decisions, failed attempts, the exact next step. Switch to another AI — or just open a new chat — and it is gone. You re-explain everything, every time.",
+            "Claude and Gemini shipped memory export in early 2026, which proves the demand. But what they transfer is who you are — not what you were building.",
           ],
         },
         {
           kind: "lede",
-          text: "Nobody built what the problem actually requires. So I did.",
+          text: "Nobody had built the real thing. So I did.",
         },
       ],
     },
     {
       id: "solution",
-      label: "SOLUTION",
+      label: "HOW IT WORKS",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "A silent Chrome extension. It captures every AI conversation turn by turn, compresses it into a live project snapshot using an LLM, encrypts it end-to-end, and stores it in the cloud.",
-            "When you want to continue in a different AI — three clicks. The new AI opens knowing exactly where the project left off.",
+            "Install it once and use AI normally — nothing is asked of you. The extension captures every conversation turn silently, an LLM compresses it into a living snapshot of the project, and the snapshot is stored encrypted in the cloud.",
+            "Ready to switch? Open the extension, pick the project, click continue. The new AI starts already knowing where you left off.",
+          ],
+        },
+        {
+          kind: "figures",
+          items: [
+            {
+              src: "/images/projects/accul-continue.webp",
+              alt: "Accul Reburg continuing a project in another AI",
+              caption: "Continuing a project in a different AI — three clicks",
+            },
           ],
         },
         {
@@ -80,72 +92,58 @@ const acculRebugr: ProjectReport = {
     },
     {
       id: "capture",
-      label: "CAPTURE ARCHITECTURE",
+      label: "THE HARD PART",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "The platforms being captured from are not mine. No API access, no cooperation, no official way to read what happens inside them. So three independent capture methods run simultaneously on every turn, on four platforms with completely different architectures:",
+            "None of the four platforms offers a way to read what happens inside them. Each one had to be reverse-engineered — and is captured three independent ways at once, on every turn:",
           ],
         },
         {
           kind: "numbered",
           items: [
             {
-              title: "API interception",
-              body: "Wraps window.fetch (Claude, ChatGPT) and XMLHttpRequest (Gemini, DeepSeek) to intercept the platform's own network requests, then reconstructs the full AI response from streaming SSE data. Each platform has its own response format — each parser is built specifically for it.",
+              title: "Network interception",
+              body: "Wraps the page's own network layer and rebuilds the full AI response from each platform's private streaming format.",
             },
             {
-              title: "React fiber reading",
-              body: "Claude, ChatGPT and DeepSeek are built with React. The extension reads message data directly from React's internal fiber tree in memory — no network calls, no DOM scraping. Gemini is Angular and strips debug access from production builds, so it is covered by the other two methods.",
+              title: "React internals",
+              body: "Reads message state straight from React's in-memory component tree — and catches the exact moment a response finishes.",
             },
             {
-              title: "MutationObserver",
-              body: "Watches the conversation DOM for new AI response elements, with platform-specific selectors for each AI. The completion signal is the thumbs-up feedback icon — it only appears once a response has fully finished generating.",
+              title: "DOM observation",
+              body: "Watches the conversation on screen, using each platform's own completion signal as the cue.",
             },
+          ],
+        },
+        {
+          kind: "paragraphs",
+          items: [
+            "The first method to succeed saves the turn. If any method breaks silently, an alert with a specific error code reaches my phone within ten seconds. The platforms change without warning — the system is built to be maintained, not just deployed.",
           ],
         },
       ],
     },
     {
-      id: "failsafe",
-      label: "FAIL-SAFES",
+      id: "security",
+      label: "SECURITY",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "The first method to succeed sends the turn immediately. A 10-second window stays open — any method that hasn't reported fires a coded alert via Telegram.",
-            "Every failure point across every platform and every capture method has its own error code. Nothing fails silently.",
+            "People's conversations are sensitive, so the system is designed so that not even I can read them. Every snapshot is encrypted before it is stored; the key exists only on my server — never in the browser, never in the database.",
+            "That server is mine too: a Linux machine I administer myself, running Docker behind automatic HTTPS, monitoring and restarting itself. It runs unattended, at near-zero cost.",
           ],
         },
         {
-          kind: "meta",
-          rows: [
-            { term: "Monitoring", detail: "Telegram alerts, coded per failure point" },
-            { term: "Failure budget", detail: "10s reporting window per capture method" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "architecture",
-      label: "SYSTEM ARCHITECTURE",
-      blocks: [
-        {
-          kind: "meta",
-          rows: [
+          kind: "figures",
+          items: [
             {
-              term: "Extension",
-              detail: "Chrome MV3 — two content scripts in different JavaScript contexts: MAIN world for capture, ISOLATED world for routing",
+              src: "/images/projects/accul-onboarding.webp",
+              alt: "Accul Reburg first-run privacy terms",
+              caption: "First run — what is processed, what is stored, what you control",
             },
-            { term: "Backend", detail: "Node.js on Oracle Cloud (OCI), self-hosted — Docker + Caddy + SSL" },
-            { term: "Storage", detail: "Supabase — only encrypted blobs, no readable data ever stored" },
-            {
-              term: "Encryption",
-              detail: "AES-256-GCM — the key never leaves the OCI server, never reaches the browser, never touches the database",
-            },
-            { term: "Compression", detail: "LLM-powered via Groq — snapshots fit any AI's context window" },
-            { term: "Running cost", detail: "Near zero — free-tier models at current scale" },
           ],
         },
       ],
@@ -155,9 +153,15 @@ const acculRebugr: ProjectReport = {
       label: "STATUS",
       blocks: [
         {
+          kind: "paragraphs",
+          items: [
+            "Live, with a structured early-user testing program: real users, recorded feedback sessions, and a roadmap shaped by what they say. That feedback is already widening the idea — from AI-to-AI continuity toward making work context portable anywhere it needs to go.",
+          ],
+        },
+        {
           kind: "status",
-          text: "Published on the Chrome Web Store · unlisted · collecting user feedback",
-          note: "The architecture, logic, and product decisions: all mine. Code built with AI assistance.",
+          text: "Live on the Chrome Web Store · in active development",
+          note: "The idea, architecture, product decisions and infrastructure: all mine. Code built with AI assistance.",
         },
       ],
     },
@@ -181,65 +185,92 @@ const gruberGoal: ProjectReport = {
       id: "cover",
       label: "PROJECT FILE",
       blocks: [
-        { kind: "kicker", text: "A real business — goalkeeper accessories" },
+        { kind: "logo", src: "/images/projects/gg-logo.webp", alt: "Gruber Goal logo" },
+        { kind: "kicker", text: "A real business, run across two continents" },
         { kind: "title", text: "Gruber Goal" },
         {
           kind: "lede",
-          text: "Founded in Brazil, rebuilt from the Netherlands — a retail operation run across two continents.",
+          text: "A goalkeeper-gear brand I founded in Brazil in January 2025. When I moved to the Netherlands, I didn't shut it down — I rebuilt it to run without me there.",
         },
         {
           kind: "meta",
           rows: [
-            { term: "Type", detail: "Physical-product retail" },
-            { term: "Markets", detail: "Shopee · Mercado Livre (Brazil)" },
-            { term: "Operated from", detail: "Rijswijk, Netherlands" },
+            { term: "Type", detail: "Physical-product retail — goalkeeper gloves and gear" },
+            { term: "Sells on", detail: "Shopee and Mercado Livre, Brazil's dominant marketplaces" },
+            { term: "Operated from", detail: "The Hague, Netherlands" },
             { term: "Status", detail: "Operational" },
           ],
         },
       ],
     },
     {
-      id: "business",
-      label: "THE BUSINESS",
+      id: "brazil",
+      label: "PART I — BRAZIL",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "Bought the first stock in Brazil in January 2025. Built the brand, logo, website and social media from scratch, made sales. Then moved countries in December 2025 — and rebuilt the entire operation from the Netherlands.",
-            "Running a Brazilian retail operation from Europe meant rethinking everything. I dropped the website, dropped content creation, and focused only on what converts: Shopee and Mercado Livre. Logistics run through family in Brazil, who handle packaging and dispatch.",
+            "January 2025: first stock bought. Around it I built everything a brand needs — the identity, the web store, and a TikTok channel of goalkeeper content that grew to 2,300 followers and 55,000 likes, pulling customers to the store.",
+            "Real orders, real customers, five-star reviews: “Everything arrived perfectly — I'll send the site to my goalkeeper friends.”",
+          ],
+        },
+        {
+          kind: "figures",
+          items: [
+            {
+              src: "/images/projects/gg-website.webp",
+              alt: "The Gruber Goal web store on mobile",
+              caption: "The store — brand, copy and campaigns, all mine",
+            },
+            {
+              src: "/images/projects/gg-tiktok.webp",
+              alt: "The Gruber Goal TikTok profile",
+              caption: "@grubergoal — 55K likes of goalkeeper content",
+            },
           ],
         },
       ],
     },
     {
-      id: "platform",
-      label: "OPERATIONS PLATFORM",
+      id: "move",
+      label: "PART II — THE MOVE",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "When the workflow got heavy, I built a custom operations platform in two days — stock, pricing, sales, logistics, the full workflow. Nothing off the shelf; built specifically for this operation.",
-            "The pricing tool inside it maps every fee tier across both platforms — weight brackets, category fees, platform cuts — calculated correctly for every possible scenario. When fees change, I update the map. Most small sellers get this wrong and lose margin without knowing it. Pricing is never a problem here.",
+            "December 2025: I moved to the Netherlands — an ocean away from my own inventory. The business didn't close. It changed shape.",
+            "I cut everything that needed me physically present — the website, the daily content — and moved sales to Shopee and Mercado Livre, the marketplaces where Brazilians already buy (Mercado Livre is Latin America's Amazon). Family in Brazil packs and ships. Everything else runs from my desk in The Hague.",
           ],
         },
       ],
     },
     {
-      id: "automation",
-      label: "SHIPPING AUTOMATION",
+      id: "systems",
+      label: "PART III — THE SYSTEMS",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "Tray, the e-commerce platform, had a Melhor Envio shipping panel built in — but orders never reached the actual Melhor Envio account where labels can be generated via API. Tray had no public API. The connection was broken by design, with no official way around it. So I built the way around it.",
-            "A paid order is detected via email. Telegram pings me to add the order to the Melhor Envio cart, then waits for my confirmation. It checks the account balance: if sufficient, it pays and generates the label automatically; if not, it alerts with the exact amount missing and waits for the top-up.",
-            "Once the label is ready, it messages a Telegram group with me and my grandmother in Brazil — the print-ready label, the nearest drop-off point, and everything she needs to pack and ship. The human stays in the loop where it matters. The machine handles everything else.",
+            "A store you can't physically touch has to run on systems, so I built two.",
+            "The operations platform holds the whole business — products, purchases, sales, stock, pricing, finances. Its pricing engine maps every fee tier on both marketplaces (commissions, category rates, weight brackets) and returns the exact break-even and true profit for any price. Most small sellers guess that math and quietly lose margin; here it is computed.",
+          ],
+        },
+        {
+          kind: "link",
+          label: "Open the operations platform",
+          href: "#",
+        },
+        {
+          kind: "paragraphs",
+          items: [
+            "The shipping robot exists because the store's platform and Brazil's shipping broker — their version of Sendcloud — were supposed to connect and didn't, with no official fix. Mine watches for the payment-confirmation email, pays and generates the label through the broker's API, and drops everything into a Telegram group with my grandmother: the label to print, the nearest drop-off point, one button to confirm dispatch. If the shipping balance is short, it reports the exact missing amount, waits for the top-up, and resumes on its own.",
           ],
         },
         {
           kind: "meta",
           rows: [
-            { term: "Stack", detail: "n8n · Melhor Envio API · Telegram Bot · IMAP trigger" },
+            { term: "Built with", detail: "n8n · shipping API · Telegram bots · email triggers" },
+            { term: "Runs on", detail: "My own self-hosted cloud server — ~€0/month" },
           ],
         },
       ],
@@ -251,7 +282,17 @@ const gruberGoal: ProjectReport = {
         {
           kind: "paragraphs",
           items: [
-            "Gruber Goal now runs on Shopee and Mercado Livre, so the same automation logic is being rebuilt for those platforms — my grandmother gets notified the moment something sells, cutting dispatch time and human error.",
+            "The same robot is now being rebuilt for the marketplaces — so the moment something sells, Brazil knows, with everything needed to ship it.",
+          ],
+        },
+        {
+          kind: "figures",
+          items: [
+            {
+              src: "/images/projects/gg-glove.webp",
+              alt: "Gruber Goal professional goalkeeper glove",
+              caption: "The product — professional goalkeeper gloves",
+            },
           ],
         },
         {
@@ -264,7 +305,7 @@ const gruberGoal: ProjectReport = {
 };
 
 /** Drawer order: front file first. */
-export const projectReports: readonly ProjectReport[] = [acculRebugr, gruberGoal];
+export const projectReports: readonly ProjectReport[] = [acculReburg, gruberGoal];
 
 export function reportById(id: ProjectId): ProjectReport {
   const report = projectReports.find((r) => r.id === id);

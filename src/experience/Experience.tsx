@@ -38,8 +38,12 @@ export function Experience() {
   useScrollDirector();
   const viewer = useExperience((s) => s.viewer);
   const about = useExperience((s) => s.about);
+  const drawer = useExperience((s) => s.drawer);
   const webglFallback = useExperience((s) => s.webglFallback);
-  useScrollLock(viewer !== "closed" || about !== "closed");
+  // The drawer-opening lock keeps the trigger scroll from also carrying the
+  // page toward the foot: while the sequence plays, the document holds
+  // still; scrolling onward to Contact resumes once the drawer is open.
+  useScrollLock(viewer !== "closed" || about !== "closed" || drawer === "opening");
 
   /**
    * The veil belongs to the stage, so it answers to whichever door is

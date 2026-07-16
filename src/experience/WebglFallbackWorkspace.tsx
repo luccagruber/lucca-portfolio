@@ -40,7 +40,7 @@ export function WebglFallbackWorkspace() {
           const kicker = cover.blocks.find((b) => b.kind === "kicker");
           const lede = cover.blocks.find((b) => b.kind === "lede");
           
-          // Accul Rebugr gets tab on left, Gruber Goal gets tab on right
+          // Accul Reburg gets tab on left, Gruber Goal gets tab on right
           const isLeftTab = index === 0;
 
           return (

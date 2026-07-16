@@ -17,7 +17,7 @@ sequence — drawer opens, camera eases in, folders rise — after which the
 scene is calm again. Opening a folder presents a corporate project report,
 paged by clicks with scrolling disabled. Closing it returns the folder.
 Scrolling on simply carries the workspace away into a plain, usability-first
-About/Contact. Exactly two projects exist: **Accul Rebugr** (black `#0B0B0B`
+About/Contact. Exactly two projects exist: **Accul Reburg** (black `#0B0B0B`
 / moss `#4A6741`) and **Gruber Goal** (petrol `#00303F` / brick `#A93226` /
 off-white `#F5F5F5`) — their colors appear only inside their opened files.
 The workspace itself is permanently neutral.
@@ -322,3 +322,35 @@ edges across the exit (none in the transition; the only steps are desk
 silhouette and the footer's intentional hairline), one-click selection of
 the email address confirmed via `window.getSelection()`, folder click-through
 under the fade confirmed via dialog state. `tsc`, `next build` clean.
+
+## Addendum — 2026-07-16: project-file content, post-it photographs, scroll gate
+
+**The files were rewritten as stories.** Both reports were rebuilt from
+Lucca's real source material (extension architecture doc, product record,
+user feedback, the n8n shipping workflow, the operations-platform app, the
+OCI server). Rules agreed with Lucca: each file is one linear story in
+short pages; Brazilian platforms are always explained for an international
+reader (Melhor Envio ≈ "Brazil's Sendcloud", Mercado Livre ≈ "Latin
+America's Amazon"); no skill lists and no age bragging — the work speaks.
+Gruber Goal is told in three parts (Brazil → The Move → The Systems) and
+must never read as a side project: it is a real business with a real brand
+(TikTok @grubergoal, 2,291 followers / 55.3K likes, five-star reviews).
+The correct spelling is **Accul Reburg** — the `accul-rebugr` id and all
+labels were fixed across code and docs. The OCI infrastructure deliberately
+gets no third folder (exactly two files, per vision); it lives inside both
+stories.
+
+**Photographs are post-it prints.** Two new report blocks: `logo` (small
+brand mark on covers) and `figures` (photos rendered as white-bordered
+prints with a masking-tape strip and alternating slight tilts — never set
+straight; captions are small italic lines on the print). Assets are
+EXIF-stripped, resized webp in `public/images/projects/`. Screenshots are
+tight crops of the relevant UI, never full-browser shots.
+
+**Scroll gate.** The drawer-open trigger scroll no longer also advances
+the page: `useScrollLock` now engages while the drawer phase is `opening`,
+so the document holds still until the sequence completes, and scrolling on
+to Contact resumes from there. Foot spacing was rebalanced: clear air above
+the contact rail (h-36/sm:h-48) and between the rail and the footer
+(h-28/sm:h-40) — the rail sits *between* scene and footer, glued to
+neither.

@@ -197,7 +197,9 @@ The page below the scene. Responsible only for contact information and credits.
 \- The email address is printed as selectable text outside the link (one click selects the whole address).  
 \- A fixed header button ("Contact") jumps here from anywhere.  
 \- Background is one shared gradient: the scene's own background color at the top, cooling into a bright grey at the bottom. Both sections are transparent over it.  
-\- The foot never overlaps the canvas. Climb-over fades were tried and rejected; the scene scrolls away and the page simply continues.
+\- The foot never overlaps the canvas. Climb-over fades were tried and rejected; the scene scrolls away and the page simply continues.  
+\- The rail sits *between* the scene and the footer with generous air on both sides (spacer above and below the rail — the foot must never feel glued to the canvas or to the credits).  
+\- While the drawer-opening sequence plays, page scroll is locked: the trigger scroll may never also carry the page toward the foot. Scrolling onward to Contact resumes only once the drawer is fully open.
 
 \---
 

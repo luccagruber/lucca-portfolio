@@ -3,8 +3,10 @@
 An interactive workspace, not a website. Visitors sit directly in front of
 a real 3D desk; the two project files live in its drawer and open into
 physical corporate reports read inside the folder itself. The camera never
-follows the mouse — scroll does exactly one thing: it opens the drawer.
-Below the workspace, a traditional About/Contact.
+follows the mouse — scroll does exactly one thing: it opens the drawer
+(the page holds still while the sequence plays). There is no traditional
+second act: About is written on the back of the photograph on the desk,
+and Contact is a footer rail below the scene.
 
 The product definition lives in **`docs/Portfolio Vision.md`** and
 **`docs/Experience Architecture.md`** — those two documents are the source
@@ -36,7 +38,7 @@ src/
     viewer/       the open-folder report (DOM; hinged cover, fastened
                   pages, physical click-paged turns)
     motion.ts     every duration, ease, and scroll threshold
-  portfolio/      the traditional act — About, Contact, Footer
+  portfolio/      the DOM foot — SiteHeader, ContactRail, Footer
   lib/            palette (3D color source of truth), reduced-motion
 ```
 
@@ -111,7 +113,7 @@ After editing that file, reload with
 
 - `public/fonts/` contains two vendored OFL-licensed `.woff` files used only
   for in-scene (troika) text — folder tabs and the nameplate. The DOM loads
-  Inter and IBM Plex Mono through `next/font` at build time.
-- Project identity colors (Accul Rebugr, Gruber Goal) are defined with their
+  Fraunces, Newsreader and Inter through `next/font` at build time.
+- Project identity colors (Accul Reburg, Gruber Goal) are defined with their
   content in `src/content/projects.ts` and are applied only inside the
   report viewer — the workspace itself stays neutral by design.

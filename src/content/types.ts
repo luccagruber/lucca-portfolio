@@ -1,4 +1,4 @@
-export type ProjectId = "accul-rebugr" | "gruber-goal";
+export type ProjectId = "accul-reburg" | "gruber-goal";
 
 /**
  * A project's visual language. Per the vision it begins only after the
@@ -29,6 +29,10 @@ export type ReportBlock =
   | { kind: "meta"; rows: { term: string; detail: string }[] }
   | { kind: "numbered"; items: { title: string; body: string }[] }
   | { kind: "link"; label: string; href: string }
+  /** Small brand mark, used on cover pages. */
+  | { kind: "logo"; src: string; alt: string }
+  /** One or more photographs/screenshots; two or more render side by side. */
+  | { kind: "figures"; items: { src: string; alt: string; caption?: string }[] }
   | { kind: "status"; text: string; note?: string };
 
 export interface ReportPage {
@@ -40,7 +44,7 @@ export interface ReportPage {
 
 export interface ProjectReport {
   id: ProjectId;
-  /** Human name, e.g. "Accul Rebugr". */
+  /** Human name, e.g. "Accul Reburg". */
   name: string;
   /** Uppercase label printed on the folder tab and report footer. */
   fileLabel: string;

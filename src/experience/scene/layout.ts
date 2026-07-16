@@ -71,8 +71,8 @@ export interface FolderSlot {
  * straight-on camera; tabs staggered outward like a real pair of files.
  * Slight rotations — believable imperfection.
  */
-export const FOLDER_SLOTS: Record<"accul-rebugr" | "gruber-goal", FolderSlot> = {
-  "accul-rebugr": { x: -0.093, z: -0.1, rotY: -0.03, tabX: -0.034 },
+export const FOLDER_SLOTS: Record<"accul-reburg" | "gruber-goal", FolderSlot> = {
+  "accul-reburg": { x: -0.093, z: -0.1, rotY: -0.03, tabX: -0.034 },
   "gruber-goal": { x: 0.093, z: -0.148, rotY: 0.028, tabX: 0.034 },
 };
 
