@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { profile } from "@/content/profile";
+import { profileText } from "@/content/profile";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, EASE } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
@@ -180,7 +182,9 @@ function FrameDialog() {
     { dependencies: [about] },
   );
 
-  const [lede, ...rest] = profile.about;
+  const locale = useLocale();
+  const t = ui[locale];
+  const [lede, ...rest] = profileText[locale].about;
 
   return (
     <div
@@ -255,7 +259,7 @@ function FrameDialog() {
                       style={{ fontSize: "clamp(12.5px, calc(var(--fh) * 0.019), 17px)" }}
                     >
                       <p className="font-sans text-[0.66em] tracking-[0.24em] text-tab-ink/50">
-                        ABOUT
+                        {t.about}
                       </p>
                       {/* The lede breaks where profile.ts writes the break,
                           never where the column runs out. */}
@@ -301,7 +305,7 @@ function FrameDialog() {
                 <button
                   type="button"
                   onClick={() => closeAbout()}
-                  aria-label="Close about"
+                  aria-label={t.closeAbout}
                   className={`grid size-9 place-items-center rounded-full border border-line bg-paper text-lg leading-none text-ink-soft shadow-md transition-colors hover:text-ink ${
                     about === "viewing" ? "" : "pointer-events-none"
                   }`}

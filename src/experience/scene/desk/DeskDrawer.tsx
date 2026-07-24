@@ -7,10 +7,12 @@ import gsap from "gsap";
 import type { Group, Object3D } from "three";
 import type { ProjectId } from "@/content/types";
 import { projectReports } from "@/content/projects";
-import { DRAWER_BUMP, DUR, EASE, SEQ } from "@/experience/motion";
+import { DRAWER_BUMP, DUR, EASE, NUDGE, SEQ } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
+import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DESK, FOLDER_POSE } from "../layout";
 import { ProjectFolders } from "../folders/ProjectFolders";
+import { DrawerLabel } from "./DrawerLabel";
 
 /**
  * The drawer system: opening, closing, and revealing the folders — those
@@ -25,6 +27,8 @@ import { ProjectFolders } from "../folders/ProjectFolders";
  */
 export function DeskDrawer({ node }: { node: Object3D }) {
   const anchors = useRef(new Map<ProjectId, Group>());
+  /** How many nudges this visit has already spent. */
+  const nudgedRef = useRef(0);
   const invalidate = useThree((s) => s.invalidate);
   const phase = useExperience((s) => s.drawer);
   /** The drawer's resting z, measured off the untouched node at mount. */
@@ -111,6 +115,66 @@ export function DeskDrawer({ node }: { node: Object3D }) {
     { dependencies: [phase, invalidate, closedZ] },
   );
 
-  // Folder anchors live inside the drawer node so they travel with it.
-  return createPortal(<ProjectFolders registerAnchor={registerAnchor} />, node);
+  /*
+   * The self-teaching nudge. Only from a cold arrival: the scene is ready,
+   * the drawer has never been opened, nothing else is on screen, and the
+   * page is still at the top. Any scroll at all — even one that doesn't
+   * reach the trigger — means the visitor has understood the gesture, so
+   * the drawer stops asking.
+   */
+  const sceneReady = useExperience((s) => s.sceneReady);
+  const viewer = useExperience((s) => s.viewer);
+  const about = useExperience((s) => s.about);
+  const idle = sceneReady && phase === "closed" && viewer === "closed" && about === "closed";
+
+  useGSAP(
+    () => {
+      if (!idle || prefersReducedMotion()) return;
+      if (nudgedRef.current >= NUDGE.times) return;
+
+      const tl = gsap.timeline({
+        onUpdate: invalidate,
+        delay: nudgedRef.current === 0 ? NUDGE.firstDelay : NUDGE.interval,
+        repeat: NUDGE.times - 1 - nudgedRef.current,
+        repeatDelay: NUDGE.interval,
+        onRepeat: () => {
+          nudgedRef.current += 1;
+        },
+        onComplete: () => {
+          nudgedRef.current = NUDGE.times;
+        },
+      });
+      tl.to(node.position, { z: closedZ + NUDGE.distance, duration: NUDGE.out, ease: "power2.out" })
+        .to(node.position, { z: closedZ, duration: NUDGE.back, ease: EASE.heavy });
+
+      // Any scroll retires it for the visit, mid-tween if need be.
+      const stop = () => {
+        nudgedRef.current = NUDGE.times;
+        tl.kill();
+        gsap.to(node.position, {
+          z: closedZ,
+          duration: 0.2,
+          ease: "power2.out",
+          onUpdate: invalidate,
+        });
+      };
+      window.addEventListener("scroll", stop, { once: true, passive: true });
+
+      return () => {
+        window.removeEventListener("scroll", stop);
+        tl.kill();
+      };
+    },
+    { dependencies: [idle, invalidate, closedZ] },
+  );
+
+  // Folder anchors and the drawer's own name card live inside the drawer
+  // node, so both travel with it.
+  return createPortal(
+    <>
+      <ProjectFolders registerAnchor={registerAnchor} />
+      <DrawerLabel />
+    </>,
+    node,
+  );
 }

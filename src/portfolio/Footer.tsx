@@ -1,4 +1,8 @@
+"use client";
+
 import { profile } from "@/content/profile";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 
 /**
  * Transparent on purpose — the page's foot gradient is the background
@@ -7,6 +11,7 @@ import { profile } from "@/content/profile";
  * one object, so they read as one.
  */
 export function Footer() {
+  const t = ui[useLocale()];
   return (
     <footer className="border-t border-line">
       <div className="mx-auto max-w-7xl px-8 py-10 text-[11px] tracking-[0.08em] text-cocoa/55">
@@ -18,15 +23,14 @@ export function Footer() {
          * around it, with the receipts one click away.
          */}
         <p className="font-display text-[16px] font-medium tracking-normal text-cocoa sm:text-[17px]">
-          This site is a project too — designed and built from zero by {profile.name}.
-          No templates.{" "}
+          {t.colophon} {profile.name}. {t.noTemplates}{" "}
           <a
             href="https://github.com/luccagruber/lucca-portifolio"
             target="_blank"
             rel="noreferrer"
             className="underline decoration-cocoa/30 underline-offset-4 transition-colors hover:decoration-cocoa"
           >
-            Source on GitHub ↗
+            {t.sourceOnGitHub} ↗
           </a>
         </p>
         <div className="mt-8 flex items-center justify-between">
@@ -34,11 +38,11 @@ export function Footer() {
             © {new Date().getFullYear()} {profile.name}
           </span>
           <a href="#top" className="transition-colors hover:text-cocoa">
-            BACK TO TOP ↑
+            {t.backToTop} ↑
           </a>
         </div>
         <p className="mt-4 text-[10px] leading-relaxed tracking-[0.06em]">
-          3D models (CC BY 4.0):{" "}
+          {t.models}{" "}
           <a
             href="https://sketchfab.com/3d-models/office-desk-140x60-9262f311271c4c4390341e526d3fe103"
             target="_blank"

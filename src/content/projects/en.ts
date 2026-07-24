@@ -1,8 +1,11 @@
-import type { ProjectId, ProjectReport } from "./types";
+import type { ProjectReport } from "../types";
+import { GRUBER_PLATFORM_URL, acculIdentity, gruberIdentity } from "./identity";
 
 /**
- * The two project files that live in the drawer — exactly two, never more
- * (vision). All project copy is edited here, nowhere else.
+ * The two project files that live in the drawer, in English — exactly two,
+ * never more (vision). This file is the original; `pt.ts` and `nl.ts` are
+ * translations of it and must keep the same pages, in the same order, with
+ * the same figures. Change the story here first.
  *
  * Writing rules (agreed with Lucca; revised 2026-07-24 to match the About
  * print's new positioning): each file reads as ONE linear story, short
@@ -18,14 +21,7 @@ const acculReburg: ProjectReport = {
   id: "accul-reburg",
   name: "Accul Reburg",
   fileLabel: "ACCUL REBURG",
-  identity: {
-    background: "#0B0B0B",
-    ink: "#EAE8E1",
-    inkSoft: "#9C9A92",
-    accent: "#4A6741",
-    accentBright: "#8FAF83",
-    rule: "#242622",
-  },
+  identity: acculIdentity,
   pages: [
     {
       id: "cover",
@@ -153,14 +149,7 @@ const gruberGoal: ProjectReport = {
   id: "gruber-goal",
   name: "Gruber Goal",
   fileLabel: "GRUBER GOAL",
-  identity: {
-    background: "#F5F5F5",
-    ink: "#00303F",
-    inkSoft: "#4A6572",
-    accent: "#A93226",
-    accentBright: "#A93226",
-    rule: "#D9DCDD",
-  },
+  identity: gruberIdentity,
   pages: [
     {
       id: "cover",
@@ -239,7 +228,7 @@ const gruberGoal: ProjectReport = {
         {
           kind: "link",
           label: "Open a live copy of the platform",
-          href: "https://copia-gesta-grubergoal.duckdns.org",
+          href: GRUBER_PLATFORM_URL,
         },
         {
           kind: "figures",
@@ -260,11 +249,4 @@ const gruberGoal: ProjectReport = {
   ],
 };
 
-/** Drawer order: front file first. */
-export const projectReports: readonly ProjectReport[] = [acculReburg, gruberGoal];
-
-export function reportById(id: ProjectId): ProjectReport {
-  const report = projectReports.find((r) => r.id === id);
-  if (!report) throw new Error(`Unknown project id: ${id}`);
-  return report;
-}
+export const en: readonly ProjectReport[] = [acculReburg, gruberGoal];

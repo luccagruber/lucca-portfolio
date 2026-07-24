@@ -41,6 +41,27 @@ export const DESK = {
 } as const;
 
 /**
+ * The card holder on the drawer front (see desk/DrawerLabel). Positioned in
+ * DRAWER-NODE space, so it travels with the drawer: the node origin is the
+ * centre of the drawer box, the box is ~0.42 deep, so its front panel sits
+ * near z = +0.21. The card stands just proud of that panel and low on it,
+ * where a real one is screwed on — above the handle, not over it.
+ */
+export const DRAWER_LABEL = {
+  width: 0.108,
+  height: 0.026,
+  /*
+   * Measured against the render, not derived: the drawer NODE's origin is
+   * not the centre of its visible front panel (the panel is taller than the
+   * box and offset within the pedestal), so these three numbers were tuned
+   * on screen until the card sits centred on the face.
+   */
+  x: -0.076,
+  y: 0.087,
+  z: 0.215,
+} as const;
+
+/**
  * Manila folder body — portrait letter file. Local origin at the
  * bottom-center of the spine, faces +z.
  */

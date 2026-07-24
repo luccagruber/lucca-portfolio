@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, Newsreader } from "next/font/google";
-import { profile } from "@/content/profile";
+import { profile, profileText } from "@/content/profile";
 import "./globals.css";
 
 const inter = Inter({
@@ -28,7 +28,10 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   title: profile.name,
-  description: `${profile.tagline} Portfolio of ${profile.name} — ${profile.location}.`,
+  // Static export: one document is prerendered, so the crawlable
+  // description is the English one. The language switch is a client
+  // preference and does not change what a crawler is served.
+  description: `${profileText.en.tagline} Portfolio of ${profile.name} — ${profile.location}.`,
 };
 
 export const viewport: Viewport = {

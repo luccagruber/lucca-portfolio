@@ -6,6 +6,8 @@ import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR } from "./motion";
 import { useExperience } from "./state/store";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 
 /**
  * The only instruction the scene ever gives: the word, a rail, and a lit
@@ -22,6 +24,7 @@ const RAIL_H = 52;
 const SEG_H = 16;
 
 export function ScrollHint() {
+  const t = ui[useLocale()];
   const drawer = useExperience((s) => s.drawer);
   const viewer = useExperience((s) => s.viewer);
   const about = useExperience((s) => s.about);
@@ -80,10 +83,22 @@ export function ScrollHint() {
     <div
       ref={rootRef}
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3 opacity-0"
+      className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex flex-col items-center gap-2.5 opacity-0"
     >
-      <span className="font-sans text-[10px] font-medium tracking-[0.32em] text-ink-soft">
-        SCROLL
+      {/*
+       * Louder than it was. The first version whispered — a 10px word at
+       * 45% ink — and a real visitor read the page, clicked Contact, and
+       * concluded that the Contact button opens the drawer. The word is
+       * now full ink at readable size, and it says what the scroll DOES,
+       * because "SCROLL" alone answers the wrong question: people who miss
+       * it are not failing to see an instruction, they are failing to
+       * believe there is anything below.
+       */}
+      <span className="font-sans text-[13px] font-semibold tracking-[0.34em] text-ink sm:text-[14px]">
+        {t.scroll}
+      </span>
+      <span className="-mt-1.5 font-sans text-[11px] tracking-[0.06em] text-ink-soft">
+        {t.scrollHelp}
       </span>
       {/* The rail: a faint track the lit segment runs down. */}
       <span

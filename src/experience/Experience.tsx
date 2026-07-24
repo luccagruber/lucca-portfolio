@@ -3,7 +3,9 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { projectReports } from "@/content/projects";
+import { reportsFor } from "@/content/projects";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, SCROLL } from "./motion";
 import { useScrollDirector } from "./hooks/useScrollDirector";
@@ -35,6 +37,7 @@ const VEILED_PHASES = new Set(["opening", "viewing", "closing"]);
  * treatment of the stage, not of any one system inside it.
  */
 export function Experience() {
+  const t = ui[useLocale()];
   useScrollDirector();
   const viewer = useExperience((s) => s.viewer);
   const about = useExperience((s) => s.about);
@@ -84,7 +87,7 @@ export function Experience() {
 
   return (
     <section
-      aria-label="Workspace — the project files"
+      aria-label={t.workspaceLabel}
       className={webglFallback ? "relative bg-stage py-6 sm:py-12" : "relative"}
       style={webglFallback ? undefined : { height: `${SCROLL.stageHeightSvh}svh` }}
     >
@@ -115,11 +118,13 @@ export function Experience() {
 
 /** Static, readable fallback when JavaScript is unavailable. */
 function NoScriptProjects() {
+  const locale = useLocale();
+  const t = ui[locale];
   return (
     <div className="absolute inset-0 overflow-auto bg-stage px-6 py-16">
       <div className="mx-auto max-w-2xl space-y-10">
-        <p className="section-label">Projects</p>
-        {projectReports.map((report) => {
+        <p className="section-label">{t.projects}</p>
+        {reportsFor(locale).map((report) => {
           const cover = report.pages[0];
           const kicker = cover.blocks.find((b) => b.kind === "kicker");
           const lede = cover.blocks.find((b) => b.kind === "lede");
@@ -135,9 +140,7 @@ function NoScriptProjects() {
             </div>
           );
         })}
-        <p className="text-sm text-ink-faint">
-          Enable JavaScript for the interactive workspace.
-        </p>
+        <p className="text-sm text-ink-faint">{t.enableJs}</p>
       </div>
     </div>
   );

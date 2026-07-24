@@ -1,5 +1,9 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { profile } from "@/content/profile";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 
 /**
  * The contact rail: four ways to reach Lucca, side by side, spanning the
@@ -44,10 +48,11 @@ const icons: Record<string, ReactNode> = {
 };
 
 export function ContactRail() {
+  const t = ui[useLocale()];
   return (
     // Transparent on purpose — the page's foot gradient is the background
     // for the rail and the footer together (see page.tsx).
-    <section id="contact" aria-label="Contact">
+    <section id="contact" aria-label={t.contactLabel}>
       <ul className="mx-auto grid max-w-[100rem] grid-cols-2 lg:grid-cols-4">
         {profile.contact.map((entry) => (
           <li

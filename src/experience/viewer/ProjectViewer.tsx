@@ -4,7 +4,9 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { reportById } from "@/content/projects";
-import type { ProjectReport } from "@/content/types";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
+import type { ProjectId, ProjectReport } from "@/content/types";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, EASE, SEQ } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
@@ -29,7 +31,7 @@ export function ProjectViewer() {
   const viewer = useExperience((s) => s.viewer);
   const activeProject = useExperience((s) => s.activeProject);
   if (viewer === "closed" || !activeProject) return null;
-  return <FolderDialog report={reportById(activeProject)} />;
+  return <ProjectViewerBody activeProject={activeProject} />;
 }
 
 /** Local page-flip state: which sheet is mid-air and what sits under it. */
@@ -39,7 +41,18 @@ interface Flip {
   dir: 1 | -1;
 }
 
+/**
+ * Reading the language here rather than in `ProjectViewer` keeps the early
+ * return above free of hooks: the dialog is what needs the words, and it
+ * only exists once a file has been chosen.
+ */
+function ProjectViewerBody({ activeProject }: { activeProject: ProjectId }) {
+  const locale = useLocale();
+  return <FolderDialog report={reportById(activeProject, locale)} />;
+}
+
 function FolderDialog({ report }: { report: ProjectReport }) {
+  const t = ui[useLocale()];
   const viewer = useExperience((s) => s.viewer);
   const storePage = useExperience((s) => s.page);
   const closeProject = useExperience((s) => s.closeProject);
@@ -415,10 +428,10 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     disabled={atFirst || viewer !== "viewing"}
                     onClick={() => nav(current - 1)}
                   >
-                    ← PREV
+                    ← {t.prev}
                   </button>
                   <span className="font-sans text-[9px] tracking-[0.2em] text-tab-ink/60">
-                    PAGE {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+                    {t.page} {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                   </span>
                   <button
                     type="button"
@@ -426,7 +439,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     disabled={atLast || viewer !== "viewing"}
                     onClick={() => nav(current + 1)}
                   >
-                    NEXT →
+                    {t.next} →
                   </button>
                 </div>
 
@@ -481,7 +494,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                       ))}
                     </ol>
                     <p className="mt-3 font-sans text-[8px] tracking-[0.2em] text-tab-ink/45">
-                      FILE: {report.fileLabel} · {String(total).padStart(2, "0")} PAGES
+                      {t.file}: {report.fileLabel} · {String(total).padStart(2, "0")} {t.pages}
                     </p>
                   </div>
                   {/* Shade the page while the cover hangs over it */}
@@ -497,7 +510,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                 <button
                   type="button"
                   onClick={() => closeProject()}
-                  aria-label="Close project file"
+                  aria-label={t.closeProject}
                   className={`absolute -top-[3%] -right-[3%] z-40 grid size-9 place-items-center rounded-full border border-line bg-paper text-lg leading-none text-ink-soft shadow-md transition-[opacity,color] hover:text-ink ${
                     viewer === "viewing" ? "opacity-100" : "pointer-events-none opacity-0"
                   }`}

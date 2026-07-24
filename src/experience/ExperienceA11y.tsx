@@ -1,6 +1,8 @@
 "use client";
 
-import { projectReports } from "@/content/projects";
+import { reportsFor } from "@/content/projects";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { useExperience } from "@/experience/state/store";
 
@@ -13,6 +15,8 @@ const srButton =
  * become visible when focused.
  */
 export function ExperienceA11y() {
+  const locale = useLocale();
+  const t = ui[locale];
   const drawer = useExperience((s) => s.drawer);
   const viewer = useExperience((s) => s.viewer);
   const about = useExperience((s) => s.about);
@@ -24,14 +28,14 @@ export function ExperienceA11y() {
   const announcement = !idle
     ? ""
     : drawer === "open"
-      ? "Projects drawer open. Two project files available."
+      ? t.a11yDrawerOpen
       : "";
 
   return (
     <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-3">
       {idle ? (
         <button type="button" className={srButton} onClick={() => openAbout()}>
-          Turn over the photograph: about Lucca
+          {t.a11yTurnPhoto}
         </button>
       ) : null}
       {drawer === "closed" && idle ? (
@@ -40,18 +44,18 @@ export function ExperienceA11y() {
           className={srButton}
           onClick={() => openDrawer({ instant: prefersReducedMotion() })}
         >
-          Open the projects drawer
+          {t.a11yOpenDrawer}
         </button>
       ) : null}
       {drawer === "open" && idle
-        ? projectReports.map((report) => (
+        ? reportsFor(locale).map((report) => (
             <button
               key={report.id}
               type="button"
               className={srButton}
               onClick={() => selectProject(report.id)}
             >
-              Open project file: {report.name}
+              {t.a11yOpenFile} {report.name}
             </button>
           ))
         : null}

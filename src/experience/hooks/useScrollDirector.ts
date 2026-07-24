@@ -23,13 +23,24 @@ export function useScrollDirector() {
     // having scrolled — not when the drawer was opened another way (e.g.
     // clicking the cabinet) while the page is still at the top.
     let armedClose = false;
+    let lastY = window.scrollY;
 
     const evaluate = (instant = false) => {
       const s = useExperience.getState();
       if (s.webglFallback) return; // scroll triggers are inactive in fallback mode
       if (s.viewer !== "closed") return; // the viewer owns input while open
-      const immediate = instant || prefersReducedMotion();
       const y = window.scrollY;
+      /*
+       * A jump, not a scroll: clicking Contact throws the page most of the
+       * way down the document in one go. Playing the full drawer sequence
+       * underneath that is what made a real visitor conclude the Contact
+       * button opens the drawer — the two happened together, so she read
+       * them as cause and effect. On a jump the drawer simply *is* open by
+       * the time she looks, with no performance attached to the click.
+       */
+      const jumped = Math.abs(y - lastY) > window.innerHeight * 1.2;
+      lastY = y;
+      const immediate = instant || jumped || prefersReducedMotion();
       if (y >= SCROLL.openTriggerPx) armedClose = true;
       if (y >= SCROLL.openTriggerPx && s.drawer === "closed") {
         s.openDrawer({ instant: immediate });

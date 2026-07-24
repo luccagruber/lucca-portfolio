@@ -1,10 +1,14 @@
 "use client";
 
 import { useExperience } from "./state/store";
-import { projectReports } from "@/content/projects";
+import { reportsFor } from "@/content/projects";
+import { ui } from "@/content/ui";
+import { useLocale } from "@/lib/locale";
 import { profile } from "@/content/profile";
 
 export function WebglFallbackWorkspace() {
+  const locale = useLocale();
+  const t = ui[locale];
   const selectProject = useExperience((s) => s.selectProject);
   const openAbout = useExperience((s) => s.openAbout);
 
@@ -29,13 +33,13 @@ export function WebglFallbackWorkspace() {
           onClick={() => openAbout()}
           className="mt-6 rounded-full border border-line bg-paper px-5 py-2 font-sans text-[10px] font-semibold tracking-[0.2em] text-ink-soft uppercase transition-colors hover:text-ink"
         >
-          About Lucca
+          {t.about}
         </button>
       </div>
 
       {/* Grid of Manila Folders */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-2xl justify-center">
-        {projectReports.map((report, index) => {
+        {reportsFor(locale).map((report, index) => {
           const cover = report.pages[0];
           const kicker = cover.blocks.find((b) => b.kind === "kicker");
           const lede = cover.blocks.find((b) => b.kind === "lede");

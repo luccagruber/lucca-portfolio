@@ -27,6 +27,28 @@ export const SCROLL = {
   stageHeightSvh: 180,
 } as const;
 
+/**
+ * The drawer teaching itself. If nobody scrolls, the drawer eases out a
+ * couple of centimetres and settles back — the one object in the scene
+ * that moves, moving. Words on a page can be missed; a heavy thing shifting
+ * on its rails cannot, and it says "this opens" without saying anything.
+ *
+ * Strictly bounded: it starts only from a cold, untouched arrival, plays a
+ * few times, and never again in that visit.
+ */
+export const NUDGE = {
+  /** Quiet time before the first one. */
+  firstDelay: 4.5,
+  /** Quiet time between the rest. */
+  interval: 7,
+  /** How many before it gives up and leaves the visitor alone. */
+  times: 3,
+  /** Slide-out distance — a hint of travel, never a reveal. */
+  distance: 0.022,
+  out: 0.5,
+  back: 0.62,
+} as const;
+
 /** Durations in seconds. */
 export const DUR = {
   // Drawer — a heavy steel box on rails: long glide, bumper kiss at the end.
