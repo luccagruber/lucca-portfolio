@@ -20,8 +20,8 @@ import { useLocale } from "@/lib/locale";
  * the stage — the same language as the desk's click hotspot, so the two
  * pieces of UI in the whole experience look related.
  */
-const RAIL_H = 52;
-const SEG_H = 16;
+const RAIL_H = 40;
+const SEG_H = 14;
 
 export function ScrollHint() {
   const t = ui[useLocale()];
@@ -83,37 +83,47 @@ export function ScrollHint() {
     <div
       ref={rootRef}
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex flex-col items-center gap-2.5 opacity-0"
+      /*
+       * Sitting IN the desk's cast shadow, not on the edge of it. The whole
+       * mark — word, rail and the chevron the segment hands off to — has to
+       * land inside that darker band, and everything is set in light ink
+       * rather than dark. Dark marks on a dark shadow were the reason this
+       * still read as faint after being made bigger.
+       *
+       * Anchored from the TOP as a percentage, not from the bottom in
+       * pixels: the camera is static and the canvas is one viewport tall,
+       * so the shadow always falls across roughly the same band of the
+       * stage — 80% down — while a fixed bottom offset drifts out of it as
+       * the window changes height. That drift is what left the chevron
+       * hanging below the shadow before.
+       *
+       * The light is carried by a paper tone at partial strength rather
+       * than pure white: the hint is one quiet mark in the scene, not a
+       * badge stuck on top of it. A soft dark halo keeps it legible if a
+       * window shape ever puts it half off the shadow.
+       */
+      className="pointer-events-none absolute inset-x-0 top-[81%] z-10 flex flex-col items-center gap-2.5 opacity-0 [text-shadow:0_1px_10px_rgba(28,22,10,0.35)]"
     >
-      {/*
-       * Louder than it was. The first version whispered — a 10px word at
-       * 45% ink — and a real visitor read the page, clicked Contact, and
-       * concluded that the Contact button opens the drawer. The word is
-       * now full ink at readable size, and it says what the scroll DOES,
-       * because "SCROLL" alone answers the wrong question: people who miss
-       * it are not failing to see an instruction, they are failing to
-       * believe there is anything below.
-       */}
-      <span className="font-sans text-[13px] font-semibold tracking-[0.34em] text-ink sm:text-[14px]">
+      <span className="font-sans text-[13px] font-semibold tracking-[0.34em] text-paper/95 sm:text-[14px]">
         {t.scroll}
       </span>
-      <span className="-mt-1.5 font-sans text-[11px] tracking-[0.06em] text-ink-soft">
+      <span className="-mt-1.5 font-sans text-[11px] tracking-[0.06em] text-paper/70">
         {t.scrollHelp}
       </span>
       {/* The rail: a faint track the lit segment runs down. */}
       <span
-        className="relative block w-px overflow-hidden bg-ink/12"
+        className="relative block w-px overflow-hidden bg-paper/25"
         style={{ height: RAIL_H }}
       >
         <span
           ref={segRef}
-          className="absolute inset-x-0 top-0 block bg-ink/70"
+          className="absolute inset-x-0 top-0 block bg-paper/90"
           style={{ height: SEG_H }}
         />
       </span>
       <span
         ref={chevRef}
-        className="block size-[7px] rotate-45 border-r border-b border-ink/70"
+        className="block size-[7px] rotate-45 border-r border-b border-paper/90"
       />
     </div>
   );

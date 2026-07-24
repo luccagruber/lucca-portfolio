@@ -71,22 +71,3 @@ body {
 .section-label {
   @apply font-sans text-[11px] font-semibold tracking-[0.24em] text-ink-faint uppercase;
 }
-
-/* The language pill's rows, arriving as the shape grows (LanguagePill). */
-@keyframes pill-row {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* The pill still changes size — it just stops springing. */
-  [class*="pill-row"] {
-    animation: none !important;
-  }
-}
