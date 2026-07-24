@@ -4,11 +4,14 @@ import type { ProjectId, ProjectReport } from "./types";
  * The two project files that live in the drawer — exactly two, never more
  * (vision). All project copy is edited here, nowhere else.
  *
- * Writing rules (agreed with Lucca, 2026-07-16): each file reads as ONE
- * linear story, short pages, no page that demands effort. Brazilian
- * platforms are always explained for an international reader, never
- * name-dropped. Photos are post-it prints pinned next to the exact claim
- * they prove. No skill lists, no age bragging — the work speaks.
+ * Writing rules (agreed with Lucca; revised 2026-07-24 to match the About
+ * print's new positioning): each file reads as ONE linear story, short
+ * pages, no page that demands effort. The files are not a list of things
+ * shipped — they are what the work taught him, with dates, so the speed is
+ * visible instead of claimed. Dates come from the real git history.
+ * Brazilian platforms are always explained for an international reader,
+ * never name-dropped. Photos are pinned next to the exact claim they
+ * prove. No skill lists, no age bragging — the work speaks.
  */
 
 const acculReburg: ProjectReport = {
@@ -33,14 +36,14 @@ const acculReburg: ProjectReport = {
         { kind: "title", text: "Accul Reburg" },
         {
           kind: "lede",
-          text: "A Chrome extension that lets a project continue in any AI, exactly where it left off. Built from zero, published, and running — by one person.",
+          text: "A Chrome extension that lets a project continue in any AI, exactly where it left off. First working version: 15 June 2026. Five weeks later it had its own backend, encrypted storage, eight languages, and a monitor that tells me when it breaks.",
         },
         {
           kind: "meta",
           rows: [
             { term: "What it is", detail: "Chrome extension + my own backend and encrypted storage" },
             { term: "Works on", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
-            { term: "Status", detail: "Live on the Chrome Web Store, real users testing" },
+            { term: "Status", detail: "Submitted to the Chrome Web Store, awaiting review" },
           ],
         },
       ],
@@ -63,41 +66,13 @@ const acculReburg: ProjectReport = {
       ],
     },
     {
-      id: "solution",
-      label: "HOW IT WORKS",
-      blocks: [
-        {
-          kind: "paragraphs",
-          items: [
-            "Install it once and use AI normally — nothing is asked of you. The extension captures every conversation turn silently, an LLM compresses it into a living snapshot of the project, and the snapshot is stored encrypted in the cloud.",
-            "Ready to switch? Open the extension, pick the project, click continue. The new AI starts already knowing where you left off.",
-          ],
-        },
-        {
-          kind: "figures",
-          items: [
-            {
-              src: "/images/projects/accul-continue.webp",
-              alt: "Accul Reburg continuing a project in another AI",
-              caption: "Continuing a project in a different AI — three clicks",
-            },
-          ],
-        },
-        {
-          kind: "link",
-          label: "View on the Chrome Web Store",
-          href: "https://chromewebstore.google.com/detail/efiokhkpcjkbbfccnfgocflcnkbhjipf",
-        },
-      ],
-    },
-    {
       id: "capture",
       label: "THE HARD PART",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "None of the four platforms offers a way to read what happens inside them. Each one had to be reverse-engineered — and is captured three independent ways at once, on every turn:",
+            "None of the four platforms offers a way to read what happens inside them. Each one had to be reverse-engineered — and every turn is captured three independent ways at once:",
           ],
         },
         {
@@ -120,25 +95,18 @@ const acculReburg: ProjectReport = {
         {
           kind: "paragraphs",
           items: [
-            "The first method to succeed saves the turn. If any method breaks silently, an alert with a specific error code reaches my phone within ten seconds. The platforms change without warning — the system is built to be maintained, not just deployed.",
-          ],
-        },
-      ],
-    },
-    {
-      id: "security",
-      label: "SECURITY",
-      blocks: [
-        {
-          kind: "paragraphs",
-          items: [
-            "People's conversations are sensitive, so the system is designed so that not even I can read them. Every snapshot is encrypted before it is stored; the key exists only on my server — never in the browser, never in the database.",
-            "That server is mine too: a Linux machine I administer myself, running Docker behind automatic HTTPS, monitoring and restarting itself. It runs unattended, at near-zero cost.",
+            "The first method to succeed saves the turn. If all three fail, an alert with a specific error code reaches my phone within ten seconds — because the platforms change without warning, and a thing that fails quietly is worse than a thing that doesn't exist.",
+            "People's conversations are sensitive, so the system is built so that not even I can read them. Every snapshot is encrypted before storage; the key exists only on my server — a Linux machine I administer myself, running unattended at near-zero cost.",
           ],
         },
         {
           kind: "figures",
           items: [
+            {
+              src: "/images/projects/accul-continue.webp",
+              alt: "Accul Reburg continuing a project in another AI",
+              caption: "Continuing a project in a different AI — three clicks",
+            },
             {
               src: "/images/projects/accul-onboarding.webp",
               alt: "Accul Reburg first-run privacy terms",
@@ -149,18 +117,31 @@ const acculReburg: ProjectReport = {
       ],
     },
     {
-      id: "status",
-      label: "STATUS",
+      id: "learned",
+      label: "FIVE WEEKS",
       blocks: [
+        {
+          kind: "meta",
+          rows: [
+            { term: "15 June", detail: "First working version — capture and restore, across four platforms" },
+            { term: "28 June", detail: "Capture and error telemetry rebuilt from zero, after the first one failed silently" },
+            { term: "11 July", detail: "Storage moved on-device; the snapshot prompt written" },
+            { term: "21 July", detail: "Per-user API key dropped — snapshots now run through my own server, encrypted" },
+            { term: "22 July", detail: "Eight languages, rate limiting, and a monitor that tests the extension against itself" },
+            { term: "23 July", detail: "Submitted for review" },
+          ],
+        },
         {
           kind: "paragraphs",
           items: [
-            "Live, with a structured early-user testing program: real users, recorded feedback sessions, and a roadmap shaped by what they say. That feedback is already widening the idea — from AI-to-AI continuity toward making work context portable anywhere it needs to go.",
+            "Most of what changed in those weeks was not code. It was what I thought the product was.",
+            "I gave it to someone who compared it to copy-paste — then said it was far faster than copy-paste, and that it caught things copy-paste can't. He also said the price was too high for where he lives, and told me to stop selling continuity. He was right. What the extension actually keeps is the state of the work: the decisions, the constraints, the next step. That is worth something anywhere it currently can't travel — between tools, between agents, between two people handing a project over.",
+            "The second lesson was about me. One morning my own project was missing from the extension, and I nearly abandoned my own product before anyone else could. Almost everything built after that — the three capture methods, the alerts, the self-testing monitor — exists because of that morning.",
           ],
         },
         {
           kind: "status",
-          text: "Live on the Chrome Web Store · in active development",
+          text: "Submitted to the Chrome Web Store — awaiting review",
           note: "The idea, architecture, product decisions and infrastructure: all mine. Code built with AI assistance.",
         },
       ],
@@ -245,45 +226,20 @@ const gruberGoal: ProjectReport = {
       ],
     },
     {
-      id: "systems",
-      label: "PART III — THE SYSTEMS",
+      id: "platform",
+      label: "PART III — THE NUMBERS",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "A store you can't physically touch has to run on systems, so I built two.",
-            "The operations platform holds the whole business — products, purchases, sales, stock, pricing, finances. Its pricing engine maps every fee tier on both marketplaces (commissions, category rates, weight brackets) and returns the exact break-even and true profit for any price. Most small sellers guess that math and quietly lose margin; here it is computed.",
+            "A store you can't physically touch has to run on something, so I built the platform that holds the whole business: products, purchases, sales, stock, pricing.",
+            "Its pricing engine maps every fee tier on both marketplaces — commissions, category rates, weight brackets — and returns the exact break-even and the true profit for any price. That was the thing worth learning: the number I had been treating as profit wasn't one. The business was leaking margin in a place that stayed invisible until it was computed. Most small sellers guess that math; a lot of them are losing money on their best-selling item and don't know it.",
           ],
         },
         {
           kind: "link",
-          label: "Open the operations platform",
-          href: "#",
-        },
-        {
-          kind: "paragraphs",
-          items: [
-            "The shipping robot exists because the store's platform and Brazil's shipping broker — their version of Sendcloud — were supposed to connect and didn't, with no official fix. Mine watches for the payment-confirmation email, pays and generates the label through the broker's API, and drops everything into a Telegram group with my grandmother: the label to print, the nearest drop-off point, one button to confirm dispatch. If the shipping balance is short, it reports the exact missing amount, waits for the top-up, and resumes on its own.",
-          ],
-        },
-        {
-          kind: "meta",
-          rows: [
-            { term: "Built with", detail: "n8n · shipping API · Telegram bots · email triggers" },
-            { term: "Runs on", detail: "My own self-hosted cloud server — ~€0/month" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "status",
-      label: "STATUS & NEXT",
-      blocks: [
-        {
-          kind: "paragraphs",
-          items: [
-            "The same robot is now being rebuilt for the marketplaces — so the moment something sells, Brazil knows, with everything needed to ship it.",
-          ],
+          label: "Open a live copy of the platform",
+          href: "https://copia-gesta-grubergoal.duckdns.org",
         },
         {
           kind: "figures",
