@@ -17,6 +17,6 @@ ssh oci-server '
   docker build -t lucca-portfolio .
   docker rm -f lucca-portfolio 2>/dev/null || true
   docker run -d --name lucca-portfolio --restart unless-stopped \
-    --network n8n_network lucca-portfolio
+    --network web lucca-portfolio
 '
-echo "Deployed. Site: https://lucca-portifolio.duckdns.org"
+echo "Deployed. Site: https://lucca-portfolio.duckdns.org"
