@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { profile } from "@/content/profile";
@@ -41,7 +41,29 @@ function FrameDialog() {
   const frameRef = useRef<HTMLDivElement>(null);
   const flipperRef = useRef<HTMLDivElement>(null);
   const chromeRef = useRef<HTMLDivElement>(null);
+  const paperRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
+
+  /** True when the paper has no more text below the fold. */
+  const [atPaperEnd, setAtPaperEnd] = useState(true);
+
+  const syncPaperCue = useCallback(() => {
+    const paper = paperRef.current;
+    if (!paper) return;
+    setAtPaperEnd(paper.scrollTop + paper.clientHeight >= paper.scrollHeight - 2);
+  }, []);
+
+  // The cue answers the paper, not the window: it is hidden when the whole
+  // piece already fits and once the end is reached, and the ResizeObserver
+  // keeps that true when the window changes shape mid-read.
+  useEffect(() => {
+    const paper = paperRef.current;
+    if (!paper) return;
+    syncPaperCue();
+    const observer = new ResizeObserver(syncPaperCue);
+    observer.observe(paper);
+    return () => observer.disconnect();
+  }, [syncPaperCue]);
 
   // Capture focus for the dialog's lifetime; give it back on close.
   useEffect(() => {
@@ -182,8 +204,21 @@ function FrameDialog() {
               ref={frameRef}
               tabIndex={-1}
               onClick={(e) => e.stopPropagation()}
-              className="relative h-(--fh) outline-none [--fh:min(34rem,76svh)] [perspective:1600px]"
-              style={{ width: `calc(var(--fh) * ${ASPECT})` }}
+              className="relative h-(--fh) outline-none [perspective:1600px]"
+              /*
+               * The print settles larger than it stands on the desk — a
+               * photograph you are handed comes to your face, and the back
+               * has to be read, not squinted at. Three limits, whichever
+               * binds first: a ceiling in rem, the window's height, and
+               * the window's WIDTH (via the portrait aspect) so a phone
+               * never computes a print wider than its own screen.
+               */
+              style={
+                {
+                  "--fh": `min(46rem, 88svh, calc(92vw / ${ASPECT}))`,
+                  width: `calc(var(--fh) * ${ASPECT})`,
+                } as React.CSSProperties
+              }
             >
               <div
                 ref={flipperRef}
@@ -201,26 +236,57 @@ function FrameDialog() {
 
                 {/* ——— Back: where you write who you are ——— */}
                 <div className="absolute inset-0 rotate-y-180 rounded-[4px] bg-[#26262A] p-[4%] shadow-[0_50px_100px_-24px_rgba(28,22,10,0.6)] [backface-visibility:hidden]">
-                  <div className="flex size-full flex-col overflow-y-auto rounded-[1px] bg-photo-back px-[9%] py-[8%] text-left">
-                    <p className="font-sans text-[10px] tracking-[0.24em] text-tab-ink/50">
-                      ABOUT
-                    </p>
-                    {/* The lede breaks where profile.ts writes the break,
-                        never where the column runs out. */}
-                    <p className="mt-5 font-serif text-[clamp(1rem,2.4svh,1.35rem)] leading-snug whitespace-pre-line text-tab-ink">
-                      {lede}
-                    </p>
-                    <div className="mt-5 h-px shrink-0 bg-tab-ink/15" />
-                    <div className="mt-5 space-y-4">
-                      {rest.map((paragraph, i) => (
-                        <p
-                          key={i}
-                          className="font-serif text-[clamp(0.82rem,1.75svh,1rem)] leading-relaxed text-tab-ink/80"
-                        >
-                          {paragraph}
-                        </p>
-                      ))}
+                  {/* The paper. `overflow-hidden` so the fade cue below can
+                      sit on its bottom edge without leaving the print. */}
+                  <div className="relative size-full overflow-hidden rounded-[1px] bg-photo-back">
+                    <div
+                      ref={paperRef}
+                      onScroll={syncPaperCue}
+                      /*
+                       * Every measurement on this paper is in `em`, and the
+                       * em is a fraction of the print's own height — so the
+                       * writing scales with the photograph instead of with
+                       * the browser, and the line length stays the same
+                       * ~70 characters at every window size. The clamp
+                       * stops it going unreadably small on a phone or
+                       * absurdly large on a 4K monitor.
+                       */
+                      className="flex size-full flex-col overflow-y-auto px-[8%] py-[7%] text-left"
+                      style={{ fontSize: "clamp(12.5px, calc(var(--fh) * 0.019), 17px)" }}
+                    >
+                      <p className="font-sans text-[0.66em] tracking-[0.24em] text-tab-ink/50">
+                        ABOUT
+                      </p>
+                      {/* The lede breaks where profile.ts writes the break,
+                          never where the column runs out. */}
+                      <p className="mt-[1.6em] font-serif text-[1.24em] leading-snug whitespace-pre-line text-tab-ink">
+                        {lede}
+                      </p>
+                      <div className="mt-[1.5em] h-px shrink-0 bg-tab-ink/15" />
+                      <div className="mt-[1.5em] space-y-[1.1em] pb-[0.5em]">
+                        {rest.map((paragraph, i) => (
+                          <p
+                            key={i}
+                            className="font-serif text-[1em] leading-[1.62] text-tab-ink/80"
+                          >
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                     </div>
+                    {/*
+                     * The cue. On a short window the last paragraph sits
+                     * below the fold, and the line the whole piece rests on
+                     * is the last one — so the paper must visibly continue.
+                     * It fades out the moment the end is reached, and never
+                     * appears at all when everything already fits.
+                     */}
+                    <div
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-photo-back via-photo-back/80 to-transparent transition-opacity duration-300 ${
+                        atPaperEnd ? "opacity-0" : "opacity-100"
+                      }`}
+                    />
                   </div>
                 </div>
               </div>

@@ -3,8 +3,13 @@
  * nameplate. Edit copy here, not in components.
  *
  * `about` is read on the back of the picture frame (AboutViewer): the first
- * entry is the lede above the rule, the rest is the body under it. Keep it
- * short enough to sit in a portrait print without scrolling.
+ * entry is the lede above the rule, the rest is the body under it.
+ *
+ * This text is the site's centre of gravity — the positioning, written by
+ * Lucca, word for word (2026-07-24). The print is sized around it, not the
+ * other way round: the back grows on the turn until the piece reads
+ * comfortably, and the tail scrolls on short windows. Do not trim it to
+ * fit a box. Punctuation is deliberate, including the parenthetical aside.
  *
  * Line breaks inside an entry are honoured (the viewer sets
  * `whitespace-pre-line`), so the lede's two lines always break where they
@@ -16,12 +21,13 @@ export const profile = {
   /** Engraved on the desk nameplate. */
   nameplate: "LUCCA GRUBER RODRIGUES",
   location: "Rijswijk, Netherlands",
-  tagline: "You have a problem. I can probably solve it.",
+  tagline: "If you run something real – any size – and you'd let me look over your shoulder: get in touch.",
   about: [
     "Lucca Gruber Rodrigues,\n16 years old.",
-    "Full availability, high adaptability, and a genuine appetite for the work.",
-    "The approach is simple: listen properly, understand what you need, deliver without overcomplicating it, and be honest about limits. Whatever gets taken on, gets done properly. Fast learner — in the real sense of the phrase, what gets learned along the way gets applied immediately.",
-    "If that's what you're looking for — get in touch.",
+    "I'm not here to sell you a service. I'm here to understand how a real business actually works – how it's structured, how its parts hand work to each other, the heaviest problems, where the money goes and why the decisions were made this way and not another. From the inside. From people who run one.",
+    "I'm available, I'm genuinely strong with technology, and I connect things fast – that's my one real talent – with inexhaustible energy, what I learn on Monday tends to be useful to you by Friday, usually as time, money or effort you (or your team maybe) stop spending. I've built and run a business of my own across two continents; there's a file on it in the drawer.",
+    "I'm sixteen and I say it first, before anyone has to point it out. I'm not a professional yet and I'm not going to perform being one. I'll ask obvious questions, and there will be things I get wrong, (completely). What I do have is that I keep my word, I'm direct, I can sit in an uncomfortable conversation without flinching. The rest I want to be taught.",
+    "If you run something real – any size – and you'd let me look over your shoulder: get in touch.",
   ],
   contact: [
     { label: "Email", value: "luccagruber1@gmail.com", href: "mailto:luccagruber1@gmail.com" },
