@@ -3,9 +3,9 @@ import { GRUBER_PLATFORM_URL, acculIdentity, gruberIdentity } from "./identity";
 
 /**
  * The two project files that live in the drawer, in English — exactly two,
- * never more (vision). This file is the original; `pt.ts` and `nl.ts` are
- * translations of it and must keep the same pages, in the same order, with
- * the same figures. Change the story here first.
+ * never more (vision). This file is the original; `pt.ts` is a translation
+ * of it and must keep the same pages, in the same order, with the same
+ * figures. Change the story here first.
  *
  * Writing rules (agreed with Lucca; revised 2026-07-24 to match the About
  * print's new positioning): each file reads as ONE linear story, short

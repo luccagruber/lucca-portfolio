@@ -2,7 +2,6 @@ import type { Locale } from "@/lib/locale";
 import type { ProjectId, ProjectReport } from "../types";
 import { en } from "./en";
 import { pt } from "./pt";
-import { nl } from "./nl";
 
 /**
  * The drawer's two files, in every language. Every locale carries the same
@@ -10,7 +9,7 @@ import { nl } from "./nl";
  * folders and anchors from that structure, so it must not vary by language.
  * Only the words change.
  */
-export const projectsByLocale: Record<Locale, readonly ProjectReport[]> = { en, pt, nl };
+export const projectsByLocale: Record<Locale, readonly ProjectReport[]> = { en, pt };
 
 /**
  * Structure only — order, ids, folder tab labels. Anything that reads

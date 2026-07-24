@@ -6,8 +6,8 @@ import type { Locale } from "@/lib/locale";
  * keep in one table, so a missing translation is visible at a glance.
  *
  * Brand names are never in here: Email, WhatsApp, LinkedIn and GitHub read
- * the same in all three languages, and translating "Email" to "E-mail"
- * would be a difference nobody needs.
+ * the same in both languages, and translating "Email" to "E-mail" would be
+ * a difference nobody needs.
  */
 export interface UiStrings {
   /** The one instruction the scene gives. */
@@ -105,34 +105,5 @@ export const ui: Record<Locale, UiStrings> = {
     models: "Modelos 3D (CC BY 4.0):",
     projects: "Projetos",
     enableJs: "Ative o JavaScript para a experiência interativa.",
-  },
-
-  nl: {
-    scroll: "SCROLL",
-    scrollHelp: "om de la te openen",
-    drawerLabel: "PROJECTEN",
-    contact: "Contact",
-    about: "OVER MIJ",
-    page: "PAGINA",
-    pages: "PAGINA'S",
-    file: "DOSSIER",
-    next: "VOLGENDE",
-    prev: "VORIGE",
-    closeProject: "Projectdossier sluiten",
-    closeAbout: "Over mij sluiten",
-    a11yTurnPhoto: "Draai de foto om: over Lucca",
-    a11yOpenDrawer: "Open de projectenla",
-    a11yOpenFile: "Open projectdossier:",
-    a11yDrawerOpen: "Projectenla open. Twee projectdossiers beschikbaar.",
-    workspaceLabel: "Werkplek — de projectdossiers",
-    contactLabel: "Contact",
-    language: "Taal",
-    colophon: "Deze site is ook een project — ontworpen en vanaf nul gebouwd door",
-    noTemplates: "Geen templates.",
-    sourceOnGitHub: "Broncode op GitHub",
-    backToTop: "TERUG NAAR BOVEN",
-    models: "3D-modellen (CC BY 4.0):",
-    projects: "Projecten",
-    enableJs: "Zet JavaScript aan voor de interactieve werkplek.",
   },
 };

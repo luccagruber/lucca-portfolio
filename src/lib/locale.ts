@@ -3,15 +3,22 @@
 import { create } from "zustand";
 
 /**
- * The site's language. Three, and each one is named in its own language —
- * a Dutch visitor looks for "Nederlands", never for "Dutch".
+ * The site's language. Each one is named in its own language — a Brazilian
+ * looks for "Português", never for "Portuguese".
+ *
+ * Dutch was built and then removed (Lucca, 2026-07-24): he does not speak
+ * it fluently enough to stand behind the writing, and the About print is a
+ * claim about who he is. A language you cannot vouch for is worse than one
+ * you do not offer. Adding a locale back is: a key here, a block in
+ * `content/ui.ts`, an entry in `profileText`, and a file in
+ * `content/projects/`.
  *
  * Deliberately its own tiny store rather than part of the experience
  * machine: language is a preference that outlives a visit, the drawer and
  * the viewer are a session. Nothing in the scene should be able to reset
  * it, and it should not re-render the machine when it changes.
  */
-export const LOCALES = ["en", "pt", "nl"] as const;
+export const LOCALES = ["en", "pt"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -19,14 +26,12 @@ export type Locale = (typeof LOCALES)[number];
 export const LOCALE_NAMES: Record<Locale, string> = {
   en: "English",
   pt: "Português",
-  nl: "Nederlands",
 };
 
 /** What goes in <html lang>, which is not always the locale key. */
 const HTML_LANG: Record<Locale, string> = {
   en: "en",
   pt: "pt-BR",
-  nl: "nl",
 };
 
 const STORAGE_KEY = "lucca-locale";

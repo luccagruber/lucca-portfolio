@@ -8,8 +8,8 @@ import type { Locale } from "@/lib/locale";
  * entry is the lede above the rule, the rest is the body under it.
  *
  * This text is the site's centre of gravity — the positioning. The English
- * is Lucca's own, word for word (2026-07-24); Português and Nederlands are
- * translations of it, and they are translations of the *tone* first: the
+ * is Lucca's own, word for word (2026-07-24); the Português is a
+ * translation of it, and it is a translation of the *tone* first: the
  * exchange stays implicit, nothing is explained, and the humility does the
  * work the boasting would have done badly. The print is sized around this
  * writing, not the other way round — do not trim it to fit a box.
@@ -79,18 +79,6 @@ export const profileText: Record<Locale, ProfileText> = {
       "Tenho disponibilidade, sou realmente forte em tecnologia, e conecto as coisas rápido – esse é o meu único talento de verdade – com energia inesgotável, o que eu aprendo na segunda costuma te ser útil na sexta, normalmente como tempo, dinheiro ou esforço que você (ou o seu time, talvez) deixa de gastar. Já construí e toquei um negócio meu entre dois continentes; tem um arquivo sobre ele na gaveta.",
       "Tenho dezesseis anos e falo isso primeiro, antes que alguém precise apontar. Ainda não sou um profissional e não vou fingir que sou. Vou fazer perguntas óbvias, e vai ter coisa que eu vou errar, (completamente). O que eu tenho é que eu cumpro a minha palavra, sou direto, consigo ficar numa conversa desconfortável sem me abalar. O resto, eu quero que me ensinem.",
       "Se você toca algo de verdade – de qualquer tamanho – e me deixaria olhar por cima do seu ombro: me chama.",
-    ],
-  },
-
-  nl: {
-    tagline:
-      "Run je iets echts – welke omvang dan ook – en zou je me over je schouder laten meekijken: neem contact op.",
-    about: [
-      "Lucca Gruber Rodrigues,\n16 jaar.",
-      "Ik ben hier niet om je een dienst te verkopen. Ik ben hier om te begrijpen hoe een echt bedrijf werkelijk werkt – hoe het in elkaar zit, hoe de onderdelen werk aan elkaar doorgeven, de zwaarste problemen, waar het geld heen gaat en waarom de beslissingen zó zijn genomen en niet anders. Van binnenuit. Van mensen die er zelf een runnen.",
-      "Ik ben beschikbaar, ik ben echt sterk met technologie, en ik leg snel verbanden – dat is mijn enige echte talent – met onuitputtelijke energie, wat ik op maandag leer is op vrijdag meestal al nuttig voor jou, meestal als tijd, geld of moeite die jij (of je team misschien) niet meer kwijt bent. Ik heb zelf een bedrijf opgebouwd en gerund over twee continenten; daar ligt een dossier over in de la.",
-      "Ik ben zestien en ik zeg het zelf, voordat iemand het hoeft op te merken. Ik ben nog geen professional en ik ga er ook geen spelen. Ik zal voor de hand liggende vragen stellen, en er zullen dingen zijn die ik fout doe, (helemaal). Wat ik wél heb: ik houd me aan mijn woord, ik ben direct, ik kan een ongemakkelijk gesprek voeren zonder te wijken. De rest mag je me leren.",
-      "Run je iets echts – welke omvang dan ook – en zou je me over je schouder laten meekijken: neem contact op.",
     ],
   },
 };
