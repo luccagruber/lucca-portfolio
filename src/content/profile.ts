@@ -30,8 +30,23 @@ export const profile = {
     "If you run something real – any size – and you'd let me look over your shoulder: get in touch.",
   ],
   contact: [
-    { label: "Email", value: "luccagruber1@gmail.com", href: "mailto:luccagruber1@gmail.com" },
-    { label: "WhatsApp", value: "wa.me/310631085489", href: "https://wa.me/310631085489" },
+    /*
+     * `print` is the one thing on a cell people need to TAKE rather than
+     * follow — it is printed under the label as real, selectable text.
+     * Only the two that get copied into a phone or an address bar have it.
+     */
+    {
+      label: "Email",
+      value: "luccagruber1@gmail.com",
+      href: "mailto:luccagruber1@gmail.com",
+      print: "luccagruber1@gmail.com",
+    },
+    {
+      label: "WhatsApp",
+      value: "wa.me/310631085489",
+      href: "https://wa.me/310631085489",
+      print: "+31 6 31085489",
+    },
     { label: "LinkedIn", value: "linkedin.com/in/luccagruber1", href: "https://www.linkedin.com/in/luccagruber1/" },
     { label: "GitHub", value: "github.com/luccagruber", href: "https://github.com/luccagruber" },
   ],

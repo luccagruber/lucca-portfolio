@@ -9,10 +9,11 @@ import { profile } from "@/content/profile";
  * the clickable label, and the whole cell is the link. Icons are inline
  * SVGs (no icon dependency).
  *
- * Email is the one exception: its address is printed under the label and
- * is real selectable text, because an address is something people copy
- * elsewhere, not something they follow. The other three keep their URLs
- * hidden — nobody types a linkedin.com/in/… by hand.
+ * Email and WhatsApp are the exceptions: the address and the phone number
+ * are printed under the label as real selectable text, because both are
+ * things people copy elsewhere — into a mail client, into a phone —
+ * rather than follow. LinkedIn and GitHub keep their URLs hidden; nobody
+ * types a linkedin.com/in/… by hand.
  */
 
 const icons: Record<string, ReactNode> = {
@@ -84,12 +85,12 @@ export function ContactRail() {
              * cell taller than its neighbours and knock the four labels
              * out of alignment. One click takes the whole address.
              */}
-            {entry.label === "Email" ? (
+            {"print" in entry && entry.print ? (
               <span className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center sm:bottom-7">
                 {/* Only the glyphs take the pointer — everywhere else in
                     the cell stays a link, like the other three. */}
                 <span className="pointer-events-auto cursor-text font-sans text-[13px] tracking-[0.02em] text-cocoa/70 transition-colors duration-200 select-all hover:text-cocoa sm:text-sm">
-                  {entry.value}
+                  {entry.print}
                 </span>
               </span>
             ) : null}
