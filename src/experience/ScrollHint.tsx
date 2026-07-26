@@ -62,14 +62,25 @@ export function ScrollHint() {
        * pixels: the camera is static and the canvas is one viewport tall,
        * so the mark always lands on the same band of the stage, while a
        * fixed bottom offset drifts as the window changes height.
+       *
+       * Low on the stage in both shapes (user, 2026-07-26).
        */
-      className="pointer-events-none absolute inset-x-0 top-[78%] z-10 flex justify-center opacity-0 sm:top-[81%]"
+      className="pointer-events-none absolute inset-x-0 top-[84%] z-10 flex justify-center opacity-0 sm:top-[86%]"
     >
-      <span className="flex flex-col items-center gap-1 rounded-full bg-[rgba(28,22,10,0.42)] px-5 py-2.5 backdrop-blur-[2px]">
-        <span className="font-sans text-[13px] font-semibold tracking-[0.34em] text-paper/95 sm:text-[14px]">
+      {/*
+       * The plate carries its own light hairline. On a phone it lands on
+       * wood and a dark plate alone is plenty; on the wide shot it lands
+       * across the desk's cast shadow, where dark-on-dark left it hard to
+       * pick out and the blur had no texture to work with. The ring gives
+       * it an edge against ANY background rather than tuning the position
+       * against where a shadow happens to fall, which changes with the
+       * window's shape anyway.
+       */}
+      <span className="flex flex-col items-center gap-1 rounded-full bg-[rgba(24,18,8,0.62)] px-6 py-3 ring-1 ring-paper/20 shadow-[0_10px_30px_-12px_rgba(28,22,10,0.75)] backdrop-blur-[3px]">
+        <span className="font-sans text-[13px] font-semibold tracking-[0.34em] text-paper sm:text-[14px]">
           {t.scroll}
         </span>
-        <span className="font-sans text-[11px] tracking-[0.06em] text-paper/80">
+        <span className="font-sans text-[11px] tracking-[0.06em] text-paper/85">
           {t.scrollHelp}
         </span>
       </span>

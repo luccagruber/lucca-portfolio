@@ -27,13 +27,14 @@ const acculReburg: ProjectReport = {
         { kind: "title", text: "Accul Reburg" },
         {
           kind: "lede",
-          text: "Uma extensão do Chrome que deixa um projeto continuar em qualquer IA, exatamente de onde parou. Primeira versão funcionando: 15 de junho de 2026. Cinco semanas depois já tinha backend próprio, armazenamento criptografado, oito idiomas e um monitor que me avisa quando quebra.",
+          text: "Uma extensão do Chrome que deixa um projeto continuar em qualquer IA, exatamente de onde parou. Primeira versão funcionando: 15 de junho de 2026. Cinco semanas depois já tinha sido reconstruída do zero uma vez — de produto na nuvem para produto no dispositivo — e saiu em oito idiomas, com um monitor que me avisa quando quebra.",
         },
         {
           kind: "meta",
           rows: [
-            { term: "O que é", detail: "Extensão do Chrome + backend e armazenamento criptografado meus" },
+            { term: "O que é", detail: "Extensão do Chrome; os projetos ficam no seu próprio dispositivo" },
             { term: "Funciona em", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
+            { term: "Roda em", detail: "Um servidor que eu construí e administro, que guarda a chave da IA" },
             { term: "Situação", detail: "Enviada para a Chrome Web Store, aguardando aprovação" },
           ],
         },
@@ -87,7 +88,7 @@ const acculReburg: ProjectReport = {
           kind: "paragraphs",
           items: [
             "O primeiro método que der certo salva o turno. Se os três falharem, um alerta com um código de erro específico chega no meu celular em dez segundos — porque as plataformas mudam sem avisar, e uma coisa que falha em silêncio é pior do que uma coisa que não existe.",
-            "As conversas das pessoas são sensíveis, então o sistema foi feito de um jeito que nem eu consigo lê-las. Cada snapshot é criptografado antes de ser guardado; a chave existe só no meu servidor — uma máquina Linux que eu mesmo administro, rodando sozinha a um custo perto de zero.",
+            "As conversas das pessoas são sensíveis, então a extensão guarda o mínimo possível delas: cada projeto vive no próprio dispositivo do usuário, sem conta e sem cadastro. A única coisa que sai do navegador é o turno que está sendo resumido, e ele passa por um servidor que eu mesmo construí e administro — uma máquina Linux rodando sozinha a um custo perto de zero — que guarda a chave da IA e não armazena nada.",
           ],
         },
         {
@@ -116,8 +117,8 @@ const acculReburg: ProjectReport = {
           rows: [
             { term: "15 de junho", detail: "Primeira versão funcionando — captura e restauração, nas quatro plataformas" },
             { term: "28 de junho", detail: "Captura e telemetria de erros refeitas do zero, depois que a primeira falhou em silêncio" },
-            { term: "11 de julho", detail: "Armazenamento passa para o dispositivo; o prompt do snapshot é escrito" },
-            { term: "21 de julho", detail: "Chave de API por usuário eliminada — os snapshots agora passam pelo meu servidor, criptografados" },
+            { term: "11 de julho", detail: "Reconstruída: fora a nuvem e as contas, cada projeto vai para o dispositivo do usuário" },
+            { term: "21 de julho", detail: "A chave de IA por usuário também cai — quem guarda é o meu servidor, então funciona ao instalar" },
             { term: "22 de julho", detail: "Oito idiomas, limite de requisições e um monitor que testa a extensão contra ela mesma" },
             { term: "23 de julho", detail: "Enviada para revisão" },
           ],
@@ -126,6 +127,7 @@ const acculReburg: ProjectReport = {
           kind: "paragraphs",
           items: [
             "A maior parte do que mudou nessas semanas não foi código. Foi o que eu achava que o produto era.",
+            "A maior reconstrução foi invisível. No primeiro mês isso era um produto na nuvem: você criava uma conta, e cada snapshot ficava criptografado em repouso no meu banco. Funcionava. E mesmo assim era o formato errado — o trabalho inacabado de alguém é sobre a coisa mais privada que existe, e a resposta honesta não era criptografar melhor, era nunca segurar. No dia 11 de julho eu movi cada projeto para o dispositivo do próprio usuário. A minha primeira versão disso pedia que cada pessoa colocasse a própria chave de IA; dez dias depois eu tirei, porque era um muro na frente de uma coisa que devia simplesmente funcionar. Hoje quem guarda a chave é o meu servidor, e ele só enxerga o turno que está resumindo.",
             "Dei a extensão para uma pessoa que comparou com copiar e colar — e aí disse que era muito mais rápido que copiar e colar, e que pegava coisas que copiar e colar não pega. Também disse que o preço era alto para onde ele mora, e me mandou parar de vender continuidade. Ele estava certo. O que a extensão guarda de verdade é o estado do trabalho: as decisões, as restrições, o próximo passo. E isso vale alguma coisa em todo lugar onde hoje esse estado não consegue viajar — entre ferramentas, entre agentes, entre duas pessoas passando um projeto adiante.",
             "A segunda lição foi sobre mim. Numa manhã o meu próprio projeto não estava lá na extensão, e eu quase abandonei o meu próprio produto antes de qualquer outra pessoa. Quase tudo que foi construído depois disso — os três métodos de captura, os alertas, o monitor que se testa sozinho — existe por causa daquela manhã.",
           ],

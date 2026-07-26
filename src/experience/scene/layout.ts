@@ -55,21 +55,41 @@ export const PEDESTAL_X = 0.5;
  * near z = +0.21. The card stands just proud of that panel and low on it,
  * where a real one is screwed on — above the handle, not over it.
  */
+/**
+ * The card holder on the drawer front (see desk/DrawerLabel).
+ *
+ * These are read off the GLB's actual vertices, not tuned against a
+ * render. In DRAWER-NODE space the drawer's front panel is a flat quad at
+ * **z = 0** spanning x ±0.1968 and y ±0.0785, and the pull handle is the
+ * only thing that stands proud of it: it reaches z = 0.021 across
+ * x ±0.09, between y = 0.05 and y = 0.06.
+ *
+ * Everything here follows from that:
+ *
+ * - `x = 0` — the panel's true centre, which is also the handle's centre,
+ *   so card and handle share one axis.
+ * - `y` — dead centre of the space BELOW the handle (the panel's bottom
+ *   edge is -0.0785, the handle's underside is 0.05), so the card is
+ *   neither tucked under the grip nor sliding into the cabinet door.
+ * - `z = 0.002` — half the holder's 4 mm depth, which puts its BACK face
+ *   flush on the panel. It used to be 0.215, floating the card nearly
+ *   20 cm in front of the drawer; standing still that read as a decal,
+ *   but the moment the drawer slid the parallax gave it away and the card
+ *   appeared to fly on its own (user, 2026-07-26).
+ */
 export const DRAWER_LABEL = {
-  width: 0.108,
-  height: 0.026,
   /*
-   * x is 0 because the drawer node's origin IS the horizontal centre of
-   * its front panel. It carried a -0.076 nudge for a long time, annotated
-   * as "measured against the render" — it was not: it parked the card a
-   * fifth of the panel's width to the left, which is exactly what it
-   * looked like (user, 2026-07-26). y and z are the real measurements:
-   * low on the face where a card holder is actually screwed on, just
-   * proud of the panel.
+   * Sized against the handle above it (0.18 wide), which is the only
+   * other feature on the panel. The card was drawn when it was floating
+   * far in front of the drawer and looked big for the wrong reason;
+   * standing on the panel at true depth it needed the extra millimetres
+   * to stay a sign rather than a sticker.
    */
+  width: 0.138,
+  height: 0.033,
   x: 0,
-  y: 0.087,
-  z: 0.215,
+  y: -0.014,
+  z: 0.002,
 } as const;
 
 /**
@@ -178,12 +198,14 @@ export const PROP_ARRANGEMENTS: Record<"landscape" | "portrait", PropArrangement
     cup: { position: [0.55, 0, -0.14], rotY: 0 },
   },
   portrait: {
-    // Left of the pedestal's centre line, standing back on the desk so the
-    // hotspot above it has clear air.
-    frame: { position: [PEDESTAL_X - 0.115, 0, -0.11], rotY: 0.26 },
-    // Right of it, nearer the front edge — the two never share a line.
-    notebook: { position: [PEDESTAL_X + 0.105, 0, 0.03], rotY: -0.24 },
-    glasses: { position: [PEDESTAL_X + 0.1, 0.013, 0.02], rotY: 0.5 },
+    // Left of the pedestal's centre line and the nearest thing to the
+    // desk's front edge — closer to it than the notebook (user,
+    // 2026-07-26). It is the one prop that is also a door, so it stands
+    // where a photograph you are meant to pick up would stand.
+    frame: { position: [PEDESTAL_X - 0.115, 0, 0.12], rotY: 0.26 },
+    // Right of it and further back — the two never share a line.
+    notebook: { position: [PEDESTAL_X + 0.105, 0, 0.0], rotY: -0.24 },
+    glasses: { position: [PEDESTAL_X + 0.1, 0.013, -0.01], rotY: 0.5 },
   },
 };
 

@@ -32,13 +32,14 @@ const acculReburg: ProjectReport = {
         { kind: "title", text: "Accul Reburg" },
         {
           kind: "lede",
-          text: "A Chrome extension that lets a project continue in any AI, exactly where it left off. First working version: 15 June 2026. Five weeks later it had its own backend, encrypted storage, eight languages, and a monitor that tells me when it breaks.",
+          text: "A Chrome extension that lets a project continue in any AI, exactly where it left off. First working version: 15 June 2026. Five weeks later it had been rebuilt once from the ground up — from a cloud product into an on-device one — and shipped in eight languages with a monitor that tells me when it breaks.",
         },
         {
           kind: "meta",
           rows: [
-            { term: "What it is", detail: "Chrome extension + my own backend and encrypted storage" },
+            { term: "What it is", detail: "Chrome extension; projects stay on your own device" },
             { term: "Works on", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
+            { term: "Runs on", detail: "A server I built and administer, which holds the AI key" },
             { term: "Status", detail: "Submitted to the Chrome Web Store, awaiting review" },
           ],
         },
@@ -92,7 +93,7 @@ const acculReburg: ProjectReport = {
           kind: "paragraphs",
           items: [
             "The first method to succeed saves the turn. If all three fail, an alert with a specific error code reaches my phone within ten seconds — because the platforms change without warning, and a thing that fails quietly is worse than a thing that doesn't exist.",
-            "People's conversations are sensitive, so the system is built so that not even I can read them. Every snapshot is encrypted before storage; the key exists only on my server — a Linux machine I administer myself, running unattended at near-zero cost.",
+            "People's conversations are sensitive, so the extension holds as little of them as it can: every project lives on the user's own device, with no account and nothing to sign up for. The only thing that ever leaves the browser is the single turn being summarised, and it passes through a server I built and administer myself — a Linux machine running unattended at near-zero cost — which holds the AI key and stores nothing.",
           ],
         },
         {
@@ -121,8 +122,8 @@ const acculReburg: ProjectReport = {
           rows: [
             { term: "15 June", detail: "First working version — capture and restore, across four platforms" },
             { term: "28 June", detail: "Capture and error telemetry rebuilt from zero, after the first one failed silently" },
-            { term: "11 July", detail: "Storage moved on-device; the snapshot prompt written" },
-            { term: "21 July", detail: "Per-user API key dropped — snapshots now run through my own server, encrypted" },
+            { term: "11 July", detail: "Rebuilt: the cloud and the accounts out, every project onto the user's own device" },
+            { term: "21 July", detail: "The per-user AI key dropped too — my server holds it, so it works on install" },
             { term: "22 July", detail: "Eight languages, rate limiting, and a monitor that tests the extension against itself" },
             { term: "23 July", detail: "Submitted for review" },
           ],
@@ -131,6 +132,7 @@ const acculReburg: ProjectReport = {
           kind: "paragraphs",
           items: [
             "Most of what changed in those weeks was not code. It was what I thought the product was.",
+            "The biggest rebuild was invisible. For the first month this was a cloud product: you made an account, and every snapshot sat encrypted at rest in my database. It worked. It was also the wrong shape — someone's unfinished work is about the most private thing they have, and the honest answer was not to encrypt it better, it was to never hold it. On 11 July I moved every project onto the user's own device. My first version of that asked each person for their own AI key; I dropped it ten days later, because it was a wall in front of something that should just work. My server holds the key now and sees only the one turn it is summarising.",
             "I gave it to someone who compared it to copy-paste — then said it was far faster than copy-paste, and that it caught things copy-paste can't. He also said the price was too high for where he lives, and told me to stop selling continuity. He was right. What the extension actually keeps is the state of the work: the decisions, the constraints, the next step. That is worth something anywhere it currently can't travel — between tools, between agents, between two people handing a project over.",
             "The second lesson was about me. One morning my own project was missing from the extension, and I nearly abandoned my own product before anyone else could. Almost everything built after that — the three capture methods, the alerts, the self-testing monitor — exists because of that morning.",
           ],
