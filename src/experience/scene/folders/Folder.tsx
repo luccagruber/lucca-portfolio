@@ -13,7 +13,6 @@ import { DUR, EASE } from "@/experience/motion";
 import { folderPhaseFor, useExperience } from "@/experience/state/store";
 import {
   APEX,
-  CAMERA,
   FOLDER,
   FOLDER_FULL_H,
   FOLDER_POSE,
@@ -122,7 +121,10 @@ export function Folder({ report, slot }: { report: ProjectReport; slot: FolderSl
           .addScaledVector(folderUp, -FOLDER_FULL_H / 2);
         const local = anchor.worldToLocal(worldTarget.clone());
         // World-rotation targets, expressed against the anchor's pose.
-        const targetRotX = CAMERA.pitch - FOLDER_POSE.revealed.rotX;
+        // Read the pitch off the camera rather than the constant: it is
+        // steeper on a portrait viewport, and a folder that lands square
+        // to the desktop pitch would hand the DOM a quad it does not fill.
+        const targetRotX = camera.rotation.x - FOLDER_POSE.revealed.rotX;
 
         const tl = gsap.timeline({
           onUpdate: invalidate,

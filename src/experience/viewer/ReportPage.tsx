@@ -92,7 +92,9 @@ function renderBlock(block: ReportBlock, index: number) {
             rel="noreferrer"
             className="font-serif text-[15px] font-medium text-(--report-accent-bright) underline decoration-(--report-rule) underline-offset-4 transition-colors hover:text-(--report-ink)"
           >
-            {block.label} ↗
+            {/* No trailing arrow — U+2197 renders as an emoji sticker on
+                iOS. The underline is the link affordance. */}
+            {block.label}
           </a>
         </p>
       );

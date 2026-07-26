@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, EASE, SEQ } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
-import { CAMERA, framingFor, type FramingName } from "./layout";
+import { fovFor, framingFor, pitchFor, type FramingName } from "./layout";
 
 /**
  * The camera system: framing and subtle easing — and nothing else
@@ -32,12 +32,23 @@ export function CameraRig() {
   // restore, reduced motion, and plain viewport resizes. Layout effect so
   // the very first paint is already composed for the actual viewport.
   useLayoutEffect(() => {
-    camera.rotation.set(CAMERA.pitch, 0, 0); // fixed gentle look-down, permanently
     const aspect = size.width / Math.max(size.height, 1);
+    // Fixed look-down, permanently — steeper on a portrait viewport. Zero
+    // yaw, zero roll, in every shape.
+    camera.rotation.set(pitchFor(aspect), 0, 0);
     const [x, y, z] = framingFor(framing, aspect);
     const isFirst = lastFraming.current === null;
     const isReframe = lastFraming.current === framing; // same shot, new viewport
     lastFraming.current = framing;
+
+    // The lens follows the viewport shape (portrait phones get the wider
+    // one). A change is a reframe, not a narrative move — snap it with the
+    // rest of the viewport handling.
+    const fov = fovFor(aspect);
+    if ("fov" in camera && camera.fov !== fov) {
+      gsap.set(camera, { fov });
+      camera.updateProjectionMatrix();
+    }
 
     if (isFirst || prefersReducedMotion() || useExperience.getState().instant) {
       gsap.killTweensOf(camera.position);

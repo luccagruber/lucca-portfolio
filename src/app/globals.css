@@ -67,6 +67,15 @@ body {
   }
 }
 
+/* Touch: a quick second tap on a control (NEXT, NEXT…) must page, not
+   double-tap-zoom. The canvas is included — folders are tapped twice in a
+   row too. Pinch zoom stays available everywhere else. */
+button,
+a,
+canvas {
+  touch-action: manipulation;
+}
+
 /* Small section label — clean tracked sans (the noscript projects list). */
 .section-label {
   @apply font-sans text-[11px] font-semibold tracking-[0.24em] text-ink-faint uppercase;

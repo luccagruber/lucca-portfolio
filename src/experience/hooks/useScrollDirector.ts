@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { SCROLL } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
+import { pageScrollY } from "./useScrollLock";
 
 /**
  * Scroll is a *trigger*, never a scrubber (architecture rule). This hook
@@ -23,13 +24,16 @@ export function useScrollDirector() {
     // having scrolled — not when the drawer was opened another way (e.g.
     // clicking the cabinet) while the page is still at the top.
     let armedClose = false;
-    let lastY = window.scrollY;
+    let lastY = pageScrollY();
 
     const evaluate = (instant = false) => {
       const s = useExperience.getState();
       if (s.webglFallback) return; // scroll triggers are inactive in fallback mode
       if (s.viewer !== "closed") return; // the viewer owns input while open
-      const y = window.scrollY;
+      // Never `window.scrollY` — while the page is pinned behind an open
+      // viewer that reads 0, and 0 means "back at the top", which would
+      // close the drawer under the thing being read (see useScrollLock).
+      const y = pageScrollY();
       /*
        * A jump, not a scroll: clicking Contact throws the page most of the
        * way down the document in one go. Playing the full drawer sequence

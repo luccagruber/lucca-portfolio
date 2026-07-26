@@ -18,6 +18,14 @@ import { FONT_SANS_3D } from "../fonts";
  * instead of hanging in the air in front of it. The card is paper, not
  * paint: a cream slab set slightly back inside a matte frame, so the
  * scene's light catches the frame's edge and the card sits in its shadow.
+ *
+ * Nothing here casts a shadow. The holder is a 4 mm plate screwed flat
+ * onto the drawer face, and the key light's shadow map is sized for the
+ * whole desk with a 25 mm normal bias — six times the plate's thickness.
+ * At that ratio the shadow does not hug the plate, it detaches and lands
+ * on the drawer front as a separate dark slab a few centimetres away: a
+ * smudge with no object over it. A real card holder this thin casts a
+ * hairline nobody would notice, so the honest render of it is none.
  */
 export function DrawerLabel() {
   const invalidate = useThree((s) => s.invalidate);
@@ -28,7 +36,7 @@ export function DrawerLabel() {
     <group position={[x, y, z]}>
       {/* Frame — matte black, the nameplate's material, so the two pieces
           of "signage" in the room read as the same object family. */}
-      <RoundedBox args={[W, H, 0.004]} radius={0.0015} smoothness={2} castShadow>
+      <RoundedBox args={[W, H, 0.004]} radius={0.0015} smoothness={2}>
         <meshStandardMaterial color={palette.matteBlack} roughness={0.6} metalness={0.15} />
       </RoundedBox>
 

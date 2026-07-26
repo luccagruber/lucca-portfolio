@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent as ReactTouchEvent,
+} from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { reportById } from "@/content/projects";
@@ -26,6 +33,19 @@ import { ReportPage } from "./ReportPage";
  * content, so the turn itself reveals it. PREV turns the sheet back the
  * other way. Navigation is clicks only (arrows, page edges, the index)
  * plus keyboard arrows; scroll stays locked while viewing.
+ *
+ * A phone gets ONE page and no spread (user's call, 2026-07-26). The
+ * folder still arrives from the drawer and still opens on its hinge —
+ * that is the whole point of the thing — but the cover swings away off
+ * the left edge instead of settling beside the page, because two panels
+ * on a 375 px screen means two unreadable panels. What is left is the
+ * page itself, as large as the screen allows. The index goes with the
+ * cover: a four-page file read by swiping does not need a contents page,
+ * and the page header names where you are.
+ *
+ * Pages turn by swipe as well as by click here — flicking paper sideways
+ * is what a hand expects to do with a document, and the arrows in the lip
+ * stay for anyone who does not try it.
  */
 export function ProjectViewer() {
   const viewer = useExperience((s) => s.viewer);
@@ -176,6 +196,25 @@ function FolderDialog({ report }: { report: ProjectReport }) {
     return folder.offsetWidth / 2;
   };
 
+  /** Touch: a sideways flick turns the page, the way paper does. */
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const onTouchStart = (e: ReactTouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTouchEnd = (e: ReactTouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start || useExperience.getState().viewer !== "viewing") return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    // A deliberate horizontal stroke — not a tap, and not the vertical
+    // drag that scrolls a long page inside the panel.
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    nav(dx < 0 ? current + 1 : current - 1);
+  };
+
   // Phase-driven enter/exit. Completions feed the machine.
   useGSAP(
     () => {
@@ -315,8 +354,15 @@ function FolderDialog({ report }: { report: ProjectReport }) {
 
   const atFirst = current === 0;
   const atLast = current === total - 1;
+  // The negative-margin padding grows the touch target without growing
+  // the mark — finger-sized controls on a folder lip drawn for a mouse.
+  //
+  // The arrows on these buttons carry a U+FE0E after them (the text
+  // presentation selector). Bare ← and → have emoji presentations that
+  // iOS will happily use, which turns a typographic mark into a coloured
+  // sticker. Do not "clean up" the invisible character.
   const navButton =
-    "font-sans text-[10px] tracking-[0.18em] text-tab-ink/70 transition-colors hover:text-tab-ink disabled:pointer-events-none disabled:opacity-35";
+    "-m-2 p-2 font-sans text-[10px] tracking-[0.18em] text-tab-ink/70 transition-colors hover:text-tab-ink disabled:pointer-events-none disabled:opacity-35";
 
   return (
     <div
@@ -342,7 +388,9 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                 ref={folderRef}
                 tabIndex={-1}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-(--fw) outline-none [--fw:min(26rem,88vw,44svh)] sm:[--fw:min(26rem,46vw,44svh)] [perspective:1400px]"
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+                className="relative w-(--fw) outline-none [--fw:min(26rem,90vw,58svh)] sm:[--fw:min(26rem,46vw,44svh)] [perspective:1400px]"
                 style={{ height: "calc(var(--fw) * 1.25)" }}
               >
                 {/* ——— Back cover (the folder body) ——— */}
@@ -428,7 +476,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     disabled={atFirst || viewer !== "viewing"}
                     onClick={() => nav(current - 1)}
                   >
-                    ← {t.prev}
+                    {"←︎"} {t.prev}
                   </button>
                   <span className="font-sans text-[9px] tracking-[0.2em] text-tab-ink/60">
                     {t.page} {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
@@ -439,7 +487,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                     disabled={atLast || viewer !== "viewing"}
                     onClick={() => nav(current + 1)}
                   >
-                    {t.next} →
+                    {t.next} {"→︎"}
                   </button>
                 </div>
 
@@ -506,6 +554,7 @@ function FolderDialog({ report }: { report: ProjectReport }) {
                   className="pointer-events-none absolute inset-0 z-20 rounded-md bg-linear-to-r from-black/25 via-black/10 to-black/5"
                 />
 
+
                 {/* Close — appears once the folder is fully open */}
                 <button
                   type="button"
@@ -537,6 +586,36 @@ function PageFace({
   total: number;
 }) {
   const page = report.pages[Math.min(index, report.pages.length - 1)];
+
+  /*
+   * The below-the-fold cue, same contract as the About paper: a page
+   * taller than its panel must visibly continue, and the fade retires the
+   * moment the end is reached (or never appears when everything fits).
+   * Phone panels are short and phone scrollbars are invisible — without
+   * this, the second half of a page simply doesn't exist.
+   */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEnd, setAtEnd] = useState(true);
+  const syncCue = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 2);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // A fresh page starts at its top — the previous page's scroll must
+    // not carry over through the turn.
+    el.scrollTop = 0;
+    syncCue();
+    const observer = new ResizeObserver(syncCue);
+    observer.observe(el);
+    // Content grows as lazy images arrive; el itself never resizes then.
+    if (el.firstElementChild) observer.observe(el.firstElementChild);
+    return () => observer.disconnect();
+  }, [index, syncCue]);
+
   return (
     <div className="relative flex h-full flex-col bg-(--report-bg) text-(--report-ink)">
       {/* Punched holes under the fastener */}
@@ -553,9 +632,15 @@ function PageFace({
         </p>
       </header>
       <div className="mx-[7%] mt-[3.5%] h-px shrink-0 bg-(--report-rule)" />
-      <div className="min-h-0 flex-1 overflow-y-auto px-[7%] py-[5.5%]">
+      <div ref={scrollRef} onScroll={syncCue} className="min-h-0 flex-1 overflow-y-auto px-[7%] py-[5.5%]">
         <ReportPage page={page} />
       </div>
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-t from-(--report-bg) to-transparent transition-opacity duration-300 ${
+          atEnd ? "opacity-0" : "opacity-100"
+        }`}
+      />
     </div>
   );
 }

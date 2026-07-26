@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { createPortal, useThree } from "@react-three/fiber";
+import { useCursor } from "@react-three/drei";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import type { Group, Object3D } from "three";
+import type { ThreeEvent } from "@react-three/fiber";
 import type { ProjectId } from "@/content/types";
 import { projectReports } from "@/content/projects";
 import { DRAWER_BUMP, DUR, EASE, NUDGE, SEQ } from "@/experience/motion";
@@ -127,6 +129,39 @@ export function DeskDrawer({ node }: { node: Object3D }) {
   const about = useExperience((s) => s.about);
   const idle = sceneReady && phase === "closed" && viewer === "closed" && about === "closed";
 
+  /*
+   * The drawer is also a handle you can simply pull — or push. Scroll
+   * remains the narrated way in (the hint and the nudge both point at
+   * it), but a finger's first instinct is to tap the thing itself — and
+   * a drawer that shifts on its rails inviting you and then ignores your
+   * tap breaks the physicality it just performed. Desktop clicks get the
+   * same courtesy. The front panel toggles: closed it opens, open it
+   * closes (the panel rides the box well below the standing folders, so
+   * the two targets never compete). A tap-opened drawer needs this way
+   * back: the scroll director only closes what scrolling opened.
+   */
+  const frontActive =
+    sceneReady &&
+    viewer === "closed" &&
+    about === "closed" &&
+    (phase === "closed" || phase === "open");
+  const [frontHovered, setFrontHovered] = useState(false);
+  useCursor(frontHovered && frontActive);
+  const onFrontOver = (e: ThreeEvent<PointerEvent>) => {
+    if (!frontActive) return;
+    e.stopPropagation();
+    setFrontHovered(true);
+  };
+  const onFrontOut = () => setFrontHovered(false);
+  const onFrontClick = (e: ThreeEvent<MouseEvent>) => {
+    if (!frontActive) return;
+    e.stopPropagation();
+    setFrontHovered(false);
+    const s = useExperience.getState();
+    if (s.drawer === "closed") s.openDrawer({ instant: prefersReducedMotion() });
+    else s.closeDrawer({ instant: prefersReducedMotion() });
+  };
+
   useGSAP(
     () => {
       if (!idle || prefersReducedMotion()) return;
@@ -165,7 +200,15 @@ export function DeskDrawer({ node }: { node: Object3D }) {
         tl.kill();
       };
     },
-    { dependencies: [idle, invalidate, closedZ] },
+    /*
+     * `revertOnUpdate` matters: without it useGSAP does NOT run the
+     * cleanup when dependencies change (only on unmount), so a pending
+     * nudge would survive `idle` flipping false — and its scheduled
+     * repeat would then glide the freshly opened drawer shut while the
+     * machine believes it is open. Any exit from idle must genuinely
+     * retire the nudge, whichever door the visitor took.
+     */
+    { dependencies: [idle, invalidate, closedZ], revertOnUpdate: true },
   );
 
   // Folder anchors and the drawer's own name card live inside the drawer
@@ -174,6 +217,20 @@ export function DeskDrawer({ node }: { node: Object3D }) {
     <>
       <ProjectFolders registerAnchor={registerAnchor} />
       <DrawerLabel />
+      {/* Generous invisible pull/push-target over the drawer's front
+          panel. Unmounted while anything is in flight or open above it,
+          so it can never sit between the pointer and the folders. */}
+      {frontActive ? (
+        <mesh
+          position={[0, 0.02, 0.215]}
+          onPointerOver={onFrontOver}
+          onPointerOut={onFrontOut}
+          onClick={onFrontClick}
+        >
+          <boxGeometry args={[0.42, 0.26, 0.02]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        </mesh>
+      ) : null}
     </>,
     node,
   );

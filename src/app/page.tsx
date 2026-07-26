@@ -35,9 +35,16 @@ export default function Home() {
             "linear-gradient(to bottom, var(--color-stage) 0%, var(--color-foot) 100%)",
         }}
       >
-        <div aria-hidden="true" className="h-36 sm:h-48" />
+        {/*
+         * Phones get roughly half the air the wide layout gets. The wide
+         * spacers are sized against a desk that has just scrolled away
+         * across a whole screen; on a phone the same numbers read as a
+         * gap where something is missing (user, 2026-07-26). Breathing
+         * room, not a pause.
+         */}
+        <div aria-hidden="true" className="h-16 sm:h-48" />
         <ContactRail />
-        <div aria-hidden="true" className="h-28 sm:h-40" />
+        <div aria-hidden="true" className="h-16 sm:h-40" />
         <Footer />
       </div>
     </main>

@@ -49,58 +49,75 @@ const icons: Record<string, ReactNode> = {
 
 export function ContactRail() {
   const t = ui[useLocale()];
+  const count = profile.contact.length;
   return (
     // Transparent on purpose — the page's foot gradient is the background
     // for the rail and the footer together (see page.tsx).
     <section id="contact" aria-label={t.contactLabel}>
-      <ul className="mx-auto grid max-w-[100rem] grid-cols-2 lg:grid-cols-4">
-        {profile.contact.map((entry) => (
-          <li
-            key={entry.label}
-            /*
-             * Hairlines between cells only — never on the rail's outer
-             * edge; the section's own top border and the footer below
-             * close the box. Two columns: the first two cells carry the
-             * row rule, the odd cells carry the column rule. Four
-             * columns: no row rule at all, every cell but the last
-             * carries the column rule.
-             */
-            className="relative border-line [&:nth-child(-n+2)]:border-b [&:nth-child(odd)]:border-r lg:[&:not(:last-child)]:border-r lg:[&:nth-child(-n+2)]:border-b-0"
-          >
-            <a
-              href={entry.href}
-              target={entry.href.startsWith("mailto:") ? undefined : "_blank"}
-              rel="noreferrer"
-              className="group flex h-full items-center justify-center gap-4 px-6 py-10 transition-colors duration-200 hover:bg-paper/45 sm:py-14"
-            >
-              <span className="grid size-6 shrink-0 place-items-center transition-transform duration-200 group-hover:scale-110">
-                {icons[entry.label]}
-              </span>
-              <span className="text-xl font-medium text-cocoa underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-cocoa sm:text-2xl">
-                {entry.label}
-              </span>
-            </a>
-            {/*
-             * The address is the one thing on this rail people need to
-             * take rather than follow, so it sits OUTSIDE the anchor:
-             * inside it, dragging across the text would start a link drag
-             * instead of selecting, and it could never be copied. `li` is
-             * the positioned ancestor, so the address hangs over the
-             * anchor without joining the flow — in flow it would make this
-             * cell taller than its neighbours and knock the four labels
-             * out of alignment. One click takes the whole address.
-             */}
-            {"print" in entry && entry.print ? (
-              <span className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center sm:bottom-7">
-                {/* Only the glyphs take the pointer — everywhere else in
-                    the cell stays a link, like the other three. */}
-                <span className="pointer-events-auto cursor-text font-sans text-[13px] tracking-[0.02em] text-cocoa/70 transition-colors duration-200 select-all hover:text-cocoa sm:text-sm">
-                  {entry.print}
+      <ul className="mx-auto grid max-w-[100rem] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {profile.contact.map((entry, i) => {
+          const hasPrint = "print" in entry && entry.print;
+          /*
+           * Hairlines between cells only — never on the rail's outer
+           * edge; the section's own top border and the footer below
+           * close the box. One column (phones): a rule under every row
+           * but the last. Two columns: the first two cells carry the row
+           * rule, the odd cells the column rule. Four columns: no row
+           * rule at all, every cell but the last carries the column rule.
+           */
+          const hairlines = [
+            i < count - 1 ? "border-b" : "",
+            i < 2 ? "sm:border-b" : "sm:border-b-0",
+            i % 2 === 0 ? "sm:border-r" : "sm:border-r-0",
+            "lg:border-b-0",
+            i < count - 1 ? "lg:border-r" : "lg:border-r-0",
+          ].join(" ");
+          return (
+            <li key={entry.label} className={`relative border-line ${hairlines}`}>
+              <a
+                href={entry.href}
+                target={entry.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noreferrer"
+                /*
+                 * Phones read this as a plain contact list: rows, left
+                 * aligned, the whole row a comfortable tap target. From
+                 * `sm` up it is the original rail of centered cells.
+                 */
+                className={`group flex items-center gap-4 px-7 transition-colors duration-200 hover:bg-paper/45 sm:h-full sm:justify-center sm:px-6 sm:py-14 ${
+                  hasPrint ? "pt-6 pb-2" : "py-6"
+                }`}
+              >
+                <span className="grid size-6 shrink-0 place-items-center transition-transform duration-200 group-hover:scale-110">
+                  {icons[entry.label]}
                 </span>
-              </span>
-            ) : null}
-          </li>
-        ))}
+                <span className="text-lg font-medium text-cocoa underline decoration-transparent decoration-1 underline-offset-[6px] transition-colors duration-200 group-hover:decoration-cocoa sm:text-2xl">
+                  {entry.label}
+                </span>
+              </a>
+              {/*
+               * The address is the one thing on this rail people need to
+               * take rather than follow, so it sits OUTSIDE the anchor:
+               * inside it, dragging across the text would start a link
+               * drag instead of selecting, and it could never be copied.
+               * On phones it simply follows the label in the flow,
+               * indented to the label's own left edge. From `sm` up, `li`
+               * is the positioned ancestor and the address hangs over the
+               * anchor without joining the flow — in flow it would make
+               * the cell taller than its neighbours and knock the labels
+               * out of alignment. One click/tap takes the whole address.
+               */}
+              {hasPrint ? (
+                <span className="block pb-6 pl-17 sm:pointer-events-none sm:absolute sm:inset-x-0 sm:bottom-7 sm:z-10 sm:flex sm:justify-center sm:p-0">
+                  {/* Only the glyphs take the pointer — everywhere else in
+                      the cell stays a link, like the other three. */}
+                  <span className="pointer-events-auto cursor-text font-sans text-[13px] tracking-[0.02em] text-cocoa/70 transition-colors duration-200 select-all hover:text-cocoa sm:text-sm">
+                    {entry.print}
+                  </span>
+                </span>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

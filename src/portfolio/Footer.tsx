@@ -30,7 +30,14 @@ export function Footer() {
             rel="noreferrer"
             className="underline decoration-cocoa/30 underline-offset-4 transition-colors hover:decoration-cocoa"
           >
-            {t.sourceOnGitHub} ↗
+            {/*
+             * No trailing arrow. U+2197 has an emoji presentation, and
+             * iOS picks it: on a phone this line ended in a blue arrow
+             * sticker (user, 2026-07-26). The underline already says
+             * "link" and the copy already says where it goes, so the
+             * glyph was decoration that could only render wrong.
+             */}
+            {t.sourceOnGitHub}
           </a>
         </p>
         <div className="mt-8 flex items-center justify-between">
@@ -38,7 +45,7 @@ export function Footer() {
             © {new Date().getFullYear()} {profile.name}
           </span>
           <a href="#top" className="transition-colors hover:text-cocoa">
-            {t.backToTop} ↑
+            {t.backToTop}
           </a>
         </div>
         <p className="mt-4 text-[10px] leading-relaxed tracking-[0.06em]">

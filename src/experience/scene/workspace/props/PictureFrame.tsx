@@ -11,7 +11,7 @@ import { palette } from "@/lib/palette";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, EASE } from "@/experience/motion";
 import { useExperience } from "@/experience/state/store";
-import { APEX, CAMERA, FRAME, apexDistanceFor } from "@/experience/scene/layout";
+import { APEX, CAMERA, FRAME, apexDistanceFor, isPortraitAspect } from "@/experience/scene/layout";
 import { Hotspot } from "@/experience/scene/Hotspot";
 
 type GroupProps = ThreeElements["group"];
@@ -44,6 +44,11 @@ export function PictureFrame(props: GroupProps) {
   const rootRef = useRef<Group>(null);
   const invalidate = useThree((s) => s.invalidate);
   const camera = useThree((s) => s.camera);
+  const size = useThree((s) => s.size);
+  // The one click mark has to survive being seen from a phone: at the
+  // portrait framing's distance the mark at its desktop size shrinks to a
+  // speck, so it grows with the theatre it plays in.
+  const hotspotScale = isPortraitAspect(size.width / Math.max(size.height, 1)) ? 1.5 : 1;
 
   const photo = useTexture(PORTRAIT_SRC, (t) => {
     t.colorSpace = SRGBColorSpace;
@@ -229,7 +234,12 @@ export function PictureFrame(props: GroupProps) {
         </mesh>
 
         {/* "Turn me over" — the desk's only click mark. */}
-        <Hotspot position={[0, FRAME.height + 0.032, 0]} visible={interactive} active={hovered} />
+        <Hotspot
+          position={[0, FRAME.height + 0.032, 0]}
+          visible={interactive}
+          active={hovered}
+          size={hotspotScale}
+        />
       </group>
     </group>
   );

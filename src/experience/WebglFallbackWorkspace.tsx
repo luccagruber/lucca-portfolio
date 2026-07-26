@@ -93,7 +93,7 @@ export function WebglFallbackWorkspace() {
                   {report.fileLabel}
                 </span>
                 <span className="font-sans text-[8.5px] tracking-widest text-tab-ink font-bold opacity-60 flex items-center gap-1 group-hover:opacity-90 transition-opacity">
-                  OPEN FILE <span className="text-[10px]">→</span>
+                  OPEN FILE <span className="text-[10px]">{"→︎"}</span>
                 </span>
               </div>
             </button>

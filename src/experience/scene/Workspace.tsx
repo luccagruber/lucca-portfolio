@@ -1,7 +1,8 @@
 "use client";
 
 import { useGLTF } from "@react-three/drei";
-import { DESK } from "./layout";
+import { useThree } from "@react-three/fiber";
+import { DESK, PROP_ARRANGEMENTS, isPortraitAspect } from "./layout";
 import { Room } from "./Room";
 import { DeskModel } from "./desk/DeskModel";
 import { GlbProp } from "./workspace/props/GlbProp";
@@ -17,41 +18,63 @@ const MACBOOK_GLB = "/models/macbook.glb";
  * The workspace system renders the set: the room, the real desk (which
  * owns its drawer, which reveals the folders) and the props on the desk
  * top. Vision: every visible object has a reason to exist; no monitors,
- * no keyboards, no clutter. Prop positions are desk-top-local
- * (x ∈ [-0.7, 0.7], z ∈ [-0.314, 0.286]) and deliberately staggered in
- * depth — nothing sits on one line.
+ * no keyboards, no clutter.
+ *
+ * The set is dressed for the house: a portrait viewport gets the portrait
+ * arrangement (the same objects, pulled into the band the phone camera
+ * can actually see) and everything else gets the authored desktop one.
+ * Placement data lives in layout.PROP_ARRANGEMENTS.
  */
 export function Workspace() {
+  const size = useThree((s) => s.size);
+  const props =
+    PROP_ARRANGEMENTS[
+      isPortraitAspect(size.width / Math.max(size.height, 1)) ? "portrait" : "landscape"
+    ];
+
   return (
     <group>
       <Room />
       <DeskModel />
 
-      {/* The core trio holds its top-view composition regardless of the
-          rest: frame mid-left, nameplate centered near the front edge,
-          Starbucks cup top-right (back-right corner), logo to the camera.
-          The supporting props dress the remaining space without ever
-          crowding the trio. */}
       <group position={[0, DESK.topY, 0]}>
-        {/* Left — the personal corner. The frame's spot is settled (user-
-            approved); the plaque sits alone at the front-left, running
-            diagonally: left end toward the desk edge, right end toward
-            the center. It never stands in the frame's way. */}
-        <PictureFrame position={[-0.38, 0, -0.08]} rotation-y={0.3} />
-        <Nameplate position={[-0.52, 0, 0.14]} rotation-y={0.45} />
+        {/* The picture frame — the About door — and the notebook with the
+            glasses on it are the two props every arrangement carries. */}
+        <PictureFrame position={props.frame.position} rotation-y={props.frame.rotY} />
+        <GlbProp
+          url={NOTEBOOK_GLB}
+          height={0.013}
+          position={props.notebook.position}
+          rotation-y={props.notebook.rotY}
+        />
+        <GlbProp
+          url={GLASSES_GLB}
+          height={0.04}
+          position={props.glasses.position}
+          rotation-y={props.glasses.rotY}
+        />
 
-        {/* Center — the closed MacBook, dead straight. Not centered on the
-            desk but between its neighbours: the gap to the frame on the
-            left and the gap to the notebook on the right read equal
-            (user's call, 2026-07-16). */}
-        <GlbProp url={MACBOOK_GLB} height={0.015} position={[-0.03, 0, -0.02]} rotation-y={0} />
-
-        {/* Right — notebook with the glasses resting on its cover. */}
-        <GlbProp url={NOTEBOOK_GLB} height={0.013} position={[0.34, 0, 0.03]} rotation-y={-0.2} />
-        <GlbProp url={GLASSES_GLB} height={0.04} position={[0.34, 0.013, 0.02]} rotation-y={0.5} />
-
-        {/* Top-right corner — the cup, logo to the camera. */}
-        <GlbProp url={COFFEE_CUP_GLB} height={0.14} position={[0.55, 0, -0.14]} rotation-y={0} />
+        {/* Set dressing for the wide shot only — a phone stands too close
+            to the drawer for any of it to be more than a cropped edge. */}
+        {props.nameplate ? (
+          <Nameplate position={props.nameplate.position} rotation-y={props.nameplate.rotY} />
+        ) : null}
+        {props.macbook ? (
+          <GlbProp
+            url={MACBOOK_GLB}
+            height={0.015}
+            position={props.macbook.position}
+            rotation-y={props.macbook.rotY}
+          />
+        ) : null}
+        {props.cup ? (
+          <GlbProp
+            url={COFFEE_CUP_GLB}
+            height={0.14}
+            position={props.cup.position}
+            rotation-y={props.cup.rotY}
+          />
+        ) : null}
       </group>
     </group>
   );

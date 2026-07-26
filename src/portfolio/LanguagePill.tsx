@@ -40,7 +40,7 @@ export function LanguagePill() {
             onClick={() => setLocale(code)}
             aria-pressed={active}
             lang={code === "pt" ? "pt-BR" : code}
-            className={`rounded-full px-3 py-1.5 font-sans text-[11px] whitespace-nowrap transition-colors duration-300 sm:px-4 sm:text-[12px] ${
+            className={`rounded-full px-4 py-2 font-sans text-[12px] whitespace-nowrap transition-colors duration-300 sm:px-4 sm:py-1.5 ${
               active
                 ? "bg-ink/8 font-semibold text-ink"
                 : "font-medium text-ink-soft hover:bg-ink/4 hover:text-ink"

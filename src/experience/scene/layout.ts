@@ -41,6 +41,14 @@ export const DESK = {
 } as const;
 
 /**
+ * Centre line of the drawer pedestal (the drawer node's own x). The desk
+ * is not symmetrical — the pedestal is the right-hand third — so this is
+ * the axis the portrait camera stands on and the axis the portrait props
+ * are composed around. On a phone the pedestal IS the desk.
+ */
+export const PEDESTAL_X = 0.5;
+
+/**
  * The card holder on the drawer front (see desk/DrawerLabel). Positioned in
  * DRAWER-NODE space, so it travels with the drawer: the node origin is the
  * centre of the drawer box, the box is ~0.42 deep, so its front panel sits
@@ -51,12 +59,15 @@ export const DRAWER_LABEL = {
   width: 0.108,
   height: 0.026,
   /*
-   * Measured against the render, not derived: the drawer NODE's origin is
-   * not the centre of its visible front panel (the panel is taller than the
-   * box and offset within the pedestal), so these three numbers were tuned
-   * on screen until the card sits centred on the face.
+   * x is 0 because the drawer node's origin IS the horizontal centre of
+   * its front panel. It carried a -0.076 nudge for a long time, annotated
+   * as "measured against the render" — it was not: it parked the card a
+   * fifth of the panel's width to the left, which is exactly what it
+   * looked like (user, 2026-07-26). y and z are the real measurements:
+   * low on the face where a card holder is actually screwed on, just
+   * proud of the panel.
    */
-  x: -0.076,
+  x: 0,
   y: 0.087,
   z: 0.215,
 } as const;
@@ -120,6 +131,62 @@ export const FRAME = {
   tilt: -0.09,
 } as const;
 
+/** One prop's place on the desk top (desk-top-local coordinates). */
+export interface PropPose {
+  position: Vec3;
+  rotY: number;
+}
+
+/**
+ * Which props are on the desk and where. A prop left out is not rendered
+ * at all — on a phone the camera is close enough that anything outside
+ * the shot is pure cost, and the vision's rule ("every visible object has
+ * a reason to exist") is easier to keep by removing than by hiding.
+ */
+export interface PropArrangement {
+  frame: PropPose;
+  notebook: PropPose;
+  glasses: PropPose;
+  nameplate?: PropPose;
+  macbook?: PropPose;
+  cup?: PropPose;
+}
+
+/**
+ * Desk-top-local (x ∈ [-0.7, 0.7], z ∈ [-0.314, 0.286]), deliberately
+ * staggered in depth — nothing sits on one line.
+ *
+ * Landscape is the authored desktop composition (the frame's spot and the
+ * MacBook's equal gaps are user-approved, 2026-07-16).
+ *
+ * Portrait is a different set, not a rearrangement of the same one. The
+ * phone camera stands close over the drawer pedestal (PEDESTAL_X), so the
+ * desk it can see is a strip about 0.6 m wide — room for exactly two
+ * things. They are the two that earn it: the picture frame, because it is
+ * the door to About, and the notebook with the glasses on it, because the
+ * desk has to look worked at rather than staged. The nameplate, the
+ * MacBook and the cup are dropped (user's call, 2026-07-26): on a phone
+ * they would either crowd the two that matter or be cropped in half.
+ */
+export const PROP_ARRANGEMENTS: Record<"landscape" | "portrait", PropArrangement> = {
+  landscape: {
+    frame: { position: [-0.38, 0, -0.08], rotY: 0.3 },
+    nameplate: { position: [-0.52, 0, 0.14], rotY: 0.45 },
+    macbook: { position: [-0.03, 0, -0.02], rotY: 0 },
+    notebook: { position: [0.34, 0, 0.03], rotY: -0.2 },
+    glasses: { position: [0.34, 0.013, 0.02], rotY: 0.5 },
+    cup: { position: [0.55, 0, -0.14], rotY: 0 },
+  },
+  portrait: {
+    // Left of the pedestal's centre line, standing back on the desk so the
+    // hotspot above it has clear air.
+    frame: { position: [PEDESTAL_X - 0.115, 0, -0.11], rotY: 0.26 },
+    // Right of it, nearer the front edge — the two never share a line.
+    notebook: { position: [PEDESTAL_X + 0.105, 0, 0.03], rotY: -0.24 },
+    glasses: { position: [PEDESTAL_X + 0.1, 0.013, 0.02], rotY: 0.5 },
+  },
+};
+
 /** Selected-folder / lifted-frame presentation in front of the camera. */
 export const APEX = {
   /** Fraction of the viewport height the folder fills at rest. */
@@ -140,7 +207,47 @@ export const CAMERA = {
    * pointer; this one constant is the camera's entire orientation.
    */
   pitch: -0.19,
+  /**
+   * Portrait lens — a phone held upright. Wider than the desktop lens so
+   * the visible band of desk doesn't force the camera across the room,
+   * which would shrink the folders and the frame into untappable specks.
+   */
+  portraitFov: 58,
+  /**
+   * Portrait pitch — a steeper look-down than the desktop shot.
+   *
+   * A portrait viewport sees roughly 2.2× as much height as width, so
+   * framing tightly on the pedestal's width buys a very tall shot whether
+   * we want one or not. Where that height lands is the only real choice:
+   * at the desktop pitch it lands on blank wall above the desk. Tipping
+   * the camera down spends it on the desk plane instead — the surface
+   * opens up, the two props on it separate in screen space, and the
+   * drawer front still faces the lens squarely enough to read its card.
+   */
+  portraitPitch: -0.36,
 } as const;
+
+/**
+ * A portrait viewport is a different theatre, not a thinner window on the
+ * same one (vision: mobile preserves the concept, not the implementation).
+ * Below this width:height ratio the scene recomposes: portrait framings,
+ * the portrait lens, and the portrait prop arrangement.
+ */
+export const PORTRAIT_ASPECT = 0.95;
+
+export function isPortraitAspect(aspect: number): boolean {
+  return aspect < PORTRAIT_ASPECT;
+}
+
+/** The lens for the current viewport shape. */
+export function fovFor(aspect: number): number {
+  return isPortraitAspect(aspect) ? CAMERA.portraitFov : CAMERA.fov;
+}
+
+/** The camera's fixed orientation for the current viewport shape. */
+export function pitchFor(aspect: number): number {
+  return isPortraitAspect(aspect) ? CAMERA.portraitPitch : CAMERA.pitch;
+}
 
 /**
  * Named framings. The camera's orientation is the fixed CAMERA.pitch, so
@@ -155,17 +262,52 @@ export const FRAMINGS = {
   drawer: [0.18, 1.04, 1.52] as Vec3,
 } as const;
 
+/**
+ * Portrait framings are authored as x/y plus the strip of desk the shot
+ * must span; z is derived from the lens so every phone — whatever its
+ * exact aspect — sees the same composition instead of a luckier or
+ * unluckier crop of it.
+ *
+ * Both shots stand on the pedestal's centre line: the phone never sees
+ * the whole desk, it stands right at the drawer, which is the only thing
+ * on this desk a visitor has to find.
+ */
+const PORTRAIT_FRAMINGS = {
+  /** Arrival — the pedestal and the strip of desk over it, carrying the
+   * picture frame and the notebook. */
+  idle: { x: PEDESTAL_X, y: 1.06, halfWidth: 0.27, atZ: DESK.frontZ },
+  /**
+   * Drawer open. The span is held at the OPEN drawer's plane rather than
+   * the desk front, which pulls the camera back by most of the travel —
+   * without it the drawer slides 0.335 m toward a lens that is already
+   * close and the folders burst out of frame. What is left of the travel
+   * still reads as the drawer coming to you.
+   */
+  drawer: {
+    x: PEDESTAL_X,
+    y: 1.05,
+    halfWidth: 0.265,
+    atZ: DESK.frontZ + DESK.drawer.travel * 0.82,
+  },
+} as const;
+
 export type FramingName = keyof typeof FRAMINGS;
 
 /**
- * Aspect compensation: the camera stays centered on the desk and narrow
- * viewports pull straight back (never rotating, never sliding) so the
- * full desk width stays in frame. Wide viewports use the framing as
- * authored.
+ * Aspect compensation. Landscape: the camera stays centered on the desk
+ * and narrow viewports pull straight back (never rotating, never sliding)
+ * so the full desk width stays in frame. Portrait: the framing names the
+ * strip of desk it needs and the distance follows from the lens.
  */
 export function framingFor(name: FramingName, aspect: number): Vec3 {
+  if (isPortraitAspect(aspect)) {
+    const { x, y, halfWidth, atZ } = PORTRAIT_FRAMINGS[name];
+    const halfFovY = (fovFor(aspect) * Math.PI) / 360;
+    const halfFovX = Math.atan(Math.tan(halfFovY) * Math.max(aspect, 0.35));
+    return [x, y, atZ + halfWidth / Math.tan(halfFovX)];
+  }
   const [x, y, z] = FRAMINGS[name];
-  const deficit = Math.max(0, 1.7 - Math.max(aspect, 0.35));
+  const deficit = Math.max(0, 1.7 - aspect);
   return [x, y, z + deficit * 0.62];
 }
 
