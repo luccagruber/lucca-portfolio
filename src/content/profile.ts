@@ -28,7 +28,7 @@ import type { Locale } from "@/lib/locale";
  * Cache-Control, so overwriting a photo in place leaves every returning
  * visitor looking at the old one. New photo, new number.
  */
-export const PORTRAIT_SRC = "/images/portrait-v2.jpg";
+export const PORTRAIT_SRC = "/images/portrait-v3.jpg";
 
 export const profile = {
   name: "Lucca Gruber Rodrigues",
