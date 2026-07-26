@@ -10,6 +10,7 @@ npm run build
 ssh oci-server 'mkdir -p ~/lucca-portfolio'
 rsync -az --delete out/ oci-server:~/lucca-portfolio/out/
 rsync -az deploy/Dockerfile oci-server:~/lucca-portfolio/Dockerfile
+rsync -az deploy/Caddyfile oci-server:~/lucca-portfolio/Caddyfile
 
 ssh oci-server '
   set -e

@@ -20,6 +20,16 @@ import type { Locale } from "@/lib/locale";
  * are written here rather than wherever the column happens to run out.
  */
 
+/**
+ * The printed photograph — in the desk frame and on the front of the DOM
+ * frame that replaces it. Portrait 3:4, cropped close (see PictureFrame).
+ *
+ * Versioned in the filename on purpose: the host serves /images/* without
+ * Cache-Control, so overwriting a photo in place leaves every returning
+ * visitor looking at the old one. New photo, new number.
+ */
+export const PORTRAIT_SRC = "/images/portrait-v2.jpg";
+
 export const profile = {
   name: "Lucca Gruber Rodrigues",
   /** Engraved on the desk nameplate. */

@@ -1,0 +1,19 @@
+:80 {
+	root * /usr/share/caddy
+	file_server
+
+	# Caddy's default file_server sends an ETag but no Cache-Control, which
+	# leaves browsers free to guess how long a response stays fresh — and
+	# they guess generously. That is fine for the build's own assets, whose
+	# filenames contain a content hash and can never change meaning, and
+	# wrong for everything else: swapping the photograph or redeploying the
+	# page would show returning visitors the old site for days.
+	@hashed path /_next/static/*
+	@mutable not path /_next/static/*
+
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+	# `no-cache` is not "do not cache" — it is "cache it, but revalidate
+	# before reuse". The ETag then makes the check a 304 with no body, so a
+	# repeat visit still costs nothing but always shows the current site.
+	header @mutable Cache-Control "public, no-cache"
+}

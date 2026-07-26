@@ -6,6 +6,7 @@ import { useThree, type ThreeElements, type ThreeEvent } from "@react-three/fibe
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Euler, Quaternion, SRGBColorSpace, Vector3, type Group } from "three";
+import { PORTRAIT_SRC } from "@/content/profile";
 import { palette } from "@/lib/palette";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { DUR, EASE } from "@/experience/motion";
@@ -20,9 +21,16 @@ const HOVER_RAISE = 0.0035;
 /**
  * Thin black picture frame standing upright with a real printed photo —
  * and the door to the About text. The print is whatever lives at
- * /images/portrait.jpg — portrait 3:4, matching the print plane below and
- * the DOM frame's ASPECT. Crop it waist-up: at desk scale the print is a
- * thumbnail, and a full-body shot reads as a person-shaped smudge.
+ * PORTRAIT_SRC — portrait 3:4, matching the print plane below and the DOM
+ * frame's ASPECT. Crop it close, head-and-shoulders: at desk scale the
+ * print is a thumbnail, and a full-body shot reads as a person-shaped
+ * smudge.
+ *
+ * The filename carries a version because Caddy serves /images/* with an
+ * ETag but no Cache-Control, so a browser that has seen this URL will
+ * happily show a stale face for days. REPLACING THE PHOTO MEANS BUMPING
+ * THE FILENAME — overwriting the old one deploys a picture nobody who has
+ * already visited will see.
  *
  * The frame owns only its own motion: the hover breath, the flight to the
  * camera apex (ending in the DOM hand-off, where the photograph turns
@@ -37,7 +45,7 @@ export function PictureFrame(props: GroupProps) {
   const invalidate = useThree((s) => s.invalidate);
   const camera = useThree((s) => s.camera);
 
-  const photo = useTexture("/images/portrait.jpg", (t) => {
+  const photo = useTexture(PORTRAIT_SRC, (t) => {
     t.colorSpace = SRGBColorSpace;
   });
 

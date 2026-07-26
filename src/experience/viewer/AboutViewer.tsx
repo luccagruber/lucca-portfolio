@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { profileText } from "@/content/profile";
+import { PORTRAIT_SRC, profileText } from "@/content/profile";
 import { ui } from "@/content/ui";
 import { useLocale } from "@/lib/locale";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
@@ -232,7 +232,7 @@ function FrameDialog() {
                 <div className="absolute inset-0 rounded-[4px] bg-[#26262A] p-[4%] shadow-[0_50px_100px_-24px_rgba(28,22,10,0.6)] [backface-visibility:hidden]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/images/portrait.jpg"
+                    src={PORTRAIT_SRC}
                     alt=""
                     className="size-full rounded-[1px] object-cover"
                   />
