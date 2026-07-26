@@ -20,7 +20,9 @@ const HOVER_RAISE = 0.0035;
 /**
  * Thin black picture frame standing upright with a real printed photo —
  * and the door to the About text. The print is whatever lives at
- * /images/portrait.jpg (portrait orientation, ~4:5).
+ * /images/portrait.jpg — portrait 3:4, matching the print plane below and
+ * the DOM frame's ASPECT. Crop it waist-up: at desk scale the print is a
+ * thumbnail, and a full-body shot reads as a person-shaped smudge.
  *
  * The frame owns only its own motion: the hover breath, the flight to the
  * camera apex (ending in the DOM hand-off, where the photograph turns
