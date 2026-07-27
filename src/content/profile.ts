@@ -86,7 +86,7 @@ export const profileText: Record<Locale, ProfileText> = {
       "Lucca Gruber Rodrigues,\n16 anos.",
       "Não estou aqui para te vender um serviço. Estou aqui para entender como um negócio real funciona de verdade – como ele é estruturado, como as peças se conectam, para onde o dinheiro vai e por que as decisões foram tomadas de um jeito e não de outro. Por dentro. Com quem realmente toca um.",
       "Estou disponível, sou genuinamente forte com tecnologia e conecto as coisas rápido – esse é o meu talento mais forte. E é por isso que o que eu aprendo na segunda-feira costuma ser útil para você na sexta, geralmente poupando tempo, dinheiro ou esforço.",
-      "Tenho 16 anos e falo isso primeiro, antes que alguém precise apontar. Ainda não sou um profissional e não vou fingir ser um. Mas eu já construí e toco um negócio próprio em dois continentes; tem um arquivo sobre isso na gaveta. Cumpro minha palavra, sou direto e tenho maturidade suficiente para sentar numa conversa desconfortável. O resto, eu quero aprender.",
+      "Tenho 16 anos e falo isso primeiro, antes que alguém precise apontar. Ainda não sou um profissional e não vou fingir ser um. Mas eu já construí e toco um negócio próprio em dois continentes; tem um arquivo sobre isso na gaveta. Cumpro minha palavra, sou direto e tenho maturidade suficiente para estar numa conversa desconfortável. O resto, eu quero aprender.",
       "Se você toca algo real – de qualquer tamanho – e me deixar ver como funciona por dentro, enquanto eu ajudo no que for preciso: vamos conversar.",
     ],
   },
