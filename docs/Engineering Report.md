@@ -137,7 +137,8 @@ src/
 - `tsc --noEmit`, `eslint`, `next build` — all clean.
 - Full headless-Chrome walkthrough of the built site (hardware GL):
   arrival → scroll-trigger → drawer opens with folders rising → folder
-  select → Accul report (7 pages, paging works) → Escape → folder returns →
+  select → Accul report (paging works across every page) → Escape → folder
+  returns →
   Gruber report → traditional act → back-to-top reverse. Zero console
   errors. Screenshots of the closed→open→closed round trip are
   byte-identical to the originals — the machine restores state exactly.

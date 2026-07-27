@@ -27,3 +27,7 @@ export const gruberIdentity: ProjectIdentity = {
 
 /** Where the live copy of the Gruber Goal operations platform is served. */
 export const GRUBER_PLATFORM_URL = "https://copia-gesta-grubergoal.duckdns.org";
+
+/** Accul Reburg's public listing — live on the Chrome Web Store since 27 July 2026. */
+export const ACCUL_STORE_URL =
+  "https://chromewebstore.google.com/detail/efiokhkpcjkbbfccnfgocflcnkbhjipf";

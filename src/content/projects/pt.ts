@@ -1,5 +1,5 @@
 import type { ProjectReport } from "../types";
-import { GRUBER_PLATFORM_URL, acculIdentity, gruberIdentity } from "./identity";
+import { ACCUL_STORE_URL, GRUBER_PLATFORM_URL, acculIdentity, gruberIdentity } from "./identity";
 
 /**
  * The two project files in Brazilian Portuguese — a translation of `en.ts`,
@@ -27,44 +27,30 @@ const acculReburg: ProjectReport = {
         { kind: "title", text: "Accul Reburg" },
         {
           kind: "lede",
-          text: "Uma extensão do Chrome que deixa um projeto continuar em qualquer IA, exatamente de onde parou. Primeira versão funcionando: 15 de junho de 2026. Cinco semanas depois já tinha sido reconstruída do zero uma vez — de produto na nuvem para produto no dispositivo — e saiu em oito idiomas, com um monitor que me avisa quando quebra.",
+          text: "Você trabalha dentro de um chat de IA e alguma coisa valiosa vai se acumulando: decisões, tentativas que falharam, o próximo passo exato. Troca de IA — ou só abre um chat novo — e sumiu. Você explica tudo de novo, toda vez.",
         },
         {
-          kind: "meta",
-          rows: [
-            { term: "O que é", detail: "Extensão do Chrome; os projetos ficam no seu próprio dispositivo" },
-            { term: "Funciona em", detail: "Claude · ChatGPT · Gemini · DeepSeek" },
-            { term: "Roda em", detail: "Um servidor que eu construí e administro, que guarda a chave da IA" },
-            { term: "Situação", detail: "Enviada para a Chrome Web Store, aguardando aprovação" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "problem",
-      label: "O PROBLEMA",
-      blocks: [
-        {
-          kind: "paragraphs",
-          items: [
-            "Você trabalha dentro de um chat de IA e alguma coisa valiosa vai se acumulando: decisões, tentativas que falharam, o próximo passo exato. Troca de IA — ou só abre um chat novo — e sumiu. Você explica tudo de novo, toda vez.",
-            "Claude e Gemini lançaram exportação de memória no começo de 2026, o que prova que a demanda existe. Só que o que eles levam é quem você é — não o que você estava construindo.",
-          ],
+          kind: "link",
+          label: "Instalar pela Chrome Web Store",
+          href: ACCUL_STORE_URL,
         },
         {
-          kind: "lede",
-          text: "Ninguém tinha construído a coisa de verdade. Então eu construí.",
+          kind: "status",
+          text: "No ar na Chrome Web Store — Claude, ChatGPT, Gemini e DeepSeek, em oito idiomas",
+          note: "A ideia, a arquitetura, as decisões de produto e a infraestrutura: tudo meu. Código construído com apoio de IA.",
         },
       ],
     },
     {
       id: "capture",
-      label: "A PARTE DIFÍCIL",
+      label: "PRIVACIDADE E A PARTE DIFÍCIL",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "Nenhuma das quatro plataformas oferece um jeito de ler o que acontece dentro delas. Cada uma teve que ser reconstruída por engenharia reversa — e cada turno da conversa é capturado de três formas independentes ao mesmo tempo:",
+            "O trabalho inacabado de alguém é sobre a coisa mais privada que existe, então a extensão guarda o mínimo possível dele. Cada projeto vive no dispositivo do próprio usuário: sem conta, sem cadastro, com um botão de exportar que devolve tudo e um botão de apagar que apaga de verdade.",
+            "A única coisa que sai do navegador é o turno que está sendo resumido. Ele passa por um servidor que eu mesmo construí e administro — uma máquina Linux rodando sozinha a um custo perto de zero — que guarda a chave da IA e não armazena nada.",
+            "Conseguir esse turno é a parte difícil. Nenhuma das quatro plataformas oferece um jeito de ler o que acontece dentro delas, então cada uma teve que ser destrinchada por engenharia reversa — e cada turno é capturado de três formas independentes ao mesmo tempo:",
           ],
         },
         {
@@ -72,11 +58,11 @@ const acculReburg: ProjectReport = {
           items: [
             {
               title: "Interceptação de rede",
-              body: "Envolve a própria camada de rede da página e remonta a resposta completa da IA a partir do formato de streaming privado de cada plataforma.",
+              body: "Envolve a própria camada de rede da página e remonta a resposta a partir do formato de streaming privado de cada plataforma.",
             },
             {
               title: "Internals do React",
-              body: "Lê o estado das mensagens direto da árvore de componentes do React em memória — e pega o instante exato em que a resposta termina.",
+              body: "Lê o estado das mensagens direto da árvore de componentes do React em memória, e pega o instante em que a resposta termina.",
             },
             {
               title: "Observação do DOM",
@@ -87,22 +73,21 @@ const acculReburg: ProjectReport = {
         {
           kind: "paragraphs",
           items: [
-            "O primeiro método que der certo salva o turno. Se os três falharem, um alerta com um código de erro específico chega no meu celular em dez segundos — porque as plataformas mudam sem avisar, e uma coisa que falha em silêncio é pior do que uma coisa que não existe.",
-            "As conversas das pessoas são sensíveis, então a extensão guarda o mínimo possível delas: cada projeto vive no próprio dispositivo do usuário, sem conta e sem cadastro. A única coisa que sai do navegador é o turno que está sendo resumido, e ele passa por um servidor que eu mesmo construí e administro — uma máquina Linux rodando sozinha a um custo perto de zero — que guarda a chave da IA e não armazena nada.",
+            "O primeiro método que der certo salva o turno. Se os três falharem, um alerta com um código de erro específico chega no meu celular em dez segundos — as plataformas mudam sem avisar, e uma coisa que falha em silêncio é pior do que uma coisa que não existe.",
           ],
         },
         {
           kind: "figures",
           items: [
             {
+              src: "/images/projects/accul-data.webp",
+              alt: "Controles de exportar, importar e apagar tudo da Accul Reburg",
+              caption: "Seus projetos, no seu dispositivo — exportar ou apagar, quando quiser",
+            },
+            {
               src: "/images/projects/accul-continue.webp",
               alt: "Accul Reburg continuando um projeto em outra IA",
               caption: "Continuando um projeto em outra IA — três cliques",
-            },
-            {
-              src: "/images/projects/accul-onboarding.webp",
-              alt: "Termos de privacidade da Accul Reburg na primeira execução",
-              caption: "Primeira execução — o que é processado, o que é guardado, o que você controla",
             },
           ],
         },
@@ -121,21 +106,14 @@ const acculReburg: ProjectReport = {
             { term: "21 de julho", detail: "A chave de IA por usuário também cai — quem guarda é o meu servidor, então funciona ao instalar" },
             { term: "22 de julho", detail: "Oito idiomas, limite de requisições e um monitor que testa a extensão contra ela mesma" },
             { term: "23 de julho", detail: "Enviada para revisão" },
+            { term: "27 de julho", detail: "No ar na Chrome Web Store" },
           ],
         },
         {
           kind: "paragraphs",
           items: [
-            "A maior parte do que mudou nessas semanas não foi código. Foi o que eu achava que o produto era.",
-            "A maior reconstrução foi invisível. No primeiro mês isso era um produto na nuvem: você criava uma conta, e cada snapshot ficava criptografado em repouso no meu banco. Funcionava. E mesmo assim era o formato errado — o trabalho inacabado de alguém é sobre a coisa mais privada que existe, e a resposta honesta não era criptografar melhor, era nunca segurar. No dia 11 de julho eu movi cada projeto para o dispositivo do próprio usuário. A minha primeira versão disso pedia que cada pessoa colocasse a própria chave de IA; dez dias depois eu tirei, porque era um muro na frente de uma coisa que devia simplesmente funcionar. Hoje quem guarda a chave é o meu servidor, e ele só enxerga o turno que está resumindo.",
-            "Dei a extensão para uma pessoa que comparou com copiar e colar — e aí disse que era muito mais rápido que copiar e colar, e que pegava coisas que copiar e colar não pega. Também disse que o preço era alto para onde ele mora, e me mandou parar de vender continuidade. Ele estava certo. O que a extensão guarda de verdade é o estado do trabalho: as decisões, as restrições, o próximo passo. E isso vale alguma coisa em todo lugar onde hoje esse estado não consegue viajar — entre ferramentas, entre agentes, entre duas pessoas passando um projeto adiante.",
-            "A segunda lição foi sobre mim. Numa manhã o meu próprio projeto não estava lá na extensão, e eu quase abandonei o meu próprio produto antes de qualquer outra pessoa. Quase tudo que foi construído depois disso — os três métodos de captura, os alertas, o monitor que se testa sozinho — existe por causa daquela manhã.",
+            "A maior parte do que mudou nessas semanas não foi código — foi o que eu achava que o produto era. No primeiro mês isso era um produto na nuvem: uma conta, e cada snapshot criptografado em repouso no meu banco. Funcionava, e mesmo assim era o formato errado, porque a resposta honesta para segurar o trabalho inacabado de alguém nunca foi criptografar melhor, era não segurar. O resto eu aprendi numa única manhã, quando o meu próprio projeto não estava lá na minha própria extensão e eu quase abandonei tudo antes de qualquer outra pessoa: os três métodos de captura, os alertas e o monitor que se testa sozinho existem por causa daquela manhã.",
           ],
-        },
-        {
-          kind: "status",
-          text: "Enviada para a Chrome Web Store — aguardando aprovação",
-          note: "A ideia, a arquitetura, as decisões de produto e a infraestrutura: tudo meu. Código construído com apoio de IA.",
         },
       ],
     },
@@ -213,13 +191,12 @@ const gruberGoal: ProjectReport = {
     },
     {
       id: "platform",
-      label: "PARTE III — OS NÚMEROS",
+      label: "PARTE III — A PLATAFORMA",
       blocks: [
         {
           kind: "paragraphs",
           items: [
-            "Uma loja que você não consegue tocar tem que rodar em cima de alguma coisa, então construí a plataforma que segura o negócio inteiro: produtos, compras, vendas, estoque, precificação.",
-            "O motor de precificação mapeia cada faixa de taxa dos dois marketplaces — comissões, percentuais por categoria, faixas de peso — e devolve o ponto de equilíbrio exato e o lucro real para qualquer preço. Essa foi a parte que valeu aprender: o número que eu tratava como lucro não era lucro. O negócio vazava margem num lugar que ficava invisível até ser calculado. A maioria dos vendedores pequenos chuta essa conta; boa parte deles está perdendo dinheiro no produto que mais vende e não sabe.",
+            "Uma loja que você não consegue tocar tem que rodar em cima de alguma coisa, então essa coisa eu construí — uma plataforma feita sob medida para a minha operação, e não para a de outra pessoa: produtos, compras, vendas, estoque e a precificação que me diz o que eu ganho de verdade.",
           ],
         },
         {
